@@ -14,6 +14,8 @@ After the import is done:
   Goto File->Project Structure
   Find "Modules" under Project Settings
   Under "forge-1.12.2-14.23.5.2838-mdk_main" add the "spongeforge-1.12.2-2838-7.1.8.jar"
+  Change the scope of the newly added library from "Compile" to "Provided"
+
   
 Goto Run->Edit Configuration:
   Add New Configuration -> Application -> Put "GradleStartServer" under MainClass.
