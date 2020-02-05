@@ -2,7 +2,7 @@
 
 To setup the MineBike-Server, unzip the forge source.
 
-run: ./gredlew setupDecompWorkspace --refresh-dependencies
+run: ./gradlew setupDecompWorkspace --refresh-dependencies
 
 For IntelliJ:
   Goto File->New->Project from Existing Source
