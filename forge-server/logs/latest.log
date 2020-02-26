@@ -1,0 +1,114 @@
+[17:59:39] [main/INFO] [LaunchWrapper]: Using primary tweak class name net.minecraftforge.fml.common.launcher.FMLServerTweaker
+[17:59:39] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLServerTweaker
+[17:59:39] [main/INFO] [FML]: Forge Mod Loader version 14.23.5.2838 for Minecraft 1.12.2 loading
+[17:59:39] [main/INFO] [FML]: Java is Java HotSpot(TM) 64-Bit Server VM, version 1.8.0_221, running on Windows 10:amd64:10.0, installed at C:\Program Files\Java\jre1.8.0_221
+[17:59:39] [main/INFO] [FML]: Searching D:\forge-server\.\mods for mods
+[17:59:39] [main/INFO] [FML]: Loading tweaker org.spongepowered.asm.launch.MixinTweaker from spongeforge-1.12.2-2838-7.1.8.jar
+[17:59:39] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[17:59:39] [main/INFO] [LaunchWrapper]: Loading tweak class name org.spongepowered.asm.launch.MixinTweaker
+[17:59:39] [main/INFO] [mixin]: SpongePowered MIXIN Subsystem Version=0.7.11 Source=file:/D:/forge-server/./mods/spongeforge-1.12.2-2838-7.1.8.jar Service=LaunchWrapper Env=SERVER
+[17:59:41] [main/WARN] [FML]: The coremod SpongeCoremod (org.spongepowered.mod.SpongeCoremod) is not signed!
+[17:59:41] [main/INFO] [mixin]: Compatibility level set to JAVA_8
+[17:59:41] [main/INFO] [mixin]: Adding new token provider org.spongepowered.mod.SpongeCoremod$TokenProvider to MixinEnvironment[DEFAULT]
+[17:59:41] [main/INFO] [mixin]: Adding new token provider org.spongepowered.mod.SpongeCoremod$TokenProvider to MixinEnvironment[PREINIT]
+[17:59:41] [main/INFO] [mixin]: Adding new token provider org.spongepowered.mod.SpongeCoremod$TokenProvider to MixinEnvironment[INIT]
+[17:59:41] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
+[17:59:41] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[17:59:41] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[17:59:41] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[17:59:42] [main/INFO] [FML]: Found valid fingerprint for Minecraft Forge. Certificate fingerprint e3c3d50c7c986df74c645c0ac54639741c90a557
+[17:59:42] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[17:59:42] [main/INFO] [LaunchWrapper]: Calling tweak class org.spongepowered.asm.launch.MixinTweaker
+[17:59:42] [main/INFO] [mixin]: Initialised Mixin FML Remapper Adapter with net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper@5ecba515
+[17:59:42] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
+[17:59:42] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.TerminalTweaker
+[17:59:42] [main/INFO] [LaunchWrapper]: Loading tweak class name org.spongepowered.asm.mixin.EnvironmentStateTweaker
+[17:59:42] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.TerminalTweaker
+[17:59:42] [main/INFO] [LaunchWrapper]: Calling tweak class org.spongepowered.asm.mixin.EnvironmentStateTweaker
+[17:59:43] [main/WARN] [mixin]: @Mixin target net.minecraft.block.state.BlockStateContainer$StateImplementation is public in mixins.common.api.json:mcp.block.state.StateImplementationMixin_API and should be specified in value
+[17:59:46] [main/WARN] [mixin]: Static binding violation: PRIVATE @Overwrite method func_189509_E in mixins.common.core.json:world.WorldMixin cannot reduce visibiliy of PUBLIC target method, visibility will be upgraded.
+[17:59:46] [main/INFO] [LaunchWrapper]: Launching wrapped minecraft {net.minecraft.server.MinecraftServer}
+[17:59:47] [main/WARN] [mixin]: Method overwrite conflict for accessor$dropRecordItem in mixins.common.core.json:block.BlockJukeboxAccessor, previously written by org.spongepowered.common.mixin.core.block.BlockJukeboxMixin. Skipping method.
+[17:59:49] [main/WARN] [mixin]: Method overwrite conflict for accessor$getScoreboard in mixins.common.core.json:scoreboard.ScorePlayerTeamAccessor, previously written by org.spongepowered.common.mixin.core.scoreboard.ScorePlayerTeamMixin. Skipping method.
+[17:59:49] [main/WARN] [mixin]: Method overwrite conflict for accessor$setScoreboard in mixins.common.core.json:scoreboard.ScorePlayerTeamAccessor, previously written by org.spongepowered.common.mixin.core.scoreboard.ScorePlayerTeamMixin. Skipping method.
+[17:59:50] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Starting minecraft server version 1.12.2
+[17:59:50] [Server thread/INFO] [FML]: MinecraftForge v14.23.5.2838 Initialized
+[17:59:50] [Server thread/INFO] [FML]: Starts to replace vanilla recipe ingredients with ore ingredients.
+[17:59:50] [Server thread/INFO] [FML]: Invalid recipe found with multiple oredict ingredients in the same ingredient...
+[17:59:50] [Server thread/INFO] [FML]: Replaced 1227 ore ingredients
+[17:59:50] [Server thread/INFO] [Sponge]: Found mcmod.info at jar:file:/D:/forge-server/./mods/spongeforge-1.12.2-2838-7.1.8.jar!/mcmod.info
+[17:59:51] [Server thread/INFO] [Sponge]: Creating injector in stage 'PRODUCTION'
+[17:59:54] [Server thread/INFO] [FML]: Searching D:\forge-server\.\mods for mods
+[17:59:54] [Server thread/INFO] [FML]: Forge Mod Loader has identified 11 mods to load
+[17:59:54] [Server thread/WARN] [FML]: Missing English translation for FML: assets/fml/lang/en_us.lang
+[17:59:54] [Server thread/WARN] [FML]: Missing English translation for spongeapi: assets/spongeapi/lang/en_us.lang
+[17:59:54] [Server thread/WARN] [FML]: Missing English translation for spongeforge: assets/spongeforge/lang/en_us.lang
+[17:59:54] [Server thread/WARN] [FML]: Missing English translation for clearmob: assets/clearmob/lang/en_us.lang
+[17:59:54] [Server thread/WARN] [FML]: Missing English translation for examplemod: assets/examplemod/lang/en_us.lang
+[17:59:54] [Server thread/WARN] [FML]: Missing English translation for plugin: assets/plugin/lang/en_us.lang
+[17:59:54] [Server thread/WARN] [FML]: Missing English translation for minbikeservermainplugin: assets/minbikeservermainplugin/lang/en_us.lang
+[17:59:54] [Server thread/WARN] [Sponge]: The mod clearmob was designed for spongeapi 7.2.0-SNAPSHOT but version 7.1.0-ea50f0c2 is in use. It may not work properly.
+[17:59:54] [Server thread/WARN] [Sponge]: The mod clearmob was designed for spongeapi 7.2.0-SNAPSHOT but version 7.1.0-ea50f0c2 is in use. It may not work properly.
+[17:59:54] [Server thread/INFO] [FML]: Attempting connection with missing mods [minecraft, mcp, FML, forge, spongeapi, sponge, spongeforge, clearmob, examplemod, plugin, minbikeservermainplugin] at CLIENT
+[17:59:54] [Server thread/INFO] [FML]: Attempting connection with missing mods [minecraft, mcp, FML, forge, spongeapi, sponge, spongeforge, clearmob, examplemod, plugin, minbikeservermainplugin] at SERVER
+[17:59:55] [Server thread/WARN] [Sponge]: There's no certificate fingerprint available
+[17:59:55] [Server thread/INFO] [minbikeservermainplugin]: Server Constructing
+[17:59:55] [Server thread/INFO] [FML]: Processing ObjectHolder annotations
+[17:59:55] [Server thread/INFO] [FML]: Found 1169 ObjectHolder annotations
+[17:59:55] [Server thread/INFO] [FML]: Identifying ItemStackHolder annotations
+[17:59:55] [Server thread/INFO] [FML]: Found 0 ItemStackHolder annotations
+[17:59:55] [Server thread/INFO] [FML]: Configured a dormant chunk cache size of 0
+[17:59:55] [Forge Version Check/INFO] [forge.VersionCheck]: [spongeforge] Starting version check at https://files.minecraftforge.net/maven/org/spongepowered/spongeforge/promotions_slim.json
+[17:59:57] [Server thread/INFO] [STDOUT]: [com.example.examplemod.ExampleMod:preInit:24]: PreInit Dones
+[17:59:57] [Server thread/INFO] [FML]: Applying holder lookups
+[17:59:57] [Server thread/INFO] [FML]: Holder lookups applied
+[17:59:57] [Server thread/INFO] [FML]: Applying holder lookups
+[17:59:57] [Server thread/INFO] [FML]: Holder lookups applied
+[17:59:57] [Server thread/WARN] [FML]: Potentially Dangerous alternative prefix `sponge` for name `human`, expected `spongeforge`. This could be a intended override, but in most cases indicates a broken mod.
+[17:59:57] [Server thread/INFO] [FML]: Applying holder lookups
+[17:59:57] [Server thread/INFO] [FML]: Holder lookups applied
+[17:59:57] [Server thread/INFO] [FML]: Applying holder lookups
+[17:59:57] [Server thread/INFO] [FML]: Holder lookups applied
+[17:59:57] [Server thread/INFO] [FML]: Injecting itemstacks
+[17:59:57] [Server thread/INFO] [FML]: Itemstack injection complete
+[17:59:57] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Loading properties
+[17:59:57] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Default game type: SURVIVAL
+[17:59:57] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Generating keypair
+[17:59:57] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Starting Minecraft server on *:25565
+[17:59:57] [Server thread/INFO] [net.minecraft.network.NetworkSystem]: Using default channel type
+[17:59:59] [Forge Version Check/INFO] [forge.VersionCheck]: [spongeforge] Found status: OUTDATED Target: 7.1.2
+[17:59:59] [Forge Version Check/INFO] [forge.VersionCheck]: [forge] Starting version check at http://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json
+[18:00:00] [Forge Version Check/INFO] [forge.VersionCheck]: [forge] Found status: OUTDATED Target: 14.23.5.2847
+[18:00:01] [Server thread/INFO] [FML]: Applying holder lookups
+[18:00:01] [Server thread/INFO] [FML]: Holder lookups applied
+[18:00:01] [Server thread/INFO] [plugin]: asdfasdfsdfsfasdfasdfas
+[18:00:01] [Server thread/INFO] [minbikeservermainplugin]: Server Initializing
+[18:00:01] [Server thread/INFO] [examplemod]: Running example Mod
+[18:00:01] [Server thread/INFO] [examplemod]: DIRT BLOCK >> minecraft:dirt
+[18:00:01] [Server thread/INFO] [FML]: Injecting itemstacks
+[18:00:01] [Server thread/INFO] [FML]: Itemstack injection complete
+[18:00:02] [Server thread/INFO] [FML]: Forge Mod Loader has successfully loaded 11 mods
+[18:00:02] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Preparing level "world"
+[18:00:02] [Server thread/INFO] [Sponge]: Checking for worlds that need to be migrated...
+[18:00:02] [Server thread/INFO] [Sponge]: No worlds were found in need of migration.
+[18:00:02] [Server thread/INFO] [FML.ModTracker]: This world was saved with mod plugin version 1.0-SNAPSHOT and it is now at version 0.1, things may not work well
+[18:00:02] [Server thread/INFO] [FML]: Injecting existing registry data into this server instance
+[18:00:02] [Server thread/INFO] [FML]: Applying holder lookups
+[18:00:02] [Server thread/INFO] [FML]: Holder lookups applied
+[18:00:02] [Server thread/WARN] [mixin]: Method overwrite conflict for accessor$getListeners in mixins.common.core.json:world.border.WorldBorderAccessor, previously written by org.spongepowered.common.mixin.core.world.border.WorldBorderMixin. Skipping method.
+[18:00:02] [Server thread/INFO] [net.minecraft.advancements.AdvancementList]: Loaded 488 advancements
+[18:00:02] [Server thread/INFO] [net.minecraft.advancements.AdvancementList]: Loaded 6 advancement trees
+[18:00:03] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Preparing start region for world world (minecraft:overworld/0)
+[18:00:04] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Preparing spawn area: 47%
+[18:00:04] [Server thread/INFO] [Sponge]: Loading world [world] (minecraft:overworld/0)
+[18:00:04] [Server thread/WARN] [Sponge]: World [DIM-1] (minecraft:nether/-1) is set to not load on startup. To load it later, enable [load-on-startup] in config or use a plugin.
+[18:00:04] [Server thread/WARN] [Sponge]: World [DIM1] (minecraft:the_end/1) is set to not load on startup. To load it later, enable [load-on-startup] in config or use a plugin.
+[18:00:04] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Done (2.535s)! For help, type "help" or "?"
+[18:00:04] [Server thread/INFO] [clearmob]: Configuration loaded.
+[18:00:04] [Server thread/INFO] [plugin]: myplugin started
+[18:00:04] [Server thread/INFO] [minbikeservermainplugin]: Server Started
+[18:31:08] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Stopping server
+[18:31:08] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving players
+[18:31:08] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving worlds
+[18:31:08] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving chunks for level 'world'/0
+[18:31:08] [Server thread/INFO] [Sponge]: Unloading world [world] (minecraft:overworld/0)

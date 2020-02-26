@@ -2,7 +2,19 @@
     {
         "modid": "plugin",
         "name": "multiplayergame",
-        "version": "1.0-SNAPSHOT",
+        "version": "0.1",
+        "dependencies": [
+            "spongeapi@7.1.0"
+        ],
+        "requiredMods": [
+            "spongeapi@7.1.0"
+        ]
+    },
+    {
+        "modid": "minbikeservermainplugin",
+        "name": "Mine Bike Server Plugin",
+        "version": "0.1",
+        "description": "This is the sponge plugin for MineBike server for multiplayer",
         "dependencies": [
             "spongeapi@7.1.0"
         ],

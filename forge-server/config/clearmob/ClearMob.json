@@ -1,0 +1,32 @@
+{
+  "General Options": [
+    {
+      "Entity General List": [
+        "entity-w-*",
+        "item-w-minecraft:golden_shovel"
+      ]
+    }
+  ],
+  "Passive Mode": [
+    {
+      "Passive Enabled": false,
+      "Interval in Seconds": 60,
+      "Message to Players": "[ClearMob] Entities have been cleared",
+      "Warning Enabled": false,
+      "Warning to Players": "[ClearMob] Clearing Entities in 1 minute"
+    }
+  ],
+  "Mob Compression": [
+    {
+      "Enabled": false,
+      "Enable for Monsters": false,
+      "Enable for Animals": false
+    }
+  ],
+  "Mob Limiter": [
+    {
+      "Enabled": false,
+      "Max Limit": 500
+    }
+  ]
+}
