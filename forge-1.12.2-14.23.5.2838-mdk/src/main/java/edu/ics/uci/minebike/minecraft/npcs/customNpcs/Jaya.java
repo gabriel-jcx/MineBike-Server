@@ -6,8 +6,9 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 public class Jaya extends AbstractCustomNpc{
     public static final String NAME = "Jaya";
-    public static final Vec3d LOCATION = new Vec3d(111,111,111); // TODO: figure out the location
-    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/steve.png";
+    public static final Vec3d LOCATION = new Vec3d(111,70,10); // TODO: figure out the location
+    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/tradesteve.png";
+    public static String UUID;
 
     public Jaya(){
         name = NAME;

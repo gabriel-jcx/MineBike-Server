@@ -9,6 +9,7 @@ public abstract class AbstractCustomNpc {
     protected String name;
     protected Vec3d location;
     protected String texture;
+    protected String UUID  = "";
 
     //important that this method is called after the instantiation of the object
     public void register()
@@ -21,4 +22,8 @@ public abstract class AbstractCustomNpc {
     public Vec3d getLocation() {return location;}
     public String getName() {return name;}
     public String getTexture() {return texture;}
+    public void setUUID(String UUID){
+        this.UUID = UUID;
+    }
+    public String getUUID(){return UUID;}
 }

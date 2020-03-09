@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft;
 
+import edu.ics.uci.minebike.minecraft.serverSave.ServerSaveManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -16,6 +17,8 @@ public class BiGXMain {
     public static final String MOD_VERSION = "0.1.0";
     private static Logger logger;
     CommonEventHandler handler = new CommonEventHandler();
+    CommonProxy proxy = new CommonProxy();
+    ServerSaveManager saveManager = new ServerSaveManager();
     @EventHandler
     // preInit "Run before anything else. Read your config, create blocks, items,
     // etc, and register them with the GameRegistry."
@@ -31,6 +34,8 @@ public class BiGXMain {
         // Initialization goes here!
         logger.info("Initalization Started");
         logger.info("MineBike: Init finished");
+
+        System.out.println();
     }
     @EventHandler
     public void postInit(FMLPostInitializationEvent event){

@@ -6,8 +6,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 public class Sam extends AbstractCustomNpc {
     public static final String NAME = "Sam";
-    public static final Vec3d LOCATION = new Vec3d(100,100,100); // TODO: figure out the location
-    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/steve.png";
+    public static final Vec3d LOCATION = new Vec3d(113,70,10); // TODO: figure out the location
+    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/kingsteve.png";
 
     public Sam(){
         name = NAME;

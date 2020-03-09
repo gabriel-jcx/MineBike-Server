@@ -1,51 +1,95 @@
 package edu.ics.uci.minebike.minecraft;
 
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
+import edu.ics.uci.minebike.minecraft.npcs.NpcEventHandler;
 import edu.ics.uci.minebike.minecraft.npcs.NpcUtils;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.AbstractCustomNpc;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import noppes.npcs.api.IPos;
+import noppes.npcs.api.entity.ICustomNpc;
+import noppes.npcs.api.event.NpcEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 
 import java.util.Map;
-
+import net.minecraftforge.fml.common.Mod;
+@Mod.EventBusSubscriber
 public class CommonEventHandler {
     NpcDatabase npcDatabase = new NpcDatabase();
+    public static boolean spawned = false;
     public CommonEventHandler(){
-
 
     }
     public void spawn(){
-        spawnNpcDatabase();
+        //spawnNpcDatabase();
     }
 
 
-    public void spawnNpcDatabase(){
-        WorldServer ws = DimensionManager.getWorld(0);
-        WorldServer ws1 = DimensionManager.getWorlds()[0];
+    public void spawnNpcDatabase(int worldId, BlockPos pos, World worldIn){
+
+        WorldServer ws = DimensionManager.getWorld(worldId);
+
+        System.out.printf("Number of Worlds = %s\n", DimensionManager.getWorlds().length);
         System.out.println("World Server get");
         if(NpcDatabase.npcs.size() != 0) {
-            for (Map.Entry<String, Vec3d> npc : NpcDatabase.npcs.entrySet()) {
-                System.out.println(npc.getKey() + " is spwaned at " + "(" + npc.getValue().x + "," + npc.getValue().y + "," + npc.getValue().z + ")");
-                NpcUtils.spawnNpc(new BlockPos(npc.getValue()), ws1, npc.getKey());
-                System.out.println(npc.getKey() + " is spwaned at " + "(" + npc.getValue().x + "," + npc.getValue().y + "," + npc.getValue().z + ")");
+            for (AbstractCustomNpc npc: NpcDatabase.customNpcs) {
+                ICustomNpc npcEntity = NpcUtils.spawnNpc(npc.getLocation(), ws,worldIn,npc.getName(), npc.getTexture());
+                NpcDatabase.npc_entities.add(npcEntity);
+                IPos location = npcEntity.getPos();
+                npc.setUUID(npcEntity.getUUID());
+                //BlockPos pos = temp_npc.getPos();
+                System.out.println(npc.getName() + " is spwaned at " + "(" + location.getX() + "," + location.getY() + "," + location.getZ() + ")");
+                //System.out.println(npc.getKey() + " is spwaned at " + "(" + pos.getX() + "," + pos.getY() + "," + pos.getZ()+ ")");
             }
         }
     }
     @SubscribeEvent
+    public void onEntityInteract(PlayerInteractEvent.EntityInteract event){
+        EntityPlayer player = event.getEntityPlayer();
+        NpcEventHandler.customNpcInteract(player, event);
+    }
+    @SubscribeEvent
+    public void onEntityJoin(EntityJoinWorldEvent event){
+
+    }
+    @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event){
+
+        if(!spawned && !event.player.getEntityWorld().isRemote){
+            World w = event.player.getEntityWorld();
+            spawnNpcDatabase(w.provider.getDimension(),w.getSpawnPoint(),w);
+            spawned = true;
+        }
+//        for(EntityCustomNpc npc: NpcDatabase.npc_entities){
+//            System.out.println(npc.getName() + " is dead ? " +npc.isDead);
+//        }
 //        System.out.println("Player tick event triggered");
 //        spawnNpcDatabase();
     }
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event ){
-        //event.getWorld().provider
         System.out.println("A world is loaded, WorldEvent.Load triggerd");
-        spawnNpcDatabase();
+
+        if(!event.getWorld().isRemote){// if Running on the server
+            System.out.println("World Loaded on Server!!!!!");
+//            spawnNpcDatabase(event.getWorld().provider.getDimension(),event.getWorld().getSpawnPoint());
+
+        }
+
     }
+    @SubscribeEvent
+    public void onNpcInit(NpcEvent.InitEvent event){
+        System.out.printf("Npc Spawned!!!");
+    }
+
+
 }
