@@ -14,10 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class NpcEventHandler {
     public static void customNpcInteract(EntityPlayer player, PlayerInteractEvent.EntityInteract event){
-
         //player.sendMessage(new TextComponentString("/teleport " + player.getName()+" ~2 ~3 ~1"));
-        if(event.getWorld().isRemote)
-            playerSendChat(player);
         System.out.println("Target UUID:" + event.getTarget().getUniqueID() );
         for(AbstractCustomNpc npc: NpcDatabase.customNpcs){
             System.out.println("NPC UUID:" + npc.getUUID() );
@@ -27,8 +24,5 @@ public class NpcEventHandler {
             }
         }
     }
-    @SideOnly(Side.CLIENT)
-    public static void playerSendChat(EntityPlayer player){
-        ((EntityPlayerSP)player).sendChatMessage("/teleport " + player.getName()+" ~5 ~ ~");
-    }
+
 }

@@ -17,12 +17,14 @@ public class BiGXMain {
     public static final String MOD_VERSION = "0.1.0";
     private static Logger logger;
     CommonEventHandler handler = new CommonEventHandler();
-    CommonProxy proxy = new CommonProxy();
+    CommonProxy proxy;
     ServerSaveManager saveManager = new ServerSaveManager();
     @EventHandler
     // preInit "Run before anything else. Read your config, create blocks, items,
     // etc, and register them with the GameRegistry."
     public void preInit(FMLPreInitializationEvent event){
+        proxy = new CommonProxy();
+        System.out.println("Preinitializing - Finish registering the Custom Dimensions");
         // preInit goes here
         System.out.printf("MineBike: PreInit finished");
         logger = event.getModLog();
@@ -33,6 +35,8 @@ public class BiGXMain {
     public void init(FMLInitializationEvent event){
         // Initialization goes here!
         logger.info("Initalization Started");
+
+
         logger.info("MineBike: Init finished");
 
         System.out.println();

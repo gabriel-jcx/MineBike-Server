@@ -1,9 +1,13 @@
 package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
 
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class AbstractCustomNpc {
     protected String name;
@@ -26,4 +30,10 @@ public abstract class AbstractCustomNpc {
         this.UUID = UUID;
     }
     public String getUUID(){return UUID;}
+
+
+    @SideOnly(Side.CLIENT)
+    public static void telport(EntityPlayerSP playerSP, BlockPos pos, int dimID){
+        playerSP.sendChatMessage("");
+    }
 }

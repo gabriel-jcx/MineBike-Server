@@ -9,8 +9,6 @@ public abstract class WorldProviderCustomQuests extends WorldProvider {
     public static String dimName;
     protected WorldType terrainType;
 
-    @Override
-    public DimensionType getDimensionType(){
-        return DimensionType.getById(dimID);
-    }
+
+
 }
