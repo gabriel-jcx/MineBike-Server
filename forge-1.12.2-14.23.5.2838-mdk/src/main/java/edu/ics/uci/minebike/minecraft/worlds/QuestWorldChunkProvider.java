@@ -38,7 +38,7 @@ public class QuestWorldChunkProvider implements IChunkGenerator {
         ChunkPrimer chunkPrimer = new ChunkPrimer();
         // TODO:fiugre out hwat is x and z?
         this.biomesForGeneration = this.worldObj.getBiomeProvider().getBiomesForGeneration(this.biomesForGeneration, x * 4 -2, z * 4 -2 ,16 ,16);
-        System.out.println("Length of this.biomesForGeneration = " + this.biomesForGeneration.length);
+        //System.out.println("Length of this.biomesForGeneration = " + this.biomesForGeneration.length);
         terrianGenerator.setBiomesForGeneration(biomesForGeneration);
         terrianGenerator.replaceBiomeBlocks(x,z,chunkPrimer,this,biomesForGeneration);
 

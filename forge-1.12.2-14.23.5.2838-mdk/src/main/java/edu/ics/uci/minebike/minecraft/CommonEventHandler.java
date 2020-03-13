@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -42,10 +43,10 @@ public class CommonEventHandler {
         System.out.println("World Server get");
         if(NpcDatabase.npcs.size() != 0) {
             for (AbstractCustomNpc npc: NpcDatabase.customNpcs) {
-                ICustomNpc npcEntity = NpcUtils.spawnNpc(npc.getLocation(), ws,worldIn,npc.getName(), npc.getTexture());
+                EntityCustomNpc npcEntity = NpcUtils.spawnNpc(npc.getLocation(), ws,worldIn,npc.getName(), npc.getTexture());
                 NpcDatabase.npc_entities.add(npcEntity);
-                IPos location = npcEntity.getPos();
-                npc.setUUID(npcEntity.getUUID());
+                BlockPos location = npcEntity.getPosition();
+                npc.setUUID(npcEntity.getUniqueID().toString());
                 //BlockPos pos = temp_npc.getPos();
                 System.out.println(npc.getName() + " is spwaned at " + "(" + location.getX() + "," + location.getY() + "," + location.getZ() + ")");
                 //System.out.println(npc.getKey() + " is spwaned at " + "(" + pos.getX() + "," + pos.getY() + "," + pos.getZ()+ ")");
@@ -91,5 +92,11 @@ public class CommonEventHandler {
         System.out.printf("Npc Spawned!!!");
     }
 
-
+    @SubscribeEvent
+    public void onPlayerSave(PlayerEvent.SaveToFile event){
+        System.out.println(event.getEntityPlayer().getName() + " is trying to SaveToFile");
+    }
+//
+//    @SubscribeEvent
+//    public void onIDK(TickE)
 }

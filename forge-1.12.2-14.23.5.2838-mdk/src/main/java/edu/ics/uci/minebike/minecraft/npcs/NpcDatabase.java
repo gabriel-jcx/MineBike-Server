@@ -11,7 +11,7 @@ import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.entity.EntityCustomNpc;
 
 public class NpcDatabase {
-    public static ArrayList<ICustomNpc> npc_entities = new ArrayList<>();
+    public static ArrayList<EntityCustomNpc> npc_entities = new ArrayList<>();
     public static Map<String, Vec3d> npcs = new HashMap<>();
     public static ArrayList<AbstractCustomNpc> customNpcs = new ArrayList<>();
     public NpcDatabase(){

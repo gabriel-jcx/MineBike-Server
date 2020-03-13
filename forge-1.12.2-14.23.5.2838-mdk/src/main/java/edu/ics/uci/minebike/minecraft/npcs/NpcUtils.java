@@ -32,44 +32,38 @@ public class NpcUtils{
 
         return false;
     }
-    public static ICustomNpc spawnNpc(Vec3d pos, WorldServer ws, World world, String name, String Texture){
+    public static EntityCustomNpc spawnNpc(Vec3d pos, World world, String name, String Texture){
+        EntityCustomNpc npc = new EntityCustomNpc(world);
+        npc.delete();
+        return npc;
+    }
+    public static EntityCustomNpc spawnNpc(Vec3d pos, WorldServer ws, World world, String name, String Texture){
         if(world == null ){
-            System.out.println("WTF");
+            System.out.println("Wordl is null, should not spawn ");
+            return null;
         }
+        EntityCustomNpc npc = new EntityCustomNpc(world);
+        npc.wrappedNPC.getDisplay().setSkinTexture(Texture);
+        npc.wrappedNPC.setPosition(pos.x,pos.y,pos.z);
+        npc.wrappedNPC.getDisplay().setName(name);
+        npc.wrappedNPC.setHealth(1000f);
+        npc.wrappedNPC.spawn();
+//        ICustomNpc customNpc = npcAPI.createNPC(world);
 //
-//        EntityCustomNpc npc = new EntityCustomNpc((world));
-//        npc.display.setName(name);
-//        npc.display.setVisible(1);
+//        customNpc.getDisplay().setSkinTexture(Texture);
+//        //customNpc.getDisplay().setOverlayTexture(Texture);
+//        customNpc.setPosition(pos.x,pos.y,pos.z);
 //
-//        npc.display.setSkinTexture("customnpcs:textures/entity/humanmale/steve.png");
-//        npc.wrappedNPC.setName("ASDF");
-//        npc.wrappedNPC.spawn();
-//        //npc.setCustomNameTag("jaya");
-//        npc.setPosition(pos.getX(),pos.getY(),pos.getZ());
-//        npc.setHealth(1000f);
-//        System.out.println(name+ " is spwaned at " + "(" + (pos.getX()+2) + "," + pos.getY()+ "," + (pos.getZ()) + ")");
-//        System.out.printf("isRemote %b\n", npc.isRemote());
-//        //System.out.printf("isInvisibleToPlayer %b\n", npc.isInvisibleToPlayer());
-//
-//        npc.ais.setStartPos(pos);
-//        world.spawnEntity(npc);
-        ICustomNpc customNpc = npcAPI.createNPC(world);
-        customNpc.getDisplay().setSkinTexture(Texture);
-        //customNpc.getDisplay().setOverlayTexture(Texture);
-        customNpc.setPosition(pos.x,pos.y,pos.z);
-
-        customNpc.setName(name);
-        customNpc.getDisplay().setName(name);
-        customNpc.setHealth(1000f);
-        customNpc.spawn();
-
-        // = ws.spawnEntity(npc);
-        //System.out.printf("Spawning Entity %s was %b\n",name ,status);
+//        customNpc.setName(name);
+//        customNpc.getDisplay().setName(name);
+//        customNpc.setHealth(1000f);
+//        customNpc.spawn();
 
 
-        // Setting the health to prevent npc being killed
+        return npc;
+    }
+    public static boolean removeNpc(ICustomNpc npc, World worldIn, String name){
 
-
-        return customNpc;
+        return true;
     }
 }
