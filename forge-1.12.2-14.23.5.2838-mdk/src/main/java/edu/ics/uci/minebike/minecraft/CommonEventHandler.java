@@ -87,10 +87,10 @@ public class CommonEventHandler {
         }
 
     }
-    @SubscribeEvent
-    public void onNpcInit(NpcEvent.InitEvent event){
-        System.out.printf("Npc Spawned!!!");
-    }
+//    @SubscribeEvent
+//    public void onNpcInit(NpcEvent.InitEvent event){
+//        System.out.printf("Npc Spawned!!!");
+//    }
 
     @SubscribeEvent
     public void onPlayerSave(PlayerEvent.SaveToFile event){
