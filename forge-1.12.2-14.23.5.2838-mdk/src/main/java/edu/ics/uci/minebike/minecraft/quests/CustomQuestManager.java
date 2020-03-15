@@ -7,4 +7,6 @@ public class CustomQuestManager {
     public CustomQuestManager(){
         quest_list.add(new SoccerQuest());
     }
+
+
 }

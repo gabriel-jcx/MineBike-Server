@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft;
 
+import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import edu.ics.uci.minebike.minecraft.serverSave.ServerSaveManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,6 +22,7 @@ public class BiGXMain {
     CommonProxy proxy;
     ServerSaveManager saveManager = new ServerSaveManager();
     CustomQuestManager questMangager = new CustomQuestManager();
+    HudManager hudManager;
     @EventHandler
     // preInit "Run before anything else. Read your config, create blocks, items,
     // etc, and register them with the GameRegistry."
@@ -38,7 +40,7 @@ public class BiGXMain {
         // Initialization goes here!
         logger.info("Initalization Started");
 
-
+        hudManager = HudManager.getInstance();
         logger.info("MineBike: Init finished");
 
         System.out.println();

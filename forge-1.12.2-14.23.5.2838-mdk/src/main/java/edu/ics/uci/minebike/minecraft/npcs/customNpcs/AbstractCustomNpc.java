@@ -33,7 +33,7 @@ public abstract class AbstractCustomNpc {
 
 
     @SideOnly(Side.CLIENT)
-    public static void telport(EntityPlayerSP playerSP, BlockPos pos, int dimID){
-        playerSP.sendChatMessage("");
+    public static void telport(EntityPlayerSP playerSP, Vec3d pos, int dimID){
+        playerSP.sendChatMessage("\tpx "+ dimID + " " + pos.x + " " + pos.y + " " + pos.z );
     }
 }

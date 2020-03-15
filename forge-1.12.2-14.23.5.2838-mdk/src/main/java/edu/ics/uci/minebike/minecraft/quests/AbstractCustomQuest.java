@@ -2,6 +2,7 @@ package edu.ics.uci.minebike.minecraft.quests;
 
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.AbstractCustomNpc;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 
 public abstract class AbstractCustomQuest {
     public static EntityPlayer player = null;
@@ -20,14 +21,15 @@ public abstract class AbstractCustomQuest {
     }
     public boolean onPlayerJoin(EntityPlayer player){
         if(player == null){
-
+            setupQuestEnv(player.world, player);
+            start();
             return true;
         }else{
 
             return false;
         }
     }
-    public abstract void setupQuestEnv();
-    public abstract void start();
-    public abstract void end();
+    protected abstract void setupQuestEnv(World world, EntityPlayer player);
+    protected abstract void start();
+    protected abstract void end();
 }

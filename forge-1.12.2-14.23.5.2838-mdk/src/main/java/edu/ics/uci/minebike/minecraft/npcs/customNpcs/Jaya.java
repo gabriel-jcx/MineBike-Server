@@ -1,7 +1,11 @@
 package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
 
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
+import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
+import edu.ics.uci.minebike.minecraft.quests.SoccerQuest;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -34,6 +38,16 @@ public class Jaya extends AbstractCustomNpc{
                 System.out.println(npc.getName() + " is deleted");
             }
         }
-        CustomQuestManager.quest_list.get(0);
+        AbstractCustomQuest soccer = CustomQuestManager.quest_list.get(0);
+        boolean isJoinSuccess = soccer.onPlayerJoin(player);
+        if(isJoinSuccess){
+            if(event.getWorld().isRemote){  // Client side send message
+                telport((EntityPlayerSP) player, SoccerQuest.questStartLocation, WorldProviderSoccerQuest.DIM_ID);
+            }
+        }else{
+            System.out.println(player.getName() + " join ");
+            // Show soccer join error message here!
+        }
     }
+
 }
