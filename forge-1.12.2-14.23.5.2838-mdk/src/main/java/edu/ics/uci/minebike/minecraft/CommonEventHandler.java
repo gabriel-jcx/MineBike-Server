@@ -4,6 +4,7 @@ import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.npcs.NpcEventHandler;
 import edu.ics.uci.minebike.minecraft.npcs.NpcUtils;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.AbstractCustomNpc;
+import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -41,22 +42,28 @@ public class CommonEventHandler {
 
         System.out.printf("Number of Worlds = %s\n", DimensionManager.getWorlds().length);
         System.out.println("World Server get");
-        if(NpcDatabase.npcs.size() != 0) {
-            for (AbstractCustomNpc npc: NpcDatabase.customNpcs) {
+        //if(NpcDatabase.npcs.size() != 0) {
+            for (Map.Entry<String,AbstractCustomNpc> iter: NpcDatabase.npcs.entrySet()) {
+                AbstractCustomNpc npc = iter.getValue();
                 EntityCustomNpc npcEntity = NpcUtils.spawnNpc(npc.getLocation(), ws,worldIn,npc.getName(), npc.getTexture());
                 NpcDatabase.npc_entities.add(npcEntity);
                 BlockPos location = npcEntity.getPosition();
                 npc.setUUID(npcEntity.getUniqueID().toString());
                 //BlockPos pos = temp_npc.getPos();
-                System.out.println(npc.getName() + " is spwaned at " + "(" + location.getX() + "," + location.getY() + "," + location.getZ() + ")");
+                System.out.println(npc.getName() + " is spwaned at " + location);
                 //System.out.println(npc.getKey() + " is spwaned at " + "(" + pos.getX() + "," + pos.getY() + "," + pos.getZ()+ ")");
             }
-        }
+        //}
+    }
+    public void spawnCustomClient(){
+        NpcDatabase.registerNpcs();
     }
     @SubscribeEvent
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event){
         EntityPlayer player = event.getEntityPlayer();
-        NpcEventHandler.customNpcInteract(player, event);
+        if(event.getTarget() instanceof EntityCustomNpc) {
+            NpcEventHandler.customNpcInteract(player, event);
+        }
     }
     @SubscribeEvent
     public void onEntityJoin(EntityJoinWorldEvent event){
@@ -65,9 +72,14 @@ public class CommonEventHandler {
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event){
 
-        if(!spawned && !event.player.getEntityWorld().isRemote){
+        if(!spawned){
             World w = event.player.getEntityWorld();
-            spawnNpcDatabase(w.provider.getDimension(),w.getSpawnPoint(),w);
+            if(!event.player.getEntityWorld().isRemote){
+                spawnNpcDatabase(w.provider.getDimension(),w.getSpawnPoint(),w); // server spawn the npcs
+            }else {
+                spawnCustomClient();
+            }
+
             spawned = true;
         }
 //        for(EntityCustomNpc npc: NpcDatabase.npc_entities){
@@ -80,12 +92,13 @@ public class CommonEventHandler {
     public void onWorldLoad(WorldEvent.Load event ){
         System.out.println("A world is loaded, WorldEvent.Load triggerd");
 
-        if(!event.getWorld().isRemote){// if Running on the server
-            System.out.println("World Loaded on Server!!!!!");
-//            spawnNpcDatabase(event.getWorld().provider.getDimension(),event.getWorld().getSpawnPoint());
-
-        }
-
+//        if(!event.getWorld().isRemote){// if Running on the server
+//            System.out.println("World Loaded on Server!!!!!");
+////            spawnNpcDatabase(event.getWorld().provider.getDimension(),event.getWorld().getSpawnPoint());
+//        }
+          if(event.getWorld().provider.getDimension() == 222){
+              EntityCustomNpc tempnpc = NpcUtils.spawnNpc(new Vec3d(11,10,11),event.getWorld(),Jaya.NAME, Jaya.TEXTURE_NAME);
+          }
     }
 //    @SubscribeEvent
 //    public void onNpcInit(NpcEvent.InitEvent event){

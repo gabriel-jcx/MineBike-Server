@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 public abstract class AbstractCustomQuest {
     public static EntityPlayer player = null;
 
-    protected boolean started;
+    protected boolean started = false;
     protected boolean finished;
 
     private long questStartTime;
@@ -20,9 +20,8 @@ public abstract class AbstractCustomQuest {
 
     }
     public boolean onPlayerJoin(EntityPlayer player){
-        if(player == null){
+        if(!started){
             setupQuestEnv(player.world, player);
-            start();
             return true;
         }else{
 

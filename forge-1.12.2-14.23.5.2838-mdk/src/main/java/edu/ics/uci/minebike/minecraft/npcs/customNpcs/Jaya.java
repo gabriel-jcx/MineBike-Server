@@ -8,6 +8,8 @@ import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 
@@ -43,6 +45,8 @@ public class Jaya extends AbstractCustomNpc{
         if(isJoinSuccess){
             if(event.getWorld().isRemote){  // Client side send message
                 telport((EntityPlayerSP) player, SoccerQuest.questStartLocation, WorldProviderSoccerQuest.DIM_ID);
+                System.out.println("is Client Side!!!!");
+                //player.sendMessage(new TextComponentString("/tpx 222 10 10 10"));
             }
         }else{
             System.out.println(player.getName() + " join ");

@@ -16,9 +16,8 @@ public abstract class AbstractCustomNpc {
     protected String UUID  = "";
 
     //important that this method is called after the instantiation of the object
-    public void register()
-    {
-        NpcDatabase.registerNpc(name, location);
+    public void register() {
+    //    NpcDatabase.registerNpc(name, location);
     }
 
     public abstract void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event);
@@ -34,6 +33,7 @@ public abstract class AbstractCustomNpc {
 
     @SideOnly(Side.CLIENT)
     public static void telport(EntityPlayerSP playerSP, Vec3d pos, int dimID){
-        playerSP.sendChatMessage("\tpx "+ dimID + " " + pos.x + " " + pos.y + " " + pos.z );
+        playerSP.sendChatMessage("/tpx "+ dimID + " " + pos.x + " " + pos.y + " " + pos.z );
+
     }
 }

@@ -12,14 +12,16 @@ import noppes.npcs.entity.EntityCustomNpc;
 
 public class NpcDatabase {
     public static ArrayList<EntityCustomNpc> npc_entities = new ArrayList<>();
-    public static Map<String, Vec3d> npcs = new HashMap<>();
-    public static ArrayList<AbstractCustomNpc> customNpcs = new ArrayList<>();
+    public static Map<String, AbstractCustomNpc> npcs = new HashMap<>();
+    //public static ArrayList<AbstractCustomNpc> customNpcs = new ArrayList<>();
     public NpcDatabase(){
-        customNpcs.add(new Sam());
-        customNpcs.add(new Jaya());
+        npcs.put(Sam.NAME,new Sam());
+        npcs.put(Jaya.NAME,new Jaya());
     }
-    public static void registerNpc(String Name, Vec3d Location){
-        System.out.printf("Name = "+ Name + "(" + Location.x + "," + Location.y + "," + Location.z + ")");
-        npcs.put(Name, Location);
+    public static void registerNpcs(){
+        //System.out.printf("Name = "+ Name + "(" + Location.x + "," + Location.y + "," + Location.z + ")");
+        npcs.put(Jaya.NAME, new Jaya());
+        npcs.put(Sam.NAME, new Sam());
+
     }
 }
