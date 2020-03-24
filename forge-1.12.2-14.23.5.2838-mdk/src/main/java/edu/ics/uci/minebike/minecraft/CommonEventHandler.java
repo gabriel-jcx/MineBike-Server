@@ -99,6 +99,9 @@ public class CommonEventHandler {
           if(event.getWorld().provider.getDimension() == 222){
               EntityCustomNpc tempnpc = NpcUtils.spawnNpc(new Vec3d(11,10,11),event.getWorld(),Jaya.NAME, Jaya.TEXTURE_NAME);
           }
+          if(event.getWorld().provider.getDimension() == 223){
+            EntityCustomNpc tempnpc = NpcUtils.spawnNpc(new Vec3d(100,10,100),event.getWorld(),Jaya.NAME, Jaya.TEXTURE_NAME);
+          }
     }
 //    @SubscribeEvent
 //    public void onNpcInit(NpcEvent.InitEvent event){
