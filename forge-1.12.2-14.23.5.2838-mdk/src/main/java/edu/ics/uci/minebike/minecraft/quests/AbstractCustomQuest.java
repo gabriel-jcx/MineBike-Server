@@ -4,7 +4,7 @@ import edu.ics.uci.minebike.minecraft.npcs.customNpcs.AbstractCustomNpc;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
-public abstract class AbstractCustomQuest {
+public abstract class AbstractCustomQuest{
     public static EntityPlayer player = null;
 
     protected boolean started = false;

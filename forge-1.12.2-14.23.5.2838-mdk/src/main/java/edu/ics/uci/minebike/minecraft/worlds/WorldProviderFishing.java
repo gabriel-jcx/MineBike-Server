@@ -1,4 +1,5 @@
-package edu.ics.uci.minebike.minecraft.worlds.CustomBiomes;
+package edu.ics.uci.minebike.minecraft.worlds;
+import edu.ics.uci.minebike.minecraft.worlds.CustomBiomes.PondBiomeGenerator;
 import edu.ics.uci.minebike.minecraft.worlds.QuestWorldChunkProvider;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderCustomQuests;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFlat;
@@ -38,6 +39,7 @@ public class WorldProviderFishing extends WorldProviderFlat {
 		this.setDimension(DIM_ID);
 		BiomeGenWhiteBeach beach= new BiomeGenWhiteBeach();
 		QuestWorldChunkProvider fishing = new QuestWorldChunkProvider(this.world);
+
 		fishing.generateChunk(x,z);
 		//Biome.BiomeProperties properties = new Biome.BiomeProperties("Flat");
 		//this.worldChunkMgr = new net.minecraft.world.biome.WorldChunkManagerHell(new BiomeGenFlatCaves(properties), 0F);
@@ -48,6 +50,11 @@ public class WorldProviderFishing extends WorldProviderFlat {
 
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 
+	}
+	@Override
+	public IChunkGenerator createChunkGenerator(){
+		//return terrainType.getChunkGenerator(this.world,)
+		return new QuestWorldChunkProvider(this.world, new PondBiomeGenerator());
 	}
 
 //	public void registerWorldChunkManager() {

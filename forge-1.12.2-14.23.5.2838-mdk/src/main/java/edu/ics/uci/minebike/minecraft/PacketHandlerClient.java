@@ -14,9 +14,13 @@ public class PacketHandlerClient extends PacketHandlerServer{
     }
     @SubscribeEvent
     public void onPacketData(FMLNetworkEvent.ClientCustomPacketEvent event){
-        EntityPlayer player = Minecraft.getMinecraft().player; // get the client side of the player
-        if(player != null){
-            ByteBuf buffer = event.getPacket().payload(); // get the packet payload
+        if(event.side().isServer()) {
+            System.err.println("Somehow this ClientCustomPacketEvent is triggered at server???");
+            return;
         }
+        EntityPlayer player = Minecraft.getMinecraft().player; // get the client side of the player
+//        if(player != null){
+//            ByteBuf buffer = event.getPacket().payload(); // get the packet payload
+//        }
     }
 }

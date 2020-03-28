@@ -9,6 +9,7 @@ import net.minecraft.world.WorldEntitySpawner;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.MapGenBase;
 import net.minecraftforge.event.terraingen.InitMapGenEvent;
@@ -24,14 +25,25 @@ public class QuestWorldChunkProvider implements IChunkGenerator {
     private Biome[] biomesForGeneration;
     private List<Biome.SpawnListEntry> mobs;
     private MapGenBase baseGenerator = new MapGenBase();
-    private BasicBiomeGenerator terrianGenerator = new BasicBiomeGenerator();
+    private BasicBiomeGenerator terrianGenerator;// = new BasicBiomeGenerator();
     //private NormalTer
     public QuestWorldChunkProvider(World worldObj){
         this.worldObj = worldObj;
         long seed = worldObj.getSeed();
         this.rand_seed = new Random((seed + 516) * 314); // seems to be arbitrary numbers atm!
+        terrianGenerator = new BasicBiomeGenerator();
         terrianGenerator.setup(worldObj,rand_seed);
         baseGenerator = TerrainGen.getModdedMapGen(baseGenerator, InitMapGenEvent.EventType.CUSTOM);
+    }
+    public QuestWorldChunkProvider(World worldObj, BasicBiomeGenerator generator){
+        this.worldObj = worldObj;
+        long seed = worldObj.getSeed();
+        this.rand_seed = new Random((seed + 516) * 314);
+        terrianGenerator = generator;
+        terrianGenerator.setup(worldObj, rand_seed);
+        baseGenerator = TerrainGen.getModdedMapGen(baseGenerator, InitMapGenEvent.EventType.CUSTOM);
+
+
     }
     @Override
     public Chunk generateChunk(int x, int z) {

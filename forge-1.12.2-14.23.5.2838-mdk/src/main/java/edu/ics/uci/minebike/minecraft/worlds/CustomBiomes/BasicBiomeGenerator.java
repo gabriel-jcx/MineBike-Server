@@ -5,6 +5,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
@@ -166,7 +167,7 @@ public class BasicBiomeGenerator {
         }
     }
 
-
+    // override this function when extended
     public void generate(int chunkX, int chunkZ, ChunkPrimer primer) {
         //generateHeightmap(chunkX * 4, 0, chunkZ * 4);
 

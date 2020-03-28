@@ -28,8 +28,9 @@ public class NpcUtils{
 
         return npc;
     }
-    public boolean isNpcSpawned(){
-
+    public boolean isNpcSpawned(World worldIn, EntityCustomNpc npc){
+        // need to query Save manager to tell if NPC's spawned
+        worldIn.loadedEntityList.contains(npc);
         return false;
     }
     public static EntityCustomNpc spawnNpc(Vec3d pos, World world, String name, String Texture){
@@ -48,6 +49,8 @@ public class NpcUtils{
         npc.wrappedNPC.getDisplay().setName(name);
         npc.wrappedNPC.setHealth(1000f);
         npc.wrappedNPC.spawn();
+        //npc.advanced.setRole();
+        //npc.advanced.
 //        ICustomNpc customNpc = npcAPI.createNPC(world);
 //
 //        customNpc.getDisplay().setSkinTexture(Texture);

@@ -23,10 +23,10 @@ public class BiGXMain {
     public static final String MOD_NAME = "MineBike Mod";
     public static final String MOD_VERSION = "0.1.0";
     private static Logger logger;
-    public CommonEventHandler handler = new CommonEventHandler();
-    public CommonProxy proxy;// = new CommonProxy();
-    public ServerSaveManager saveManager = new ServerSaveManager();
-    public CustomQuestManager questMangager = new CustomQuestManager();
+    public static CommonEventHandler handler = new CommonEventHandler();
+    public static CommonProxy proxy;// = new CommonProxy();
+    public static ServerSaveManager saveManager = new ServerSaveManager();
+    public static CustomQuestManager questMangager = new CustomQuestManager();
 //    FMLne
     public HudManager hudManager;
     public static FMLEventChannel Channel;
