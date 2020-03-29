@@ -33,9 +33,14 @@ public class NpcUtils{
         worldIn.loadedEntityList.contains(npc);
         return false;
     }
-    public static EntityCustomNpc spawnNpc(Vec3d pos, World world, String name, String Texture){
-        EntityCustomNpc npc = new EntityCustomNpc(world);
-        npc.delete();
+    public static EntityCustomNpc spawnNpc(Vec3d pos, WorldServer ws, String name, String Texture){
+        EntityCustomNpc npc = new EntityCustomNpc(ws);
+        npc.wrappedNPC.setPosition(pos.x,pos.y,pos.z);
+        npc.wrappedNPC.getDisplay().setName(name);
+        npc.wrappedNPC.setHealth(1000f);
+        npc.wrappedNPC.spawn();
+
+        //npc.delete();
         return npc;
     }
     public static EntityCustomNpc spawnNpc(Vec3d pos, WorldServer ws, World world, String name, String Texture){
@@ -49,6 +54,11 @@ public class NpcUtils{
         npc.wrappedNPC.getDisplay().setName(name);
         npc.wrappedNPC.setHealth(1000f);
         npc.wrappedNPC.spawn();
+//        EntityCustomNpc npc = new EntityCustomNpc(world);
+//        npc.setPositionAndRotation((double)x + 0.5D, (double)y, (double)z + 0.5D, 0.0F, 0.0F);
+//        npc.ais.setStartPos(new BlockPos(x, y, z));
+//        npc.func_70606_j(npc.func_110138_aP());
+//        world.func_72838_d(npc);
         //npc.advanced.setRole();
         //npc.advanced.
 //        ICustomNpc customNpc = npcAPI.createNPC(world);

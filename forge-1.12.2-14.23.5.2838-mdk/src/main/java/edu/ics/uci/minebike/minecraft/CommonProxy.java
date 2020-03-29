@@ -1,6 +1,6 @@
 package edu.ics.uci.minebike.minecraft;
 
-import biomesoplenty.common.biome.overworld.BiomeGenWhiteBeach;
+//import biomesoplenty.common.biome.overworld.BiomeGenWhiteBeach;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import net.minecraft.entity.player.EntityPlayer;

@@ -37,6 +37,7 @@ public class WorldProviderFishing extends WorldProviderFlat {
 //	}
 	public void registerWorldChunkManager() {
 		this.setDimension(DIM_ID);
+
 		BiomeGenWhiteBeach beach= new BiomeGenWhiteBeach();
 		QuestWorldChunkProvider fishing = new QuestWorldChunkProvider(this.world);
 

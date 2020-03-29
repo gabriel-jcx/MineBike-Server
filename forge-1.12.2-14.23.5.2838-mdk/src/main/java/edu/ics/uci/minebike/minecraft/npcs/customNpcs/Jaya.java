@@ -50,6 +50,11 @@ public class Jaya extends AbstractCustomNpc{
 //                System.out.println("is Client Side!!!!");
 //                //player.sendMessage(new TextComponentString("/tpx 222 10 10 10"));
 //            }
+            if(!event.getWorld().isRemote) {
+                System.out.println("/tpx " + event.getEntityPlayer().getName() + " 10 10 10");
+
+                ((EntityCustomNpc) event.getTarget()).sendMessage(new TextComponentString("/tpx " + event.getEntityPlayer().getName() + " 10 10 10"));
+            }
               if(!event.getWorld().isRemote){
                   NoppesUtilPlayer.teleportPlayer((EntityPlayerMP)player,10,10,10,222);
               }

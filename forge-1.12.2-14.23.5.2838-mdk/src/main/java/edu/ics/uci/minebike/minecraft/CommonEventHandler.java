@@ -5,7 +5,10 @@ import edu.ics.uci.minebike.minecraft.npcs.NpcEventHandler;
 import edu.ics.uci.minebike.minecraft.npcs.NpcUtils;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.AbstractCustomNpc;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
+import edu.ics.uci.minebike.minecraft.quests.SoccerQuest;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -18,6 +21,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import noppes.npcs.api.IPos;
+import noppes.npcs.api.NpcAPI;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.event.NpcEvent;
 import noppes.npcs.entity.EntityCustomNpc;
@@ -67,6 +71,12 @@ public class CommonEventHandler {
     }
     @SubscribeEvent
     public void onEntityJoin(EntityJoinWorldEvent event){
+        System.out.println(event.getEntity().getName() + " is spawned at DIM" + event.getWorld().provider.getDimension());
+        if(!event.getWorld().isRemote && event.getEntity() instanceof  EntityPlayer && event.getWorld().provider.getDimension() == WorldProviderSoccerQuest.DIM_ID){
+            System.out.println("inside the fi statement!!!!");
+            NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
+//            NpcUtils.spawnNpc(new Vec3d(10,5,10),DimensionManager.getWorld(event.getWorld().provider.getDimension()), event.getWorld(),"Cole", "customnpcs:textures/entity/humanmale/kingsteve.png");
+        }
 
     }
     @SubscribeEvent
@@ -96,9 +106,9 @@ public class CommonEventHandler {
 //            System.out.println("World Loaded on Server!!!!!");
 ////            spawnNpcDatabase(event.getWorld().provider.getDimension(),event.getWorld().getSpawnPoint());
 //        }
-          if(event.getWorld().provider.getDimension() == 222){
-              EntityCustomNpc tempnpc = NpcUtils.spawnNpc(new Vec3d(11,10,11),event.getWorld(),Jaya.NAME, Jaya.TEXTURE_NAME);
-          }
+//          if(event.getWorld().provider.getDimension() == 222){
+//              EntityCustomNpc tempnpc = NpcUtils.spawnNpc(new Vec3d(11,10,11),event.getWorld(),Jaya.NAME, Jaya.TEXTURE_NAME);
+//          }
     }
 //    @SubscribeEvent
 //    public void onNpcInit(NpcEvent.InitEvent event){
