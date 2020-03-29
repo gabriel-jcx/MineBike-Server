@@ -17,7 +17,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import java.util.Random;
 //import org.ngs.bigx.minecraft.quests.custom.FishingQuest;
 
-import biomesoplenty.common.biome.overworld.BiomeGenWhiteBeach;
+//import biomesoplenty.common.biome.overworld.BiomeGenWhiteBeach;
 public class WorldProviderFishing extends WorldProviderFlat {
 
 	public static int DIM_ID = 223;
@@ -37,8 +37,7 @@ public class WorldProviderFishing extends WorldProviderFlat {
 //	}
 	public void registerWorldChunkManager() {
 		this.setDimension(DIM_ID);
-
-		BiomeGenWhiteBeach beach= new BiomeGenWhiteBeach();
+		//BiomeGenWhiteBeach beach= new BiomeGenWhiteBeach();
 		QuestWorldChunkProvider fishing = new QuestWorldChunkProvider(this.world);
 
 		fishing.generateChunk(x,z);
