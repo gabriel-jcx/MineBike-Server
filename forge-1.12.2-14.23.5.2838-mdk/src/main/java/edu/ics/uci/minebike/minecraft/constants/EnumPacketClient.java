@@ -1,4 +1,8 @@
 package edu.ics.uci.minebike.minecraft.constants;
 
-public class EnumPacketClient {
+public enum EnumPacketClient {
+    Teleport,
+    one,
+    two,
+    three
 }

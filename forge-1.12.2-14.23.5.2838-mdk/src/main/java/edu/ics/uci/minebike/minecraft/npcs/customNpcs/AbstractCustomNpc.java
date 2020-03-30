@@ -3,11 +3,13 @@ package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import noppes.npcs.NoppesUtilPlayer;
 
 public abstract class AbstractCustomNpc {
     protected String name;
@@ -32,11 +34,9 @@ public abstract class AbstractCustomNpc {
 
 
     @SideOnly(Side.CLIENT)
-    public static void telport(EntityPlayerSP playerSP, Vec3d pos, int dimID){
-        playerSP.sendChatMessage("/tpx "+ dimID + " " + pos.x + " " + pos.y + " " + pos.z );
-    }
-    @SideOnly(Side.CLIENT)
-    public static void give_rod(EntityPlayerSP playerSP){
-        playerSP.sendChatMessage(String.format("/give %s fishingmadebetter:diamond_fishing_rod ", playerSP.getName()));
+    public static void telport(EntityPlayerMP player, Vec3d pos, int dimID){
+        NoppesUtilPlayer.teleportPlayer(player,pos.x,pos.y,pos.z,dimID);
+
+        //playerSP.sendChatMessage("/tpx "+ dimID + " " + pos.x + " " + pos.y + " " + pos.z );
     }
 }

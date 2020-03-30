@@ -1,4 +1,4 @@
 package edu.ics.uci.minebike.minecraft.constants;
 
-public class EnumPacketServer {
+public enum EnumPacketServer {
 }

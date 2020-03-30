@@ -2,6 +2,7 @@ package edu.ics.uci.minebike.minecraft.quests;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.util.text.ITextComponent;
@@ -26,7 +27,8 @@ public class FishingQuest  extends AbstractCustomQuest {
         System.out.println(" Start Fishing quest ");
         TextComponentString give = new TextComponentString(String.format("/give %s fishingmadebetter:diamond_fishing_rod ", this.player.getName()));
         this.player.sendMessage(give);
-        telport((EntityPlayerSP) player, FishingQuest.questStartLocation, WorldProviderFishing.DIM_ID);
+
+        //telport((EntityPlayerMP) player, FishingQuest.questStartLocation, WorldProviderFishing.DIM_ID);
     }
 
     @Override

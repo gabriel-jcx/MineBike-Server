@@ -38,6 +38,7 @@ public class Jaya extends AbstractCustomNpc{
         for(EntityCustomNpc npc: NpcDatabase.npc_entities){
             //System.out.println(npc.getName());
             if(npc.getName().equals(this.name)){
+
                 npc.delete();
                 System.out.println(npc.getName() + " is deleted");
             }
