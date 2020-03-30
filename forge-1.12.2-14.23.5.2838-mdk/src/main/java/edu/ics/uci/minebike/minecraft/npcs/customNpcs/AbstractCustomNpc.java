@@ -35,4 +35,8 @@ public abstract class AbstractCustomNpc {
     public static void telport(EntityPlayerSP playerSP, Vec3d pos, int dimID){
         playerSP.sendChatMessage("/tpx "+ dimID + " " + pos.x + " " + pos.y + " " + pos.z );
     }
+    @SideOnly(Side.CLIENT)
+    public static void give_rod(EntityPlayerSP playerSP){
+        playerSP.sendChatMessage(String.format("/give %s fishingmadebetter:diamond_fishing_rod ", playerSP.getName()));
+    }
 }

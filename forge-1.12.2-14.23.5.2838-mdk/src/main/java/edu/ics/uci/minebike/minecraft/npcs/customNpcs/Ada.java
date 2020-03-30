@@ -40,7 +40,10 @@ public class Ada extends AbstractCustomNpc {
         if(isJoinSuccess){
             if(event.getWorld().isRemote){  // Client side send message
                 FishingQuest fishingQuest = new FishingQuest();
-
+                System.out.println(" Start Fishing quest ");
+                //TODO: The Dialog
+                //TextComponentString give = new TextComponentString(String.format("/give %s fishingmadebetter:diamond_fishing_rod ", player.getName()));
+                give_rod((EntityPlayerSP) player);
                 telport((EntityPlayerSP) player, FishingQuest.questStartLocation, WorldProviderFishing.DIM_ID);
                 System.out.println("is Client Side!!!!");
 
