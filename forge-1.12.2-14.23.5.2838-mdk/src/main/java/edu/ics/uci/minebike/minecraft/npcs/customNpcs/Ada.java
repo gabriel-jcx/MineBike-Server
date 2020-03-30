@@ -16,7 +16,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 public class Ada extends AbstractCustomNpc {
-    public static final String NAME = "Jaya";
+    public static final String NAME = "Ada";
     public static final Vec3d LOCATION = new Vec3d(111,60,5); // TODO: figure out the location
     public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanfemale/stephanie.png";
     public Ada(){
@@ -35,13 +35,15 @@ public class Ada extends AbstractCustomNpc {
                 System.out.println(npc.getName() + " is deleted");
             }
         }
-        AbstractCustomQuest soccer = CustomQuestManager.quest_list.get(1);
-        boolean isJoinSuccess = soccer.onPlayerJoin(player);
+        AbstractCustomQuest fishing = CustomQuestManager.quest_list.get(1);
+        boolean isJoinSuccess = fishing.onPlayerJoin(player);
         if(isJoinSuccess){
             if(event.getWorld().isRemote){  // Client side send message
+                FishingQuest fishingQuest = new FishingQuest();
+
                 telport((EntityPlayerSP) player, FishingQuest.questStartLocation, WorldProviderFishing.DIM_ID);
                 System.out.println("is Client Side!!!!");
-                //player.sendMessage(new TextComponentString("/tpx 222 10 10 10"));
+
             }
         }else{
             System.out.println(player.getName() + " join ");
