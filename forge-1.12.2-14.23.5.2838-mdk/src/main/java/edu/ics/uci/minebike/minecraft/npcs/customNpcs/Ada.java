@@ -1,27 +1,24 @@
 package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
 
-
 import edu.ics.uci.minebike.minecraft.ClientUtils;
-import edu.ics.uci.minebike.minecraft.PacketHandlerClient;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import edu.ics.uci.minebike.minecraft.quests.FishingQuest;
-import edu.ics.uci.minebike.minecraft.quests.SoccerQuest;
-import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
-import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.command.CommandResultStats;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import noppes.npcs.NoppesUtilPlayer;
-import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.entity.EntityCustomNpc;
 public class Ada extends AbstractCustomNpc {
     public static final String NAME = "Ada";
@@ -35,7 +32,15 @@ public class Ada extends AbstractCustomNpc {
     }
     @SideOnly(Side.CLIENT)
     public static void give_rod(EntityPlayerSP playerSP){
-        playerSP.sendChatMessage(String.format("/give %s fishingmadebetter:diamond_fishing_rod ", playerSP.getName()));
+        ResourceLocation resourcelocation = new ResourceLocation("minebikemod:game_rod");
+        Item rod = Item.REGISTRY.getObject(resourcelocation);
+        ItemStack itemstack = new ItemStack(rod,1);
+        playerSP.inventory.addItemStackToInventory(itemstack);
+        playerSP.world.playSound((EntityPlayer)null, playerSP.posX, playerSP.posY, playerSP.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((playerSP.getRNG().nextFloat() - playerSP.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+        playerSP.inventoryContainer.detectAndSendChanges();
+
+
+
     }
     @Override
     public void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event) {

@@ -31,7 +31,7 @@
     "resultingItemMetadata": 0,
     "resultQuantityUseWeight": true,
     "baitItemMap": {
-      "minecraft:fish": 0
+      
     }
   },
   "Pufferfish": {
@@ -66,8 +66,7 @@
     "resultingItemMetadata": 0,
     "resultQuantityUseWeight": true,
     "baitItemMap": {
-      "minecraft:dye": 0
-    }
+          }
   },
   "Cod": {
     "fishId": "Cod",
@@ -101,8 +100,7 @@
     "resultingItemMetadata": 0,
     "resultQuantityUseWeight": true,
     "baitItemMap": {
-      "minecraft:red_mushroom": 0
-    }
+          }
   },
   "Clownfish": {
     "fishId": "Clownfish",
@@ -136,7 +134,6 @@
     "resultingItemMetadata": 0,
     "resultQuantityUseWeight": true,
     "baitItemMap": {
-      "minecraft:carrot": 0
-    }
+          }
   }
 }
