@@ -70,22 +70,35 @@ public class CommonEventHandler {
             NpcEventHandler.customNpcInteract(player, event);
         }
     }
+
+    @SubscribeEvent
+    public void onPlayerChangeDim(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent event){
+        System.out.println(event.player.getName() + " changed from DIM"+ event.fromDim + " to " + event.toDim);
+        if(event.fromDim == WorldProviderSoccerQuest.DIM_ID){
+            System.out.println(event.player.getName() + " is leaving Soccer");
+        }
+    }
+    @SubscribeEvent
+    public void onPlayerLogout(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event){
+        System.out.println(event.player.getName() + " has logged out");
+    }
     @SubscribeEvent
     public void onEntityJoin(EntityJoinWorldEvent event){
         System.out.println(event.getEntity().getName() + " is spawned at DIM" + event.getWorld().provider.getDimension());
         if(!event.getWorld().isRemote && event.getEntity() instanceof  EntityPlayer && event.getWorld().provider.getDimension() == WorldProviderSoccerQuest.DIM_ID){
             System.out.println("inside the fi statement!!!!");
-            NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
+            ICustomNpc npc = NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
+            npc.setName("a");
             // Spwan a ball!
             EntitySoccerBall ball = new EntitySoccerBall(event.getWorld());
             WorldServer ws = DimensionManager.getWorld(222);
             ball.setPosition(10,10,10);
             ws.spawnEntity(ball);
-
 //            NpcUtils.spawnNpc(new Vec3d(10,5,10),DimensionManager.getWorld(event.getWorld().provider.getDimension()), event.getWorld(),"Cole", "customnpcs:textures/entity/humanmale/kingsteve.png");
         }
     }
-// git 
+// git
+
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event){
 
