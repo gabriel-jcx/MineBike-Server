@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft;
 
+import com.mrcrayfish.soccer.entity.EntitySoccerBall;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.npcs.NpcEventHandler;
 import edu.ics.uci.minebike.minecraft.npcs.NpcUtils;
@@ -75,10 +76,16 @@ public class CommonEventHandler {
         if(!event.getWorld().isRemote && event.getEntity() instanceof  EntityPlayer && event.getWorld().provider.getDimension() == WorldProviderSoccerQuest.DIM_ID){
             System.out.println("inside the fi statement!!!!");
             NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
+            // Spwan a ball!
+            EntitySoccerBall ball = new EntitySoccerBall(event.getWorld());
+            WorldServer ws = DimensionManager.getWorld(222);
+            ball.setPosition(10,10,10);
+            ws.spawnEntity(ball);
+
 //            NpcUtils.spawnNpc(new Vec3d(10,5,10),DimensionManager.getWorld(event.getWorld().provider.getDimension()), event.getWorld(),"Cole", "customnpcs:textures/entity/humanmale/kingsteve.png");
         }
-
     }
+// git 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event){
 

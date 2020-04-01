@@ -1,12 +1,17 @@
 package edu.ics.uci.minebike.minecraft.quests;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CustomQuestManager {
-    public static ArrayList<AbstractCustomQuest> quest_list = new ArrayList<>();
-    public CustomQuestManager(){
-        quest_list.add(new SoccerQuest());
-        quest_list.add(new FishingQuest());
+
+
+    public static Map<String, AbstractCustomQuest> customQuests = new HashMap<String, AbstractCustomQuest>();
+
+    public CustomQuestManager() {
+        customQuests.put("soccer", new SoccerQuest());
+        customQuests.put("fishing", new FishingQuest());
     }
 
 

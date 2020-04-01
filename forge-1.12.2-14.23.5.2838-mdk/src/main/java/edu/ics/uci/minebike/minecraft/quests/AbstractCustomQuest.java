@@ -2,6 +2,8 @@ package edu.ics.uci.minebike.minecraft.quests;
 
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.AbstractCustomNpc;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public abstract class AbstractCustomQuest{
@@ -9,8 +11,9 @@ public abstract class AbstractCustomQuest{
 
     protected boolean started = false;
     protected boolean finished;
-
+    public int DIMID;
     private long questStartTime;
+    protected Vec3d questStartLocation;
 
     public enum Difficulty{
         EASY, MEDIUM, HARD
@@ -28,7 +31,8 @@ public abstract class AbstractCustomQuest{
             return false;
         }
     }
+    public Vec3d getStartLocation() {return questStartLocation;};
     protected abstract void setupQuestEnv(World world, EntityPlayer player);
-    protected abstract void start();
-    protected abstract void end();
+    public abstract void start(EntityPlayerMP player);
+    public abstract void end();
 }

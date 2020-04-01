@@ -23,7 +23,7 @@ public class ClientUtils {
         PacketBuffer buffer = new PacketBuffer((Unpooled.buffer()));
 
         try {
-            if(!Server.fillBuffer(buffer, num, objs)){
+            if(!fillBuffer(buffer, num, objs)){
                 return;
             }
             BiGXMain.ChannelPlayer.sendToServer(new FMLProxyPacket(buffer, "MineBikeClient"));

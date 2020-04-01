@@ -4,7 +4,7 @@ import net.minecraft.item.Item;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
-import org.ngs.bigx.dictionary.objects.clinical.BiGXPatientPrescription;
+//import org.ngs.bigx.dictionary.objects.clinical.BiGXPatientPrescription;
 import edu.ics.uci.minebike.minecraft.client.item.ItemGameFishingRod;
 
 public class ItemManager {

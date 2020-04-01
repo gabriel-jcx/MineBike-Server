@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
 
+import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
@@ -8,6 +9,7 @@ import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -43,7 +45,7 @@ public class Jaya extends AbstractCustomNpc{
                 System.out.println(npc.getName() + " is deleted");
             }
         }
-        AbstractCustomQuest soccer = CustomQuestManager.quest_list.get(0);
+        AbstractCustomQuest soccer = CustomQuestManager.customQuests.get("soccer");
         boolean isJoinSuccess = soccer.onPlayerJoin(player);
         if(isJoinSuccess){
 //            if(event.getWorld().isRemote){  // Client side send message
@@ -51,13 +53,16 @@ public class Jaya extends AbstractCustomNpc{
 //                System.out.println("is Client Side!!!!");
 //                //player.sendMessage(new TextComponentString("/tpx 222 10 10 10"));
 //            }
-            if(!event.getWorld().isRemote) {
-                System.out.println("/tpx " + event.getEntityPlayer().getName() + " 10 10 10");
-
-                ((EntityCustomNpc) event.getTarget()).sendMessage(new TextComponentString("/tpx " + event.getEntityPlayer().getName() + " 10 10 10"));
-            }
+//            if(!event.getWorld().isRemote) {
+//                System.out.println("/tpx " + event.getEntityPlayer().getName() + " 10 10 10");
+//
+//                ((EntityCustomNpc) event.getTarget()).sendMessage(new TextComponentString("/tpx " + event.getEntityPlayer().getName() + " 10 10 10"));
+//            }
+              Vec3d startLoc = soccer.getStartLocation();
               if(!event.getWorld().isRemote){
-                  NoppesUtilPlayer.teleportPlayer((EntityPlayerMP)player,10,10,10,222);
+                  System.out.println("executing the teleportation by Jaya!");
+                  ServerUtils.telport((EntityPlayerMP)player,startLoc,soccer.DIMID);
+                  //NoppesUtilPlayer.teleportPlayer((EntityPlayerMP)player,startLoc.x,startLoc.y,startLoc.z,soccer.DIMID);
               }
         }else{
             System.out.println(player.getName() + " join ");

@@ -38,9 +38,6 @@ public class Ada extends AbstractCustomNpc {
         playerSP.inventory.addItemStackToInventory(itemstack);
         playerSP.world.playSound((EntityPlayer)null, playerSP.posX, playerSP.posY, playerSP.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((playerSP.getRNG().nextFloat() - playerSP.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
         playerSP.inventoryContainer.detectAndSendChanges();
-
-
-
     }
     @Override
     public void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event) {
@@ -52,7 +49,7 @@ public class Ada extends AbstractCustomNpc {
                 System.out.println(npc.getName() + " is deleted");
             }
         }
-        AbstractCustomQuest fishing = CustomQuestManager.quest_list.get(1);
+        AbstractCustomQuest fishing = CustomQuestManager.customQuests.get("fishing");
         boolean isJoinSuccess = fishing.onPlayerJoin(player);
         if(isJoinSuccess){
             if(event.getWorld().isRemote){  // Client side send message
@@ -61,13 +58,13 @@ public class Ada extends AbstractCustomNpc {
                 //TODO: The Dialog
                 //TextComponentString give = new TextComponentString(String.format("/give %s fishingmadebetter:diamond_fishing_rod ", player.getName()));
                 give_rod((EntityPlayerSP) player);
-                ClientUtils.sendData(EnumPacketClient.three,"what the hell?");
+                ClientUtils.sendData(EnumPacketClient.QuestStart,"fishing");
                 System.out.println("is Client Side!!!!");
             }
-            if(!event.getWorld().isRemote){
-
-                //telport((EntityPlayerMP) player, FishingQuest.questStartLocation, WorldProviderFishing.DIM_ID);
-            }
+//            if(!event.getWorld().isRemote){
+//
+//                //telport((EntityPlayerMP) player, FishingQuest.questStartLocation, WorldProviderFishing.DIM_ID);
+//            }
         }else{
             System.out.println(player.getName() + " join ");
             // Show soccer join error message here!
