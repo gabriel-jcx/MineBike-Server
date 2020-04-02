@@ -5,13 +5,10 @@ import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.npcs.NpcEventHandler;
 import edu.ics.uci.minebike.minecraft.npcs.NpcUtils;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.AbstractCustomNpc;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
-import edu.ics.uci.minebike.minecraft.quests.SoccerQuest;
+import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -21,10 +18,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import noppes.npcs.api.IPos;
 import noppes.npcs.api.NpcAPI;
 import noppes.npcs.api.entity.ICustomNpc;
-import noppes.npcs.api.event.NpcEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 
 import java.util.Map;
@@ -86,23 +81,16 @@ public class CommonEventHandler {
     public void onEntityJoin(EntityJoinWorldEvent event){
         //System.out.println(event.getEntity().getName() + " is spawned at DIM" + event.getWorld().provider.getDimension());
         if(!event.getWorld().isRemote && (event.getEntity() instanceof EntityPlayer)){
-
+            CustomQuestManager.findAndStart(event);
         }
 
 
-        if(!event.getWorld().isRemote && event.getEntity() instanceof  EntityPlayer && event.getWorld().provider.getDimension() == WorldProviderSoccerQuest.DIM_ID){
-            System.out.println("inside the fi statement!!!!");
-            ICustomNpc npc = NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
-            npc.setName("a");
-            // Spwan a ball!
-            EntitySoccerBall ball = new EntitySoccerBall(event.getWorld());
-            WorldServer ws = DimensionManager.getWorld(222);
-            ball.setPosition(10,10,10);
-            ws.spawnEntity(ball);
-//            NpcUtils.spawnNpc(new Vec3d(10,5,10),DimensionManager.getWorld(event.getWorld().provider.getDimension()), event.getWorld(),"Cole", "customnpcs:textures/entity/humanmale/kingsteve.png");
-        }
+//        if(!event.getWorld().isRemote && event.getEntity() instanceof  EntityPlayer && event.getWorld().provider.getDimension() == WorldProviderSoccerQuest.DIM_ID){
+//            System.out.println("inside the fi statement!!!!");
+//
+////            NpcUtils.spawnNpc(new Vec3d(10,5,10),DimensionManager.getWorld(event.getWorld().provider.getDimension()), event.getWorld(),"Cole", "customnpcs:textures/entity/humanmale/kingsteve.png");
+//        }
     }
-// git
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event){

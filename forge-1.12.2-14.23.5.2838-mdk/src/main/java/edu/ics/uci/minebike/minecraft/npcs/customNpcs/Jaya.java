@@ -4,17 +4,10 @@ import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
-import edu.ics.uci.minebike.minecraft.quests.SoccerQuest;
-import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import noppes.npcs.NoppesUtilPlayer;
 import noppes.npcs.entity.EntityCustomNpc;
 
 public class Jaya extends AbstractCustomNpc{

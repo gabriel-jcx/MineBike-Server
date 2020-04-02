@@ -1,6 +1,11 @@
 package edu.ics.uci.minebike.minecraft.quests;
 
-import java.util.ArrayList;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,17 +13,27 @@ import java.util.Map;
 // To register a custom
 public class CustomQuestManager {
 
-
-    public static Map<String, AbstractCustomQuest> customQuests = new HashMap<String, AbstractCustomQuest>();
-    public static ArrayList<Integer> questDimsIDs = new ArrayList<>();
+    // Custom Quests is a container to map the Dimension ID associated with each custom Quest;
+    public static Map<Integer, AbstractCustomQuest> customQuests = new HashMap<>();
+    //public static ArrayList<Integer> questDimsIDs = new ArrayList<>();
 
     public CustomQuestManager() {
 
-        customQuests.put("soccer", new SoccerQuest());
-
-        customQuests.put("fishing", new FishingQuest());
+        customQuests.put(WorldProviderSoccerQuest.DIM_ID, new SoccerQuest());
+        //questDimsIDs.add(WorldProviderSoccerQuest.DIM_ID);
+        customQuests.put(WorldProviderFishing.DIM_ID, new FishingQuest());
+        //questDimsIDs.add(WorldProviderFishing.DIM_ID);
 
     }
 
+    public static void findAndStart(EntityJoinWorldEvent event){
 
+        AbstractCustomQuest quest = customQuests.get(event.getWorld().provider.getDimension());
+        if(quest != null) {
+            // Do nothing for Player joining non-quest dimensions
+            quest.start(event);
+        }
+        return;
+
+    }
 }
