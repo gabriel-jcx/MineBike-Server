@@ -4,11 +4,17 @@ package edu.ics.uci.minebike.minecraft.quests;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.Scanner;
+
+import static net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer;
 
 public class SoccerQuest extends AbstractCustomQuest {
     //EntitySoccerBall ball = null;
@@ -43,6 +49,8 @@ public class SoccerQuest extends AbstractCustomQuest {
 
     @Override
     public void end() {
+        int numDiamonds = 10;   //can multiply by a scalar depending on difficulty
+        giveItemToPlayer(this.player, new ItemStack(Items.DIAMOND, numDiamonds));
         player = null;
         return;
     }
