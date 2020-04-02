@@ -84,7 +84,12 @@ public class CommonEventHandler {
     }
     @SubscribeEvent
     public void onEntityJoin(EntityJoinWorldEvent event){
-        System.out.println(event.getEntity().getName() + " is spawned at DIM" + event.getWorld().provider.getDimension());
+        //System.out.println(event.getEntity().getName() + " is spawned at DIM" + event.getWorld().provider.getDimension());
+        if(!event.getWorld().isRemote && (event.getEntity() instanceof EntityPlayer)){
+
+        }
+
+
         if(!event.getWorld().isRemote && event.getEntity() instanceof  EntityPlayer && event.getWorld().provider.getDimension() == WorldProviderSoccerQuest.DIM_ID){
             System.out.println("inside the fi statement!!!!");
             ICustomNpc npc = NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );

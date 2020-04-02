@@ -10,7 +10,6 @@ public class ServerUtils {
     //@SideOnly(Side.CLIENT)
     public static void telport(EntityPlayerMP player, Vec3d pos, int dimID){
         NoppesUtilPlayer.teleportPlayer(player,pos.x,pos.y,pos.z,dimID);
-
         //playerSP.sendChatMessage("/tpx "+ dimID + " " + pos.x + " " + pos.y + " " + pos.z );
     }
 }
