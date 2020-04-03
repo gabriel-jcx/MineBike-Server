@@ -2,10 +2,12 @@ package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
 
 import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
+import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -47,7 +49,7 @@ public class Ada extends AbstractCustomNpc {
                 System.out.println(npc.getName() + " is deleted");
             }
         }
-        AbstractCustomQuest fishing = CustomQuestManager.customQuests.get("fishing");
+        AbstractCustomQuest fishing = CustomQuestManager.customQuests.get(WorldProviderFishing.DIM_ID);
         boolean isJoinSuccess = fishing.onPlayerJoin(player);
         if(isJoinSuccess){
             if(event.getWorld().isRemote){  // Client side send message

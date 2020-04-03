@@ -1,16 +1,18 @@
 package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
 
 import edu.ics.uci.minebike.minecraft.ServerUtils;
+import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 
-public class Jaya extends AbstractCustomNpc{
+public class Jaya extends AbstractCustomNpc {
     public static final String NAME = "Jaya";
     public static final Vec3d LOCATION = new Vec3d(10,70,13); // TODO: figure out the location
     public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/tradesteve.png";
@@ -38,7 +40,8 @@ public class Jaya extends AbstractCustomNpc{
                 System.out.println(npc.getName() + " is deleted");
             }
         }
-        AbstractCustomQuest soccer = CustomQuestManager.customQuests.get("soccer");
+        AbstractCustomQuest soccer = CustomQuestManager.customQuests.get(WorldProviderSoccerQuest.DIM_ID);
+        //if(soc)
         boolean isJoinSuccess = soccer.onPlayerJoin(player);
         if(isJoinSuccess){
 //            if(event.getWorld().isRemote){  // Client side send message

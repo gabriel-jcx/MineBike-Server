@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
 
+import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.Vec3d;

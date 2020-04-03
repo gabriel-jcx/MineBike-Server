@@ -3,12 +3,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.AbstractCustomNpc;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Ada;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Sam;
-import net.minecraft.util.math.Vec3d;
-import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.entity.EntityCustomNpc;
 
 public class NpcDatabase {

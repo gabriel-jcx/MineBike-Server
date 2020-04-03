@@ -1,17 +1,7 @@
 package edu.ics.uci.minebike.minecraft.npcs;
 
-import ca.weblite.objc.Client;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.AbstractCustomNpc;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import noppes.npcs.entity.EntityCustomNpc;
 
 public class NpcEventHandler {
     public static void customNpcInteract(EntityPlayer player, PlayerInteractEvent.EntityInteract event){

@@ -1,4 +1,4 @@
-package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
+package edu.ics.uci.minebike.minecraft.npcs;
 
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -16,7 +16,7 @@ public abstract class AbstractCustomNpc {
     protected Vec3d location;
     protected String texture;
     protected String UUID  = "";
-
+    public boolean isSpawned = false;
     //important that this method is called after the instantiation of the object
     public void register() {
     //    NpcDatabase.registerNpc(name, location);

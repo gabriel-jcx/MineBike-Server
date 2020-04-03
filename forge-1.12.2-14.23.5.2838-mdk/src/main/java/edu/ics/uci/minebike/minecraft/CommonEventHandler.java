@@ -1,12 +1,13 @@
 package edu.ics.uci.minebike.minecraft;
 
-import com.mrcrayfish.soccer.entity.EntitySoccerBall;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.npcs.NpcEventHandler;
 import edu.ics.uci.minebike.minecraft.npcs.NpcUtils;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.AbstractCustomNpc;
+import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
+import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -18,16 +19,17 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import noppes.npcs.api.NpcAPI;
-import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.entity.EntityCustomNpc;
 
+import java.util.Iterator;
 import java.util.Map;
 import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class CommonEventHandler {
     NpcDatabase npcDatabase = new NpcDatabase();
     public static boolean spawned = false;
+    public static boolean loaded = false;
+    public static boolean success = false;
     public CommonEventHandler(){
 
     }
@@ -45,8 +47,9 @@ public class CommonEventHandler {
         //if(NpcDatabase.npcs.size() != 0) {
             for (Map.Entry<String,AbstractCustomNpc> iter: NpcDatabase.npcs.entrySet()) {
                 AbstractCustomNpc npc = iter.getValue();
+                if(npc.isSpawned) continue;
                 EntityCustomNpc npcEntity = NpcUtils.spawnNpc(npc.getLocation(), ws,worldIn,npc.getName(), npc.getTexture());
-                NpcDatabase.npc_entities.add(npcEntity);
+                //NpcDatabase.npc_entities.add(npcEntity);
                 BlockPos location = npcEntity.getPosition();
                 npc.setUUID(npcEntity.getUniqueID().toString());
                 //BlockPos pos = temp_npc.getPos();
@@ -55,7 +58,7 @@ public class CommonEventHandler {
             }
         //}
     }
-    public void spawnCustomClient(){
+    private void spawnCustomClient(){
         NpcDatabase.registerNpcs();
     }
     @SubscribeEvent
@@ -65,12 +68,25 @@ public class CommonEventHandler {
             NpcEventHandler.customNpcInteract(player, event);
         }
     }
+    @SubscribeEvent
+    public void onWorldTick(TickEvent.WorldTickEvent event){
+//        if(event.side.isServer() && event.world.provider.getDimension() == 222 && !success){
+//            EntityCustomNpc npc = new EntityCustomNpc(event.world);
+//            if(DimensionManager.getWorld(222).spawnEntity(npc)){
+//                System.out.println("Spawn success!");
+//                success = true;
+//            }
+//
+//        }
+    }
 
     @SubscribeEvent
     public void onPlayerChangeDim(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent event){
         System.out.println(event.player.getName() + " changed from DIM"+ event.fromDim + " to " + event.toDim);
         if(event.fromDim == WorldProviderSoccerQuest.DIM_ID){
             System.out.println(event.player.getName() + " is leaving Soccer");
+            AbstractCustomQuest soccer = CustomQuestManager.customQuests.get(222);
+            soccer.end();
         }
     }
     @SubscribeEvent
@@ -79,6 +95,7 @@ public class CommonEventHandler {
     }
     @SubscribeEvent
     public void onEntityJoin(EntityJoinWorldEvent event){
+
         //System.out.println(event.getEntity().getName() + " is spawned at DIM" + event.getWorld().provider.getDimension());
         if(!event.getWorld().isRemote && (event.getEntity() instanceof EntityPlayer)){
             CustomQuestManager.findAndStart(event);
@@ -94,36 +111,52 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event){
+        if(!spawned && event.player instanceof EntityPlayer){
+            EntityPlayer player = (EntityPlayer)event.player;
 
-        if(!spawned){
-            World w = event.player.getEntityWorld();
-            if(!event.player.getEntityWorld().isRemote){
+            World w = player.getEntityWorld();
+            if(!player.getEntityWorld().isRemote){
                 spawnNpcDatabase(w.provider.getDimension(),w.getSpawnPoint(),w); // server spawn the npcs
             }else {
                 spawnCustomClient();
             }
-
             spawned = true;
         }
-//        for(EntityCustomNpc npc: NpcDatabase.npc_entities){
-//            System.out.println(npc.getName() + " is dead ? " +npc.isDead);
-//        }
-//        System.out.println("Player tick event triggered");
-//        spawnNpcDatabase();
+    }
+    @SubscribeEvent
+    public void onServerTick(TickEvent.ServerTickEvent event){
+        if(!loaded && !spawned){
+            WorldServer overAllWorldServer = DimensionManager.getWorld(0); // get the worldServer for overallWorld
+            synchronized (overAllWorldServer.loadedEntityList){
+                Iterator iter = overAllWorldServer.loadedEntityList.iterator();
+                while(iter.hasNext()){
+                    Entity entity = (Entity)iter.next();
+                    if(entity instanceof EntityCustomNpc){
+                        //System.out.println("");
+                        AbstractCustomNpc npc = NpcDatabase.npcs.get(entity.getName());
+
+                        if(npc != null){
+                            System.out.println("CustomNPC " + npc.getName() + " is already spawned!");
+                            npc.isSpawned = true;
+                        }
+                            //System.out.println(npc.getKey() + " is spwaned at " + "(" + pos.getX() + "," + pos.getY() + "," + pos.getZ()+ ")");
+                    }
+                }
+            }
+            loaded = true;
+        }
     }
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event ){
         System.out.println("A world is loaded, WorldEvent.Load triggerd");
-
-//        if(!event.getWorld().isRemote){// if Running on the server
-//            System.out.println("World Loaded on Server!!!!!");
-////            spawnNpcDatabase(event.getWorld().provider.getDimension(),event.getWorld().getSpawnPoint());
-//        }
-
-//          if(event.getWorld().provider.getDimension() == 222){
-//              EntityCustomNpc tempnpc = NpcUtils.spawnNpc(new Vec3d(11,10,11),event.getWorld(),Jaya.NAME, Jaya.TEXTURE_NAME);
-//          }
-// TODO: comment the follow section, need to figure out if it actually spawns the npc.
+        if(event.getWorld().provider.getDimension() == 0){
+            System.out.println("Loading the overall world");
+            //List<Entity> list = event.getWorld().getLoadedEntityList();
+//            for(Entity e:list){
+//                System.out.println(e.getName());
+//            }
+        }
+//  NOTE: The quest start location is now managed under the EntityJoinWorldEvent
 //          if(event.getWorld().provider.getDimension() == 222){
 //              EntityCustomNpc tempnpc = NpcUtils.spawnNpc(new Vec3d(11,10,11),event.getWorld(),Jaya.NAME, Jaya.TEXTURE_NAME);
 //          }
@@ -135,6 +168,7 @@ public class CommonEventHandler {
 //    public void onNpcInit(NpcEvent.InitEvent event){
 //        System.out.printf("Npc Spawned!!!");
 //    }
+
 
     @SubscribeEvent
     public void onPlayerSave(PlayerEvent.SaveToFile event){

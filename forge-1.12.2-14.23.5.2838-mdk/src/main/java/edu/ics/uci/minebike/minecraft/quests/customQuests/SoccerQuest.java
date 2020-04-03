@@ -6,6 +6,7 @@ import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -15,13 +16,18 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import noppes.npcs.api.NpcAPI;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.entity.data.DataAI;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class SoccerQuest extends AbstractCustomQuest {
     //EntitySoccerBall ball = null;
-    EntityPlayer player = null;
-    EntitySoccerBall ball;
+    private EntityPlayer player = null;
+    private EntitySoccerBall ball;
+    public WorldServer soccerWS = null;
+    public static List<int[]> npcPathList = new ArrayList<int[]>();
     private final Vec3d ball_location = new Vec3d(10,10,10);
     public SoccerQuest(){
         super();
@@ -42,35 +48,58 @@ public class SoccerQuest extends AbstractCustomQuest {
 
     @Override
     public void start(EntityPlayerMP player) {
-//        if(this.ball == null){
-//            System.out.println("Error, forget to initialize the Soccer Quest with setupQuestEnv(world) ");
-//            return;
-//        }
-        //if(player.) started = true;
-
+        // NOTE: this start is temporarily deprecated!
     }
 
     @Override
     public void start(EntityJoinWorldEvent event) {
-        ICustomNpc npc = NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
-        npc.setName("a");
-        if(npc instanceof  EntityCustomNpc){
-            System.out.println("The created CustomNPC is actually a EntityCustomNPc");
+        if(isStarted){
+            System.err.println("Error: The Soccer Quest is already started!");
+            return;
         }
+        soccerWS = DimensionManager.getWorld(222);
+
+        ICustomNpc npc = NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
+        DataAI npcai = (DataAI)npc.getAi();
+        npcai.setStartPos(new BlockPos(10,5,10));
+        int[] newPosition = new int[] {20,5,20};
+        npcai.getMovingPath().add(newPosition);
+        npcai.setMovingType(0);
+        npcai.canSprint = true;
+        npcai.movingPause = false;
+        //npcai.setMovingPath(new List<int>{20,20,20});
+//        BlockPos pos = new BlockPos(20, 20, 20);
+//
+//        npc.getAi().setMovingType(2); // 2 for
+//        npc.getAi().getMovingPathType()
+//        npc.setMoveForward(200);
+        //npc.getAi().setMovingPathType();
+//        EntityCustomNpc npc = new EntityCustomNpc(event.getWorld());
+//        npc.wrappedNPC.setName("a");
+//        npc.ais.setStartPos(npc.getPosition());
+//        boolean spawned = soccerWS.spawnEntity(npc);
+//        soccerWS.updateEntities();
+//        if(spawned){
+//            System.out.println("Spawn successful, but can you see it?");
+//        }
+//        if(npc instanceof  EntityCustomNpc){
+//            System.out.println("The created CustomNPC is actually a EntityCustomNPc");
+//        }
 
         // Spwan a ball!
         ball = new EntitySoccerBall(event.getWorld());
-        WorldServer ws = DimensionManager.getWorld(222);
         ball.setPosition(ball_location.x,ball_location.y,ball_location.z);
-        ws.spawnEntity(ball);
+        soccerWS.spawnEntity(ball);
 
-
+        this.isStarted = true;
         // spawn associated NPC and ball if not spawned
     }
 
     @Override
     public void end() {
         player = null;
+        soccerWS.removeEntity(ball);
+        isStarted = false;
         return;
     }
 }

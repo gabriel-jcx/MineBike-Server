@@ -1,16 +1,9 @@
 package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
 
-import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.EntityCreature;
+import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import noppes.npcs.api.entity.ICustomNpc;
-import noppes.npcs.entity.EntityCustomNpc;
 
 public class Carissa extends AbstractCustomNpc {
     public static final String NAME = "Carissa";

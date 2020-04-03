@@ -1,6 +1,5 @@
 package edu.ics.uci.minebike.minecraft.quests;
 
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.AbstractCustomNpc;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.Vec3d;
@@ -10,8 +9,8 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 public abstract class AbstractCustomQuest{
     public static EntityPlayer player = null;
 
-    protected boolean started = false;
-    protected boolean finished;
+    protected boolean isStarted = false;
+    protected boolean isFinished = false;
     public int DIMID;
     private long questStartTime;
     protected Vec3d questStartLocation;
@@ -24,7 +23,7 @@ public abstract class AbstractCustomQuest{
 
     }
     public boolean onPlayerJoin(EntityPlayer player){
-        if(!started){
+        if(!isStarted){
             setupQuestEnv(player.world, player);
             return true;
         }else{
