@@ -64,13 +64,25 @@ public class SoccerQuest extends AbstractCustomQuest {
         soccerWS = DimensionManager.getWorld(222);
 
         ICustomNpc npc = NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
+
+        if(npc.getAi() instanceof  DataAI){
+            System.out.println("INPCai is instance of DataAI");
+        }
+        int[] pos = new int[]{20,5,20};
         DataAI npcai = (DataAI)npc.getAi();
-        npcai.setStartPos(new BlockPos(10,5,10));
-        int[] newPosition = new int[] {20,5,20};
-        npcai.getMovingPath().add(newPosition);
-        npcai.setMovingType(0);
-        npcai.canSprint = true;
-        npcai.movingPause = false;
+        npcPathList.add(0,pos);
+
+        npcPathList.add(1,pos);
+        npcai.setMovingPath(npcPathList);
+        npc.getAi().setMovingPathType(2,false);
+        //npc.setMoveForward();
+//        DataAI npcai = (DataAI)npc.getAi();
+//        npcai.setStartPos(new BlockPos(10,5,10));
+//        int[] newPosition = new int[] {20,5,20};
+//        npcai.getMovingPath().add(newPosition);
+//        npcai.setMovingType(0);
+//        npcai.canSprint = true;
+//        npcai.movingPause = false;
         //npcai.setMovingPath(new List<int>{20,20,20});
 //        BlockPos pos = new BlockPos(20, 20, 20);
 //

@@ -41,7 +41,6 @@ public class Jaya extends AbstractCustomNpc {
             }
         }
         AbstractCustomQuest soccer = CustomQuestManager.customQuests.get(WorldProviderSoccerQuest.DIM_ID);
-        //if(soc)
         boolean isJoinSuccess = soccer.onPlayerJoin(player);
         if(isJoinSuccess){
 //            if(event.getWorld().isRemote){  // Client side send message
@@ -54,8 +53,8 @@ public class Jaya extends AbstractCustomNpc {
 //
 //                ((EntityCustomNpc) event.getTarget()).sendMessage(new TextComponentString("/tpx " + event.getEntityPlayer().getName() + " 10 10 10"));
 //            }
-              Vec3d startLoc = soccer.getStartLocation();
               if(!event.getWorld().isRemote){
+                  Vec3d startLoc = soccer.getStartLocation();
                   System.out.println("executing the teleportation by Jaya!");
                   ServerUtils.telport((EntityPlayerMP)player,startLoc,soccer.DIMID);
                   //NoppesUtilPlayer.teleportPlayer((EntityPlayerMP)player,startLoc.x,startLoc.y,startLoc.z,soccer.DIMID);
