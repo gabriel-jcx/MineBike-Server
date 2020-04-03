@@ -1,14 +1,16 @@
 package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
-//import com.mrcrayfish.soccer.entity.EntitySoccerBall;
 import com.mrcrayfish.soccer.entity.EntitySoccerBall;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.init.Items;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.item.ItemStack;
+
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -21,6 +23,8 @@ import noppes.npcs.entity.data.DataAI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import static net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer;
 
 public class SoccerQuest extends AbstractCustomQuest {
     //EntitySoccerBall ball = null;
@@ -97,6 +101,9 @@ public class SoccerQuest extends AbstractCustomQuest {
 
     @Override
     public void end() {
+        int numDiamonds = 10;   //can multiply by a scalar depending on difficulty
+        giveItemToPlayer(this.player, new ItemStack(Items.DIAMOND, numDiamonds));
+
         player = null;
         soccerWS.removeEntity(ball);
         isStarted = false;
