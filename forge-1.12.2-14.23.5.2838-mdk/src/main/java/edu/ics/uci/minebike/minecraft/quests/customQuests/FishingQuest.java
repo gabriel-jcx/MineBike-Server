@@ -1,6 +1,7 @@
-package edu.ics.uci.minebike.minecraft.quests;
+package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
 import edu.ics.uci.minebike.minecraft.ServerUtils;
+import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,7 +10,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 
 
 public class FishingQuest  extends AbstractCustomQuest {
@@ -35,6 +36,11 @@ public class FishingQuest  extends AbstractCustomQuest {
 //        this.player.sendMessage(give);
         System.out.println("Trying to teleport " + playerMP.getName() + " to DIM" + this.DIMID);
         ServerUtils.telport((EntityPlayerMP) playerMP, questStartLocation, DIMID);
+
+    }
+
+    @Override
+    public void start(EntityJoinWorldEvent event) {
 
     }
 
