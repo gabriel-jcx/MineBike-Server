@@ -51,6 +51,7 @@ public class SoccerQuest extends AbstractCustomQuest {
     public void end() {
         int numDiamonds = 10;   //can multiply by a scalar depending on difficulty
         giveItemToPlayer(this.player, new ItemStack(Items.DIAMOND, numDiamonds));
+
         player = null;
         return;
     }
