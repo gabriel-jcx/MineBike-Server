@@ -23,7 +23,8 @@ public class ItemManager {
 
 
     public static void registerModels() {
-        GAME_FISHING_ROD.registerItemModel(FISHING_ROD_DIAMOND);
+        GAME_FISHING_ROD.registerItemModel(GAME_FISHING_ROD
+        );
 
     }
 }
