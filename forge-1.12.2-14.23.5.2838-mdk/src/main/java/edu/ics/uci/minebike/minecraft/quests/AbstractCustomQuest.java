@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public abstract class AbstractCustomQuest{
     public static EntityPlayer player = null;
@@ -36,4 +37,5 @@ public abstract class AbstractCustomQuest{
     public abstract void start(EntityPlayerMP player);
     public abstract void start(EntityJoinWorldEvent event);
     public abstract void end();
+    public abstract void onWorldTick(TickEvent.WorldTickEvent event);
 }

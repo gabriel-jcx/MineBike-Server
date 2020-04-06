@@ -2,7 +2,7 @@ package edu.ics.uci.minebike.minecraft.constants;
 
 public enum EnumPacketClient {
     Teleport,
-    QuestStart,
+    PlayerJoin,
     QuestEnd;
 
     private EnumPacketClient(){

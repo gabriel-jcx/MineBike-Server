@@ -5,6 +5,7 @@ import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,13 @@ public class CustomQuestManager {
             quest.start(event);
         }
         return;
+    }
 
+    public static void onWorldTick(TickEvent.WorldTickEvent event){
+        AbstractCustomQuest quest = customQuests.get(event.world.provider.getDimension());
+        if(quest != null){
+            quest.onWorldTick(event);
+        }
+        return;
     }
 }

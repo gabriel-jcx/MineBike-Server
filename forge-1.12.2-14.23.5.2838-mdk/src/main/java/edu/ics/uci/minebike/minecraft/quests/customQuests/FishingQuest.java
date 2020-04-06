@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 
 public class FishingQuest  extends AbstractCustomQuest {
@@ -51,5 +52,10 @@ public class FishingQuest  extends AbstractCustomQuest {
         TextComponentString fish = new TextComponentString(String.format("/give %s Fish 2 ", this.player.getName()));
         this.player.sendMessage(rod);
         this.player.sendMessage(fish);
+    }
+
+    @Override
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
+
     }
 }

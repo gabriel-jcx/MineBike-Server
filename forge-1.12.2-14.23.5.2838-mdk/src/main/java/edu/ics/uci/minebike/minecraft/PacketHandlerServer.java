@@ -30,10 +30,14 @@ public class PacketHandlerServer {
 //        System.out.println(buffer.readInt());
         EnumPacketClient num = EnumPacketClient.values()[integer];
         System.out.println("Enum is " + num.toString());
-        if(num == EnumPacketClient.QuestStart) {
-            CustomQuestManager.customQuests.get("fishing").start(player);
+        if(num == EnumPacketClient.PlayerJoin) {
+            String questNum = readString(buffer);
+            System.out.println("questNum = " + questNum);
+            int a = Integer.parseInt(questNum);
+            System.out.println("a = " + a);
+            CustomQuestManager.customQuests.get(Integer.parseInt(questNum)).onPlayerJoin(player);
         }
-        System.out.println(readString(buffer));
+        //System.out.println(readString(buffer));
         // teleport and start the quest here!!!!
     }
     public static String readString(ByteBuf buffer) {

@@ -32,7 +32,7 @@ public class Ada extends AbstractCustomNpc {
     }
     @SideOnly(Side.CLIENT)
     public static void give_rod(EntityPlayerSP playerSP){
-        ResourceLocation resourcelocation = new ResourceLocation("minebikemod:game_rod");
+        ResourceLocation resourcelocation = new ResourceLocation("minebikemod:game_rod"); //
         Item rod = Item.REGISTRY.getObject(resourcelocation);
         ItemStack itemstack = new ItemStack(rod,1);
         playerSP.inventory.addItemStackToInventory(itemstack);
@@ -58,7 +58,7 @@ public class Ada extends AbstractCustomNpc {
                 //TODO: The Dialog
                 //TextComponentString give = new TextComponentString(String.format("/give %s fishingmadebetter:diamond_fishing_rod ", player.getName()));
                 give_rod((EntityPlayerSP) player);
-                ClientUtils.sendData(EnumPacketClient.QuestStart,"fishing");
+                ClientUtils.sendData(EnumPacketClient.PlayerJoin,"223");
                 System.out.println("is Client Side!!!!");
             }
 //            if(!event.getWorld().isRemote){

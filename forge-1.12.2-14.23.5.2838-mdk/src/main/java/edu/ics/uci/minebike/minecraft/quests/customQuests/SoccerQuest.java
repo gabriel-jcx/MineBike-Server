@@ -1,6 +1,7 @@
 package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
 import com.mrcrayfish.soccer.entity.EntitySoccerBall;
+import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import noppes.npcs.api.NpcAPI;
 import noppes.npcs.api.entity.ICustomNpc;
@@ -33,10 +35,30 @@ public class SoccerQuest extends AbstractCustomQuest {
     public WorldServer soccerWS = null;
     public static List<int[]> npcPathList = new ArrayList<int[]>();
     private final Vec3d ball_location = new Vec3d(10,10,10);
+
+    private ArrayList<EntityPlayerMP> waitingQueue  = new ArrayList<>();
+    private long waitingStartTime = 0;
+    private long waitingTime = 10000; // units in millisecond
+    public boolean isWaiting = false;
     public SoccerQuest(){
         super();
         this.DIMID = 222;
         this.questStartLocation = new Vec3d(11,10,11);
+    }
+
+    @Override
+    public boolean onPlayerJoin(EntityPlayer player){
+        ServerUtils.telport((EntityPlayerMP)player,this.questStartLocation,this.DIMID);
+        if(!isStarted){
+            if(!isWaiting) {
+                waitingStartTime = System.currentTimeMillis();
+
+            }
+            waitingQueue.add((EntityPlayerMP)player);
+            return true;
+        }
+        return false;
+
     }
 
     @Override
@@ -49,6 +71,7 @@ public class SoccerQuest extends AbstractCustomQuest {
 
         }
     }
+
 
     @Override
     public void start(EntityPlayerMP player) {
@@ -120,5 +143,10 @@ public class SoccerQuest extends AbstractCustomQuest {
         soccerWS.removeEntity(ball);
         isStarted = false;
         return;
+    }
+
+    @Override
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
+
     }
 }

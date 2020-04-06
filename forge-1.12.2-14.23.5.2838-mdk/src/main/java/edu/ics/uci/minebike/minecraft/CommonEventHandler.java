@@ -66,18 +66,13 @@ public class CommonEventHandler {
         EntityPlayer player = event.getEntityPlayer();
         if(event.getTarget() instanceof EntityCustomNpc) {
             NpcEventHandler.customNpcInteract(player, event);
-        }
+    }
     }
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event){
-//        if(event.side.isServer() && event.world.provider.getDimension() == 222 && !success){
-//            EntityCustomNpc npc = new EntityCustomNpc(event.world);
-//            if(DimensionManager.getWorld(222).spawnEntity(npc)){
-//                System.out.println("Spawn success!");
-//                success = true;
-//            }
-//
-//        }
+        if(event.world.provider.getDimension() != 0){ // if the world is not overall world
+            CustomQuestManager.onWorldTick(event);
+        }
     }
 
     @SubscribeEvent
