@@ -32,7 +32,7 @@ public class Ada extends AbstractCustomNpc {
     }
     @SideOnly(Side.CLIENT)
     public static void give_rod(EntityPlayerSP playerSP){
-        ResourceLocation resourcelocation = new ResourceLocation("minebikemod:game_rod");
+        ResourceLocation resourcelocation = new ResourceLocation("minebikemod:game_fish_rod");
         Item rod = Item.REGISTRY.getObject(resourcelocation);
         ItemStack itemstack = new ItemStack(rod,1);
         playerSP.inventory.addItemStackToInventory(itemstack);
