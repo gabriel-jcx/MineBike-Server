@@ -1,6 +1,7 @@
 package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
 
 import edu.ics.uci.minebike.minecraft.ClientUtils;
+import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
@@ -10,6 +11,7 @@ import edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -23,7 +25,7 @@ import noppes.npcs.entity.EntityCustomNpc;
 
 public class Ada extends AbstractCustomNpc {
     public static final String NAME = "Ada";
-    public static final Vec3d LOCATION = new Vec3d(10,70,14); // TODO: figure out the location
+    public static final Vec3d LOCATION = new Vec3d(6,0,-3); // TODO: figure out the location
     public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanfemale/stephanie.png";
     public Ada(){
         name = NAME;
@@ -68,6 +70,7 @@ public class Ada extends AbstractCustomNpc {
             }
             else {
                 give_rod( player);
+                ServerUtils.telport((EntityPlayerMP)player, fishing.questStartLocation,fishing.DIMID);
             }
 //            if(!event.getWorld().isRemote){
 //
