@@ -11,7 +11,7 @@ import net.theawesomegem.fishingmadebetter.common.item.fishingrod.ItemBetterFish
 import static net.theawesomegem.fishingmadebetter.common.item.ItemManager.FISHING_ROD_DIAMOND;
 
 public class ItemManager {
-    public static final ItemBetterFishingRod GAME_FISHING_ROD = new ItemGameFishingRod("game_rod", 20,5,1);
+    public static final ItemBetterFishingRod GAME_FISHING_ROD = new ItemGameFishingRod("game_fish_rod", 20,5,1);
 
 
     public ItemManager() {

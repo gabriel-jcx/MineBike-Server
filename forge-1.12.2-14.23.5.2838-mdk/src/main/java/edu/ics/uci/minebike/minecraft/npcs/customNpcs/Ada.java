@@ -20,6 +20,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.entity.EntityCustomNpc;
+
 public class Ada extends AbstractCustomNpc {
     public static final String NAME = "Ada";
     public static final Vec3d LOCATION = new Vec3d(10,70,14); // TODO: figure out the location
@@ -31,7 +32,7 @@ public class Ada extends AbstractCustomNpc {
         this.register();
     }
     @SideOnly(Side.CLIENT)
-    public static void give_rod(EntityPlayerSP playerSP){
+    public static void give_rod(EntityPlayer playerSP){
         //ResourceLocation resourcelocation = new ResourceLocation("minebikemod:game_rod"); //
         //Fishing rod name
         ResourceLocation resourcelocation = new ResourceLocation("minebikemod:game_fish_rod");
@@ -40,6 +41,7 @@ public class Ada extends AbstractCustomNpc {
         playerSP.inventory.addItemStackToInventory(itemstack);
         playerSP.world.playSound((EntityPlayer)null, playerSP.posX, playerSP.posY, playerSP.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((playerSP.getRNG().nextFloat() - playerSP.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
         playerSP.inventoryContainer.detectAndSendChanges();
+
     }
     @Override
     public void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event) {
@@ -59,16 +61,20 @@ public class Ada extends AbstractCustomNpc {
                 System.out.println(" Start Fishing quest ");
                 //TODO: The Dialog
                 //TextComponentString give = new TextComponentString(String.format("/give %s fishingmadebetter:diamond_fishing_rod ", player.getName()));
-                give_rod((EntityPlayerSP) player);
+                give_rod( player);
                 ClientUtils.sendData(EnumPacketClient.PlayerJoin,"223");
 
                 System.out.println("is Client Side!!!!");
+            }
+            else {
+                give_rod( player);
             }
 //            if(!event.getWorld().isRemote){
 //
 //                //telport((EntityPlayerMP) player, FishingQuest.questStartLocation, WorldProviderFishing.DIM_ID);
 //            }
         }else{
+
             System.out.println(player.getName() + " join ");
             // Show soccer join error message here!
         }

@@ -21,7 +21,7 @@ public class ItemGameFishingRod extends ItemBetterFishingRod {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
-
+        System.out.println("Right click aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         if (playerIn.fishEntity != null)
         {
             int i = playerIn.fishEntity.handleHookRetraction();
@@ -35,7 +35,8 @@ public class ItemGameFishingRod extends ItemBetterFishingRod {
 
             if (!worldIn.isRemote)
             {
-                ItemGameHook gameHook = new ItemGameHook(worldIn, playerIn);
+                System.out.println("New Hook bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+                EntityFishHook gameHook = new EntityFishHook(worldIn, playerIn);
                 int j = EnchantmentHelper.getFishingSpeedBonus(itemstack);
 
                 if (j > 0)
@@ -51,6 +52,7 @@ public class ItemGameFishingRod extends ItemBetterFishingRod {
                 }
 
                 worldIn.spawnEntity(gameHook);
+
             }
 
             playerIn.swingArm(handIn);
