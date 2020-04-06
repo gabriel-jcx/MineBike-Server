@@ -35,23 +35,25 @@ public class SoccerQuest extends AbstractCustomQuest {
     private EntitySoccerBall ball;
     public WorldServer soccerWS = null;
     public static List<int[]> npcPathList = new ArrayList<int[]>();
-    private final Vec3d ball_location = new Vec3d(10,10,10);
-
+    private final Vec3d ball_location = new Vec3d(-165, 4,1145);
     private ArrayList<EntityPlayerMP> waitingQueue  = new ArrayList<>();
     private long waitingStartTime = 0;
-    private long waitingTime = 10000; // units in millisecond
+    private long waitingTime = 30000; // units in millisecond
     //private long currWaitingTime = 0;
     private long waitingEndTime = 0;
     public boolean isWaiting = false;
     public SoccerQuest(){
         super();
         this.DIMID = 222;
-        this.questStartLocation = new Vec3d(11,10,11);
+        this.questStartLocation = new Vec3d (-160, 4,1142);
+        //this.questStartLocation = new Vec3d(11,10,11);
     }
 
     @Override
     public boolean onPlayerJoin(EntityPlayer player){
         EntityPlayerMP playerMP = (EntityPlayerMP)player;
+
+        // teleporting here seems to be a problem!
         System.out.println("On PlayerJoin triggerd on server side");
         if(!isStarted){
             if(!isWaiting) {
@@ -62,8 +64,11 @@ public class SoccerQuest extends AbstractCustomQuest {
             ServerUtils.sendQuestData(EnumPacketServer.SoccerQueueingTime,playerMP, Long.toString(this.waitingTime));
             waitingQueue.add(playerMP);
             return true;
+        }else{
+            System.out.println("There's an ongoing soccer session, please wait!");
+            return false;
         }
-        return false;
+
 
     }
 
@@ -81,6 +86,7 @@ public class SoccerQuest extends AbstractCustomQuest {
 
     @Override
     public void start(EntityPlayerMP player) {
+        System.out.println("start is triggered for " + player.getName());
         // NOTE: this start is temporarily deprecated!
     }
 
@@ -160,12 +166,18 @@ public class SoccerQuest extends AbstractCustomQuest {
             if(waitingTime > 0){
                 waitingTime -= 50; // 50 in milliseconds
             }else{
-                waitingTime = 1000; // resetting the timer param
+                waitingTime = 30000; // resetting the timer param
 
+                 //Spwan a ball!
+                soccerWS = DimensionManager.getWorld(222);
+                ball = new EntitySoccerBall(event.world);
+                ball.setPosition(ball_location.x,ball_location.y,ball_location.z);
+                soccerWS.spawnEntity(ball);
                 for(EntityPlayerMP player: this.waitingQueue){
                     this.start(player);
                 }
                 isStarted = true;
+                isWaiting = false;
             }
         }
 
