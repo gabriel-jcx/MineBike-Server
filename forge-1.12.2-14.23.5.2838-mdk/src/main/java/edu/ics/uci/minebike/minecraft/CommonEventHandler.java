@@ -93,7 +93,7 @@ public class CommonEventHandler {
 
         //System.out.println(event.getEntity().getName() + " is spawned at DIM" + event.getWorld().provider.getDimension());
         if(!event.getWorld().isRemote && (event.getEntity() instanceof EntityPlayer)){
-            CustomQuestManager.findAndStart(event);
+//            CustomQuestManager.findAndStart(event);
         }
 
 

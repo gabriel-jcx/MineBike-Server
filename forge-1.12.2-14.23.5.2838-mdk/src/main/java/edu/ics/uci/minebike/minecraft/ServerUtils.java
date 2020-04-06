@@ -1,14 +1,20 @@
 package edu.ics.uci.minebike.minecraft;
 
+import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
+import edu.ics.uci.minebike.minecraft.utils.MineBikeScheduler;
+import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.NoppesUtilPlayer;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,8 +24,23 @@ public class ServerUtils {
         NoppesUtilPlayer.teleportPlayer(player,pos.x,pos.y,pos.z,dimID);
         //playerSP.sendChatMessage("/tpx "+ dimID + " " + pos.x + " " + pos.y + " " + pos.z );
     }
-    public static void sendQuestData(EnumPacketServer type, EntityPlayerMP player, String name){
-
+    public static void sendQuestData(EnumPacketServer type, EntityPlayerMP player, Object... objs){
+        sendQuestDataDelayed(player, type, 0, objs);
+    }
+    private static void sendQuestDataDelayed(EntityPlayerMP playerMP, EnumPacketServer type, int delay, Object... obs){
+        MineBikeScheduler.runTask(()->{
+            PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+            try{
+                if(!CommonUtils.fillBuffer(buffer,type,obs)){
+                    return;
+                }
+                System.out.println("Send: " + type + " to " + playerMP.getName() + " at " + playerMP.getPlayerIP());
+                BiGXMain.Channel.sendTo(new FMLProxyPacket(buffer, "MineBikeServer"), playerMP);
+            } catch(IOException var5){
+                var5.printStackTrace();
+                //printStackTrace;
+            }
+        },delay);
     }
     public static EntityPlayer getPlayer(MinecraftServer server, UUID uuid){
         List<EntityPlayerMP> list = server.getPlayerList().getPlayers();

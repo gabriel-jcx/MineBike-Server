@@ -2,6 +2,7 @@ package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
 import com.mrcrayfish.soccer.entity.EntitySoccerBall;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
+import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,6 +40,8 @@ public class SoccerQuest extends AbstractCustomQuest {
     private ArrayList<EntityPlayerMP> waitingQueue  = new ArrayList<>();
     private long waitingStartTime = 0;
     private long waitingTime = 10000; // units in millisecond
+    //private long currWaitingTime = 0;
+    private long waitingEndTime = 0;
     public boolean isWaiting = false;
     public SoccerQuest(){
         super();
@@ -48,13 +51,16 @@ public class SoccerQuest extends AbstractCustomQuest {
 
     @Override
     public boolean onPlayerJoin(EntityPlayer player){
-        ServerUtils.telport((EntityPlayerMP)player,this.questStartLocation,this.DIMID);
+        EntityPlayerMP playerMP = (EntityPlayerMP)player;
+        System.out.println("On PlayerJoin triggerd on server side");
         if(!isStarted){
             if(!isWaiting) {
                 waitingStartTime = System.currentTimeMillis();
-
+                isWaiting = true;
+                waitingEndTime = waitingStartTime + waitingTime;
             }
-            waitingQueue.add((EntityPlayerMP)player);
+            ServerUtils.sendQuestData(EnumPacketServer.SoccerQueueingTime,playerMP, Long.toString(this.waitingTime));
+            waitingQueue.add(playerMP);
             return true;
         }
         return false;
@@ -80,25 +86,25 @@ public class SoccerQuest extends AbstractCustomQuest {
 
     @Override
     public void start(EntityJoinWorldEvent event) {
-        if(isStarted){
-            System.err.println("Error: The Soccer Quest is already started!");
-            return;
-        }
-        soccerWS = DimensionManager.getWorld(222);
-
-        ICustomNpc npc = NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
-
-        if(npc.getAi() instanceof  DataAI){
-            System.out.println("INPCai is instance of DataAI");
-        }
-        int[] pos = new int[]{20,5,20};
-        DataAI npcai = (DataAI)npc.getAi();
-        npcPathList.add(0,pos);
-
-        npcPathList.add(1,pos);
-        npcai.setMovingPath(npcPathList);
-        npc.getAi().setMovingPathType(2,false);
-        //npc.setMoveForward();
+//        if(isStarted){
+//            System.err.println("Error: The Soccer Quest is already started!");
+//            return;
+//        }
+//        soccerWS = DimensionManager.getWorld(222);
+//
+//        ICustomNpc npc = NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
+//
+//        if(npc.getAi() instanceof  DataAI){
+//            System.out.println("INPCai is instance of DataAI");
+//        }
+//        int[] pos = new int[]{20,5,20};
+//        DataAI npcai = (DataAI)npc.getAi();
+//        npcPathList.add(0,pos);
+//
+//        npcPathList.add(1,pos);
+//        npcai.setMovingPath(npcPathList);
+//        npc.getAi().setMovingPathType(2,false);
+//        //npc.setMoveForward();
 //        DataAI npcai = (DataAI)npc.getAi();
 //        npcai.setStartPos(new BlockPos(10,5,10));
 //        int[] newPosition = new int[] {20,5,20};
@@ -126,11 +132,11 @@ public class SoccerQuest extends AbstractCustomQuest {
 //        }
 
         // Spwan a ball!
-        ball = new EntitySoccerBall(event.getWorld());
-        ball.setPosition(ball_location.x,ball_location.y,ball_location.z);
-        soccerWS.spawnEntity(ball);
-
-        this.isStarted = true;
+//        ball = new EntitySoccerBall(event.getWorld());
+//        ball.setPosition(ball_location.x,ball_location.y,ball_location.z);
+//        soccerWS.spawnEntity(ball);
+//
+//        this.isStarted = true;
         // spawn associated NPC and ball if not spawned
     }
 
@@ -145,8 +151,23 @@ public class SoccerQuest extends AbstractCustomQuest {
         return;
     }
 
+
+    // NOTE: Minecraft runs 20 ticks per second
+    //       Every tick is 0.05 seconds and 50 milliseconds
     @Override
     public void onWorldTick(TickEvent.WorldTickEvent event) {
+        if(isWaiting){
+            if(waitingTime > 0){
+                waitingTime -= 50; // 50 in milliseconds
+            }else{
+                waitingTime = 1000; // resetting the timer param
+
+                for(EntityPlayerMP player: this.waitingQueue){
+                    this.start(player);
+                }
+                isStarted = true;
+            }
+        }
 
     }
 }

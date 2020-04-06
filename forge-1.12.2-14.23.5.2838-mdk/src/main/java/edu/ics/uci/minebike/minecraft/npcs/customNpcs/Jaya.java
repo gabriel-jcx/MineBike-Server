@@ -7,6 +7,7 @@ import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -44,7 +45,11 @@ public class Jaya extends AbstractCustomNpc {
         }
         AbstractCustomQuest soccer = CustomQuestManager.customQuests.get(WorldProviderSoccerQuest.DIM_ID);
 //        boolean isJoinSuccess = soccer.onPlayerJoin(player);
-        ClientUtils.sendData(EnumPacketClient.PlayerJoin,"222");
+        if(event.getWorld().isRemote)
+            ClientUtils.sendData(EnumPacketClient.PlayerJoin,"222");
+        else
+            ServerUtils.telport((EntityPlayerMP)player, soccer.questStartLocation,soccer.DIMID);
+
 //        if(isJoinSuccess){
 ////            if(event.getWorld().isRemote){  // Client side send message
 ////                telport((EntityPlayerSP) player, SoccerQuest.questStartLocation, WorldProviderSoccerQuest.DIM_ID);

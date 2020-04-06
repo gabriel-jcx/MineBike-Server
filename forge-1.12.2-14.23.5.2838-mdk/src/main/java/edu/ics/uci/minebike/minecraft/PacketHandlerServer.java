@@ -19,6 +19,25 @@ public class PacketHandlerServer {
 
     }
     @SubscribeEvent
+    public void onPacketData(FMLNetworkEvent.ClientCustomPacketEvent event){
+        System.out.println("Client got a custom packet from Server!");
+        if(event.side().isServer()) {
+            System.err.println("Somehow this ClientCustomPacketEvent is triggered at server???");
+            return;
+        }
+        ByteBuf buffer = event.getPacket().payload();
+        EnumPacketServer type = EnumPacketServer.values()[buffer.readInt()];
+        System.out.println("Enum is " + type.toString());
+        if(type == EnumPacketServer.SoccerQueueingTime){
+            String waitingTime = readString(buffer);
+            System.out.println("Current Waiting Time is " + waitingTime);
+        }
+        //EntityPlayer player = Minecraft.getMinecraft().player; // get the client side of the player
+//        if(player != null){
+//            ByteBuf buffer = event.getPacket().payload(); // get the packet payload
+//        }
+    }
+    @SubscribeEvent
     public void onServerPacket(FMLNetworkEvent.ServerCustomPacketEvent event){
 
         EntityPlayerMP player = ((NetHandlerPlayServer)event.getHandler()).player;

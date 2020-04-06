@@ -14,7 +14,7 @@ public abstract class AbstractCustomQuest{
     protected boolean isFinished = false;
     public int DIMID;
     private long questStartTime;
-    protected Vec3d questStartLocation;
+    public Vec3d questStartLocation;
 
     public enum Difficulty{
         EASY, MEDIUM, HARD
