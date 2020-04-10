@@ -1,8 +1,11 @@
 package edu.ics.uci.minebike.minecraft.client.hud;
 
+import edu.ics.uci.minebike.minecraft.client.HudManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class HudString extends HudShape {
@@ -16,7 +19,41 @@ public class HudString extends HudShape {
     public int color;
     @Override
     public void draw() {
-        drawHoveringText(this.text, this.x , this.y);
+        this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        //translate to where it is going to be displayed, then scale it
+        GL11.glPushMatrix();
+        GL11.glPushAttrib(GL11.GL_TEXTURE_BIT);
+        GL11.glPushAttrib(GL11.GL_COLOR);
+        GL11.glTranslatef(
+                (int) (this.x + (this.centerX ?
+                        (HudManager.mcWidth/2-fontRenderer.getStringWidth(this.text)/2 * this.scale)
+                        : 0)),
+                this.y + (this.centerY ? HudManager.mcHeight/2 : 0),
+                0.0f);
+
+        GL11.glScalef(this.scale, this.scale, this.scale);
+//					this breaks the other textures
+        if (this.shadow)
+        {
+            fontRenderer.drawStringWithShadow(
+                    this.text,
+                    0,
+                    0,
+                    this.color >> 8);
+        }
+        else
+        {
+            fontRenderer.drawString(
+                    this.text,
+                    0,
+                    0,
+                    this.color >> 8);
+        }
+        GL11.glScalef(1.0f, 1.0f, 1.0f);
+        GL11.glPopAttrib();
+        GL11.glPopAttrib();
+        GL11.glPopMatrix();
+//        drawHoveringText(this.text, this.x , this.y);
     }
     /**
      * takes: <br>
@@ -94,6 +131,7 @@ public class HudString extends HudShape {
 
         this.color = 0xffffffff;
         this.shadow = true;
+        HudManager.getInstance(mc).strings.add(this);
     }
 
     /**

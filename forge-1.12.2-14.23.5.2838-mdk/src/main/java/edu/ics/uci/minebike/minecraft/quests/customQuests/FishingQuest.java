@@ -63,4 +63,9 @@ public class FishingQuest  extends AbstractCustomQuest {
     public void onWorldTick(TickEvent.WorldTickEvent event) {
 
     }
+
+    @Override
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+
+    }
 }

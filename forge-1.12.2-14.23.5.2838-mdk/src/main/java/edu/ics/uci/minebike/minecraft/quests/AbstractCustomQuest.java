@@ -43,5 +43,8 @@ public abstract class AbstractCustomQuest{
     public abstract void start(EntityPlayerSP player);
     public abstract void start(EntityJoinWorldEvent event);
     public abstract void end();
+
+
     public abstract void onWorldTick(TickEvent.WorldTickEvent event);
+    public abstract void onPlayerTick(TickEvent.PlayerTickEvent event);
 }

@@ -44,4 +44,12 @@ public class CustomQuestManager {
         }
         return;
     }
+
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event){
+        AbstractCustomQuest quest = customQuests.get(event.player.dimension);
+        if(quest != null){
+            quest.onPlayerTick(event);
+        }
+        return;
+    }
 }

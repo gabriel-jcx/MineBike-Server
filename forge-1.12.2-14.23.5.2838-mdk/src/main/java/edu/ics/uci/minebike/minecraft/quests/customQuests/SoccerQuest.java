@@ -3,6 +3,8 @@ package edu.ics.uci.minebike.minecraft.quests.customQuests;
 import com.mrcrayfish.soccer.entity.EntitySoccerBall;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.client.HudManager;
+import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
+import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
@@ -10,6 +12,8 @@ import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.init.Items;
 import net.minecraft.util.math.Vec3d;
@@ -26,6 +30,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.api.NpcAPI;
 import noppes.npcs.api.entity.ICustomNpc;
+import noppes.npcs.controllers.data.Quest;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.DataAI;
 
@@ -57,26 +62,35 @@ public class SoccerQuest extends AbstractCustomQuest {
     // Server Tracker
     private long server_waitingStartTime = 0;
     private long server_waitingTime = GAME_WAITING_TIME;
-    private final int server_waitingTime_seconds = (int)(GAME_WAITING_TIME/1000);
+    private int server_waitingTime_seconds = (int)(GAME_WAITING_TIME/1000);
 
     // Client Tracker
+    private long client_waitingTime  = 0;
+    private long client_waitingStartTime = 0;
+    private long client_waitingEndTime = 0;
+    private int client_waitingTime_seconds = 0;
 
-
+    @SideOnly(Side.CLIENT)
+    private HudRectangle clockRect;
+    private HudString clockStr;
 
     private long waitingEndTime;
 
     public boolean isWaiting = false;
+
+
+    // Temp flag
+    public boolean testFlag = false;
+
     public SoccerQuest(){
         super();
         this.DIMID = 222;
         this.isStarted = false;
         this.questStartLocation = new Vec3d (-160, 4,1142);
-        if(soccerWS != null){
-            System.out.println("WS NOT NULL");
-        }else{
-            System.out.println("WS NULL");
-        }
         //this.questStartLocation = new Vec3d(11,10,11);
+
+
+
     }
 
     // This onPlayerJoin is only called on the server side
@@ -198,7 +212,6 @@ public class SoccerQuest extends AbstractCustomQuest {
             ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
         }
 
-        player = null;
         soccerWS.removeEntity(ball);
 
         ball = null;
@@ -219,20 +232,24 @@ public class SoccerQuest extends AbstractCustomQuest {
                 this.serverStartTick(event);
             }
         }else{ // Client Side
-            if(isWaiting){
-                this.clientWaitingTick(event);
-            }else if(isStarted){
-                this.clientStartTick(event);
-            }
+
 //
         }
     }
+
+    public void onPlayerTick(TickEvent.PlayerTickEvent event){
+        if(isWaiting){
+            this.clientWaitingTick(event);
+        }else if(isStarted){
+            this.clientStartTick(event);
+        }
+    }
     private void serverStartTick(TickEvent.WorldTickEvent event){
-        System.out.println("The ball is at " + ball.posX + " " + ball.posY + " " + ball.posX);
+//        System.out.println("The ball is at " + ball.posX + " " + ball.posY + " " + ball.posX);
 //        this.end();
         // need to check the ball locations
     }
-    private void clientStartTick(TickEvent.WorldTickEvent event){
+    private void clientStartTick(TickEvent.PlayerTickEvent event){
 
     }
 
@@ -240,7 +257,7 @@ public class SoccerQuest extends AbstractCustomQuest {
     private void serverWaitingTick(TickEvent.WorldTickEvent event){
         long curr = System.currentTimeMillis();
         int elapsed_seconds = QuestUtils.getRemainingSeconds(curr,server_waitingStartTime);
-        System.out.println(elapsed_seconds + " " + server_waitingTime_seconds);
+//        System.out.println(elapsed_seconds + " " + server_waitingTime_seconds);
 
         if(elapsed_seconds < server_waitingTime_seconds){
             // Decrement milliseconds count for Client
@@ -271,12 +288,37 @@ public class SoccerQuest extends AbstractCustomQuest {
         }
     }
     public void clientStartWaiting(String waitingTime){
-        long client_waitingTime = Long.parseLong(waitingTime);
+        client_waitingTime = Long.parseLong(waitingTime);
+        client_waitingStartTime = System.currentTimeMillis();
 
+        client_waitingTime_seconds = QuestUtils.getRemainingSeconds(client_waitingTime);
+        client_waitingEndTime = client_waitingStartTime + client_waitingTime;
+        System.out.println("Client waiting for " + client_waitingTime_seconds + " seconds");
+//        QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(client_waitingTime));
+
+        clockRect = new HudRectangle(-30, 30, 60, 30, 0x000000ff, true, false);
+        clockStr = new HudString(0,35, QuestUtils.formatSeconds(client_waitingTime_seconds),2.0f,true, false);
+        isWaiting = true;
 
     }
-    public void clientWaitingTick(TickEvent.WorldTickEvent event){
+    public void clientWaitingTick(TickEvent.PlayerTickEvent event){
 
+//        int elpased_seconds = QuestUtils.getRemainingSeconds(System.currentTimeMillis(),client_waitingStartTime);
+        client_waitingTime = client_waitingEndTime - System.currentTimeMillis();
+        if(!testFlag){
+            Potion potion = Potion.getPotionById(2);
+            System.out.println(potion.getName());
+
+            event.player.addPotionEffect(new PotionEffect(potion,3000,1000000000));
+            testFlag = true;
+        }
+
+        int remaining_seconds = QuestUtils.getRemainingSeconds(client_waitingTime);
+        if(remaining_seconds >= 0 ){
+            clockStr.text = QuestUtils.formatSeconds(remaining_seconds);
+        }
+
+//        System.out.println("Client have " + clockStr.text + "left");
     }
 
 }

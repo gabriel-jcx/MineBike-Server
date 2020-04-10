@@ -13,19 +13,21 @@ public class HudRectangle extends HudShape {
     private int w;  // width
     private int h;  // height
     private int color;
-    public HudRectangle(int x, int y, int w, int h, int color){
+    public HudRectangle(int x, int y, int w, int h, int color, boolean centerX, boolean centerY){
+        this.centerX = centerX;
+        this.centerY = centerY;
         this.setCenter(x,y);
         this.w = w;
         this.h = h;
         this.color = color;
         HudManager.getInstance(mc).rectangles.add(this);
     }
-    @Override
-    public void finalize(){
-        // Remove this from the Manager on object destruction
-        if(HudManager.getInstance(mc).rectangles.contains(this))
-            HudManager.getInstance(mc).rectangles.remove(this);
-    }
+//    @Override
+////    public void finalize(){
+////        // Remove this from the Manager on object destruction
+////        if(HudManager.getInstance(mc).rectangles.contains(this))
+////            HudManager.getInstance(mc).rectangles.remove(this);
+//    }
     @Override
     public void draw(){
         int offsetX = (this.centerX ? HudManager.mcWidth/2 : 0);
@@ -39,8 +41,8 @@ public class HudRectangle extends HudShape {
         );
 
     }
-//
-//    public void drawRect(int x1, int y1, int x2, int y2, int color){
+
+//    public void drawRectangle(int x1, int y1, int x2, int y2, int color){
 //        int temp;
 //
 //        //swaps if it's in the wrong orientation

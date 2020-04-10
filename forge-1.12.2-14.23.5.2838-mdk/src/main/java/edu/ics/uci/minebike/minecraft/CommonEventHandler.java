@@ -75,7 +75,10 @@ public class CommonEventHandler {
             CustomQuestManager.onWorldTick(event);
         }
     }
-
+//    @SubscribeEvent
+//    public void onPlayerTick(TickEvent.PlayerTickEvent event){
+//
+//    }
     @SubscribeEvent
     public void onPlayerChangeDim(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent event){
         System.out.println(event.player.getName() + " changed from DIM"+ event.fromDim + " to " + event.toDim);
@@ -111,6 +114,7 @@ public class CommonEventHandler {
 //        }
     }
 
+
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event){
         if(!spawned && event.player instanceof EntityPlayer){
@@ -123,6 +127,9 @@ public class CommonEventHandler {
                 spawnCustomClient();
             }
             spawned = true;
+        }
+        if(event.side.isClient() && event.player.world.provider.getDimension() != 0){
+            CustomQuestManager.onPlayerTick(event);
         }
     }
     @SubscribeEvent
