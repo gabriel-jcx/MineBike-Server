@@ -97,11 +97,18 @@ public class SoccerQuest extends AbstractCustomQuest {
     @SideOnly(Side.SERVER)
     @Override
     public boolean onPlayerJoin(EntityPlayer player){
-        EntityPlayerMP playerMP = (EntityPlayerMP)player;
+//        if(!isStarted && isWaiting)
+        System.out.println("On PlayerJoin triggerd on server side");
+
+        if(isStarted){
+
+            System.out.println("There's an ongoing soccer session, please wait!");
+            ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
+
+            return false;
+        }
 
         // teleporting here seems to be a problem!
-        System.out.println("On PlayerJoin triggerd on server side");
-        if(!isStarted){
             if(!isWaiting) {
 
                 server_waitingStartTime = System.currentTimeMillis();
@@ -109,16 +116,17 @@ public class SoccerQuest extends AbstractCustomQuest {
                 isWaiting = true;
                 //waitingEndTime = waitingStartTime + waitingTime;
             }
-            ServerUtils.sendQuestData(EnumPacketServer.SoccerQueueingTime,playerMP, Long.toString(this.server_waitingTime));
-            playersInGame.add(playerMP);
+            Potion potion = Potion.getPotionById(2);
+            System.out.println(potion.getName());
+            int secs = QuestUtils.getRemainingSeconds(server_waitingTime);
+            System.out.println(secs);
+
+
+            // I think the duration is in Ticks
+            player.addPotionEffect(new PotionEffect(potion,secs*20,1000000000));
+            ServerUtils.sendQuestData(EnumPacketServer.SoccerQueueingTime,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
+            playersInGame.add((EntityPlayerMP)player);
             return true;
-        }else{
-            System.out.println("There's an ongoing soccer session, please wait!");
-            ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,playerMP, Long.toString(this.server_waitingTime));
-
-            return false;
-        }
-
 
     }
 
@@ -305,13 +313,7 @@ public class SoccerQuest extends AbstractCustomQuest {
 
 //        int elpased_seconds = QuestUtils.getRemainingSeconds(System.currentTimeMillis(),client_waitingStartTime);
         client_waitingTime = client_waitingEndTime - System.currentTimeMillis();
-        if(!testFlag){
-            Potion potion = Potion.getPotionById(2);
-            System.out.println(potion.getName());
 
-            event.player.addPotionEffect(new PotionEffect(potion,3000,1000000000));
-            testFlag = true;
-        }
 
         int remaining_seconds = QuestUtils.getRemainingSeconds(client_waitingTime);
         if(remaining_seconds >= 0 ){
