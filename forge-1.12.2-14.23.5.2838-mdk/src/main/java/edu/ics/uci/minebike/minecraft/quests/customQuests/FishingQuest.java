@@ -41,6 +41,11 @@ public class FishingQuest  extends AbstractCustomQuest {
     }
 
     @Override
+    public void start(EntityPlayerSP player) {
+
+    }
+
+    @Override
     public void start(EntityJoinWorldEvent event) {
 
     }

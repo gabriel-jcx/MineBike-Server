@@ -26,7 +26,7 @@ public class BiGXMain {
     public static CommonEventHandler handler = new CommonEventHandler();
     public static CommonProxy proxy;// = new CommonProxy();
     public static ServerSaveManager saveManager = new ServerSaveManager();
-    public static CustomQuestManager questMangager = new CustomQuestManager();
+    public static CustomQuestManager questMangager;
 //    FMLne
     public HudManager hudManager;
     public static FMLEventChannel Channel;
@@ -35,6 +35,8 @@ public class BiGXMain {
     // preInit "Run before anything else. Read your config, create blocks, items,
     // etc, and register them with the GameRegistry."
     public void preInit(FMLPreInitializationEvent event){
+
+
         proxy = new CommonProxy();
         Channel = NetworkRegistry.INSTANCE.newEventDrivenChannel("MineBikeServer");
         ChannelPlayer = NetworkRegistry.INSTANCE.newEventDrivenChannel("MineBikeClient");
@@ -45,6 +47,8 @@ public class BiGXMain {
         // preInit goes here
         System.out.printf("MineBike: PreInit finished");
         logger = event.getModLog();
+
+
 
         NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
         MinecraftForge.EVENT_BUS.register(handler);
@@ -58,8 +62,11 @@ public class BiGXMain {
     public void init(FMLInitializationEvent event){
         // Initialization goes here!
         logger.info("Initalization Started");
-        if(event.getSide().isClient())
-            hudManager = HudManager.getInstance();
+        if(event.getSide().isClient()){
+            hudManager = HudManager.getInstance(Minecraft.getMinecraft());
+            MinecraftForge.EVENT_BUS.register(hudManager);
+        }
+
         logger.info("MineBike: Init finished");
 
         System.out.println();
@@ -70,6 +77,7 @@ public class BiGXMain {
         //handler = new CommonEventHandler();
 
         logger.info("MineBike: PostInit finished");
+        questMangager = new CustomQuestManager();
     }
 
 }

@@ -19,6 +19,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.entity.EntityCustomNpc;
@@ -32,8 +34,9 @@ public class Ada extends AbstractCustomNpc {
         location = LOCATION;
         texture = TEXTURE_NAME;
         this.register();
+
     }
-    @SideOnly(Side.CLIENT)
+    //@SideOnly(Side.CLIENT)
     public static void give_rod(EntityPlayer playerSP){
         //ResourceLocation resourcelocation = new ResourceLocation("minebikemod:game_rod"); //
         //Fishing rod name
@@ -45,7 +48,13 @@ public class Ada extends AbstractCustomNpc {
         playerSP.inventoryContainer.detectAndSendChanges();
 
     }
-    @Override
+    @SubscribeEvent
+    public void onPlayerTick(TickEvent.PlayerTickEvent e) {
+        if(!e.player.world.isRemote){
+
+        }
+    }
+        @Override
     public void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event) {
         System.out.println("Ada was interacted");
         for(EntityCustomNpc npc: NpcDatabase.npc_entities){
@@ -63,14 +72,14 @@ public class Ada extends AbstractCustomNpc {
                 System.out.println(" Start Fishing quest ");
                 //TODO: The Dialog
                 //TextComponentString give = new TextComponentString(String.format("/give %s fishingmadebetter:diamond_fishing_rod ", player.getName()));
-                give_rod( player);
+                //give_rod( player);
                 ClientUtils.sendData(EnumPacketClient.PlayerJoin,"223");
 
                 System.out.println("is Client Side!!!!");
             }
             else {
                 give_rod( player);
-                ServerUtils.telport((EntityPlayerMP)player, fishing.questStartLocation,fishing.DIMID);
+                //ServerUtils.telport((EntityPlayerMP)player, fishing.questStartLocation,fishing.DIMID);
             }
 //            if(!event.getWorld().isRemote){
 //

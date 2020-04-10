@@ -1,6 +1,11 @@
 package edu.ics.uci.minebike.minecraft.client.hud;
 
-public abstract class HudShape {
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
+public abstract class HudShape extends GuiScreen {
     protected int x;
     protected int y;
     protected boolean centerX;

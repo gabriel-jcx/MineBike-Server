@@ -18,25 +18,25 @@ public class PacketHandlerServer {
 
 
     }
-    @SubscribeEvent
-    public void onPacketData(FMLNetworkEvent.ClientCustomPacketEvent event){
-        System.out.println("Client got a custom packet from Server!");
-        if(event.side().isServer()) {
-            System.err.println("Somehow this ClientCustomPacketEvent is triggered at server???");
-            return;
-        }
-        ByteBuf buffer = event.getPacket().payload();
-        EnumPacketServer type = EnumPacketServer.values()[buffer.readInt()];
-        System.out.println("Enum is " + type.toString());
-        if(type == EnumPacketServer.SoccerQueueingTime){
-            String waitingTime = readString(buffer);
-            System.out.println("Current Waiting Time is " + waitingTime);
-        }
+//    @SubscribeEvent
+//    public void onPacketData(FMLNetworkEvent.ClientCustomPacketEvent event){
+//        System.out.println("Client got a custom packet from Server!");
+//        if(event.side().isServer()) {
+//            System.err.println("Somehow this ClientCustomPacketEvent is triggered at server???");
+//            return;
+//        }
+//        ByteBuf buffer = event.getPacket().payload();
+//        EnumPacketServer type = EnumPacketServer.values()[buffer.readInt()];
+//        System.out.println("Enum is " + type.toString());
+//        if(type == EnumPacketServer.SoccerQueueingTime){
+//            String waitingTime = readString(buffer);
+//            System.out.println("Current Waiting Time is " + waitingTime);
+//        }
         //EntityPlayer player = Minecraft.getMinecraft().player; // get the client side of the player
 //        if(player != null){
 //            ByteBuf buffer = event.getPacket().payload(); // get the packet payload
 //        }
-    }
+
     @SubscribeEvent
     public void onServerPacket(FMLNetworkEvent.ServerCustomPacketEvent event){
 
@@ -50,7 +50,7 @@ public class PacketHandlerServer {
         EnumPacketClient num = EnumPacketClient.values()[integer];
         System.out.println("Enum is " + num.toString());
         if(num == EnumPacketClient.PlayerJoin) {
-            String questNum = readString(buffer);
+            String questNum = CommonUtils.readString(buffer);
             System.out.println("questNum = " + questNum);
             int a = Integer.parseInt(questNum);
             System.out.println("a = " + a);
@@ -59,14 +59,6 @@ public class PacketHandlerServer {
         //System.out.println(readString(buffer));
         // teleport and start the quest here!!!!
     }
-    public static String readString(ByteBuf buffer) {
-        try {
-            byte[] bytes = new byte[buffer.readInt()];
-            buffer.readBytes(bytes);
-            return new String(bytes, Charsets.UTF_8);
-        } catch (IndexOutOfBoundsException var2) {
-            return null;
-        }
-    }
+
 
 }

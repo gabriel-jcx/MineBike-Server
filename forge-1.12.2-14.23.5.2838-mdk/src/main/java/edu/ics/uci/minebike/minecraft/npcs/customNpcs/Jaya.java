@@ -45,33 +45,13 @@ public class Jaya extends AbstractCustomNpc {
             }
         }
         AbstractCustomQuest soccer = CustomQuestManager.customQuests.get(WorldProviderSoccerQuest.DIM_ID);
-//        boolean isJoinSuccess = soccer.onPlayerJoin(player);
-        if(event.getWorld().isRemote)
+
+        if(event.getWorld().isRemote) // client send packet
             ClientUtils.sendData(EnumPacketClient.PlayerJoin,"222");
-        else
+        else    // server teleport the user
             ServerUtils.telport((EntityPlayerMP)player, soccer.questStartLocation,soccer.DIMID);
 
-//        if(isJoinSuccess){
-////            if(event.getWorld().isRemote){  // Client side send message
-////                telport((EntityPlayerSP) player, SoccerQuest.questStartLocation, WorldProviderSoccerQuest.DIM_ID);
-////                System.out.println("is Client Side!!!!");
-////                //player.sendMessage(new TextComponentString("/tpx 222 10 10 10"));
-////            }
-////            if(!event.getWorld().isRemote) {
-////                System.out.println("/tpx " + event.getEntityPlayer().getName() + " 10 10 10");
-////
-////                ((EntityCustomNpc) event.getTarget()).sendMessage(new TextComponentString("/tpx " + event.getEntityPlayer().getName() + " 10 10 10"));
-////            }
-//              if(!event.getWorld().isRemote){
-//                  Vec3d startLoc = soccer.getStartLocation();
-//                  System.out.println("executing the teleportation by Jaya!");
-//                  ServerUtils.telport((EntityPlayerMP)player,startLoc,soccer.DIMID);
-//                  //NoppesUtilPlayer.teleportPlayer((EntityPlayerMP)player,startLoc.x,startLoc.y,startLoc.z,soccer.DIMID);
-//              }
-//        }else{
-//            System.out.println(player.getName() + " join ");
-//            // Show soccer join error message here!
-//        }
+
     }
 
 }

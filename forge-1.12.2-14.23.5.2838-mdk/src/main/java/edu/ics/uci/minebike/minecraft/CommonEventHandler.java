@@ -6,6 +6,7 @@ import edu.ics.uci.minebike.minecraft.npcs.NpcUtils;
 import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -66,7 +67,7 @@ public class CommonEventHandler {
         EntityPlayer player = event.getEntityPlayer();
         if(event.getTarget() instanceof EntityCustomNpc) {
             NpcEventHandler.customNpcInteract(player, event);
-    }
+        }
     }
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event){
@@ -78,15 +79,21 @@ public class CommonEventHandler {
     @SubscribeEvent
     public void onPlayerChangeDim(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent event){
         System.out.println(event.player.getName() + " changed from DIM"+ event.fromDim + " to " + event.toDim);
-        if(event.fromDim == WorldProviderSoccerQuest.DIM_ID){
+        if(event.fromDim == WorldProviderSoccerQuest.DIM_ID ){
             System.out.println(event.player.getName() + " is leaving Soccer");
-            AbstractCustomQuest soccer = CustomQuestManager.customQuests.get(222);
-            soccer.end();
+            SoccerQuest soccer = (SoccerQuest)CustomQuestManager.customQuests.get(222);
+            if(soccer.playersInGame.size() == 0){
+                // forcing Soccer to end
+                soccer.end();
+            }
+//            soccer.end();
         }
     }
     @SubscribeEvent
     public void onPlayerLogout(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event){
+        System.out.println(event.player.dimension);
         System.out.println(event.player.getName() + " has logged out");
+
     }
     @SubscribeEvent
     public void onEntityJoin(EntityJoinWorldEvent event){
@@ -143,7 +150,7 @@ public class CommonEventHandler {
     }
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event ){
-        System.out.println("A world is loaded, WorldEvent.Load triggerd");
+        //System.out.println("A world is loaded, WorldEvent.Load triggerd");
         if(event.getWorld().provider.getDimension() == 0){
             System.out.println("Loading the overall world");
             //List<Entity> list = event.getWorld().getLoadedEntityList();

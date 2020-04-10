@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft;
 
+import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.village.MerchantRecipeList;
@@ -14,6 +15,15 @@ import java.util.UUID;
 import static noppes.npcs.Server.writeString;
 
 public class CommonUtils {
+    public static String readString(ByteBuf buffer) {
+        try {
+            byte[] bytes = new byte[buffer.readInt()];
+            buffer.readBytes(bytes);
+            return new String(bytes, Charsets.UTF_8);
+        } catch (IndexOutOfBoundsException var2) {
+            return null;
+        }
+    }
     public static boolean fillBuffer(ByteBuf buffer, Enum enu, Object... obs) throws IOException {
         buffer.writeInt(enu.ordinal());
         Object[] var3 = obs;

@@ -20,8 +20,8 @@ public class CommonProxy implements IGuiHandler {
         DimensionManager.registerDimension(fishingDtype.getId(),fishingDtype);
     }
     public void load(){
-        BiGXMain.Channel.register(new PacketHandlerServer());
-        BiGXMain.ChannelPlayer.register(new PacketHandlerClient());
+        BiGXMain.Channel.register(new PacketHandlerClient());
+        BiGXMain.ChannelPlayer.register(new PacketHandlerServer());
     }
 
     @Nullable
