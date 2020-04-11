@@ -61,8 +61,10 @@ public class SoccerQuest extends AbstractCustomQuest {
 
     // Server Tracker
     private long server_waitingStartTime = 0;
+    private long server_waitingEndTime = 0;
     private long server_waitingTime = GAME_WAITING_TIME;
     private int server_waitingTime_seconds = (int)(GAME_WAITING_TIME/1000);
+
 
     // Client Tracker
     private long client_waitingTime  = 0;
@@ -112,7 +114,7 @@ public class SoccerQuest extends AbstractCustomQuest {
             if(!isWaiting) {
 
                 server_waitingStartTime = System.currentTimeMillis();
-
+                server_waitingEndTime = server_waitingStartTime + server_waitingTime;
                 isWaiting = true;
                 //waitingEndTime = waitingStartTime + waitingTime;
             }
@@ -269,7 +271,8 @@ public class SoccerQuest extends AbstractCustomQuest {
 
         if(elapsed_seconds < server_waitingTime_seconds){
             // Decrement milliseconds count for Client
-            server_waitingTime = curr - server_waitingStartTime;
+
+            server_waitingTime = server_waitingEndTime - curr;
         }else{
             // NOTE: this section re-initialize the waiting state and trigger start for User
 
