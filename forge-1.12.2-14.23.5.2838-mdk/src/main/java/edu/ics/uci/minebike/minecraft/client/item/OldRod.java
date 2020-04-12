@@ -193,7 +193,7 @@ public class OldRod extends EntityFishHook
         this.motionY = (double)(-MathHelper.sin(this.rotationPitch / 180.0F * (float)Math.PI) * f);
         this.handleHookCasting(this.motionX, this.motionY, this.motionZ, 1.5F, 1.0F);
 
-
+        //Todo: If is possible, implement the following method for spawning the fishingSpots.
         //adds all the common fish to every fish location
 //        for(int i = 0; i < 7; i++)
 //        {
@@ -270,7 +270,7 @@ public class OldRod extends EntityFishHook
         if (beginPull == false && this.ticksCatchable > 0)
         {
             beginPulling();
-//            entityitem = new CustomEntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingResult());
+            entityitem = new OldRod(this.world, this.posX, this.posY, this.posZ, this.getFishingResult());
         }
 
         //Stops the players movement
