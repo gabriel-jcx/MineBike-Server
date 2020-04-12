@@ -75,7 +75,7 @@ public class HudString extends HudShape {
 
         this.text = text;
         this.shadow = true;
-
+        HudManager.getInstance(mc).shapes.add(this);
     }
 
     /**
@@ -103,6 +103,7 @@ public class HudString extends HudShape {
 
         this.color = 0xffffffff;
         this.shadow = true;
+        HudManager.getInstance(mc).shapes.add(this);
     }
 
     /**
@@ -161,6 +162,7 @@ public class HudString extends HudShape {
 
         this.color = color;
         this.shadow = true;
+        HudManager.getInstance(mc).shapes.add(this);
     }
 
 }

@@ -29,24 +29,21 @@ public class HudManager extends GuiScreen {
         this.mc = mc;
     }
 
+    @Deprecated
     public void unregisterRectangle(HudRectangle rect){
         if(rectangles.contains(rect))
             rectangles.remove(rect);
         else
             System.err.println("Error: Removing a rectangle thats not registered");
     }
+    @Deprecated
     public void unregisterString(HudString string){
         if(strings.contains(string))
             strings.remove(string);
         else
             System.err.println("Error: Removing a rectangle thats not registered");
     }
-//
-//    @SubscribeEvent
-//    public void onPlayerTick(TickEvent.PlayerTickEvent event){
-//        EntityPlayer player = event.player;
-//
-//    }
+
     public static HudManager getInstance(Minecraft mc){
         if(instance == null)
             instance = new HudManager(mc);

@@ -20,6 +20,12 @@ public abstract class HudShape extends GuiScreen {
         this.x = x;
         this.y = y;
     }
+    public int getColor() {
+        return this.color;
+    }
+    public void setColor(int color){
+        this.color = color;
+    }
 
     public boolean unregister(){
         if(HudManager.getInstance(mc).shapes.contains(this)){

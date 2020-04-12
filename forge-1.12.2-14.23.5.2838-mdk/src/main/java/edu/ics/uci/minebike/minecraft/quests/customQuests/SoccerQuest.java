@@ -91,6 +91,7 @@ public class SoccerQuest extends AbstractCustomQuest {
 //    BlockPos leftGoal
 
 //    @SideOnly(Side.CLIENT)
+
     private HudRectangle clockRect;
     private HudString clockStr;
     private HudRectangle scoreLeftRect;
@@ -246,8 +247,11 @@ public class SoccerQuest extends AbstractCustomQuest {
         client_endTime = client_startTime + GAME_SESSION_TIME;
         isWaiting = false;
         isStarted = true;
-
-
+//
+//        scoreLeftRect = new HudRectangle();
+//        scoreLeftStr = new HudString();
+//        scoreRightRect = new HudString();
+//        scoreRightStr = new HudString();
         // Here need to
     }
     @Override
@@ -265,11 +269,14 @@ public class SoccerQuest extends AbstractCustomQuest {
 
         }else{
             // Client side
-
-
             // Remove the hud element
-            clockStr.unregister();
-            clockRect.unregister();
+            if(isWaiting){
+                clockStr.unregister();
+                clockRect.unregister();
+            }
+            if(isStarted){
+
+            }
         }
         isStarted = false; // set both client and server to not
         return;
