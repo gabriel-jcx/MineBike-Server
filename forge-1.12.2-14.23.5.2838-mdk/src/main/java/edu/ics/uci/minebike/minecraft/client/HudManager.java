@@ -59,12 +59,15 @@ public class HudManager extends GuiScreen {
 
 
         updateResolution();
-//        System.out.println("not returned");
-        for(HudRectangle rect: rectangles)
-            rect.draw();
-        for(HudString str: strings){
-            str.draw();
+        for(HudShape shape : shapes){
+            shape.draw();
         }
+////        System.out.println("not returned");
+//        for(HudRectangle rect: rectangles)
+//            rect.draw();
+//        for(HudString str: strings){
+//            str.draw();
+//        }
     }
     private void updateResolution(){
         ScaledResolution sr = new ScaledResolution(this.mc);
