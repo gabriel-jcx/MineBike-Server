@@ -4,6 +4,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;
@@ -11,12 +12,14 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
-import net.theawesomegem.fishingmadebetter.common.item.fishingrod.ItemBetterFishingRod;
+//import net.theawesomegem.fishingmadebetter.common.item.fishingrod.ItemBetterFishingRod;
 
-public class ItemGameFishingRod extends ItemBetterFishingRod {
+public class ItemGameFishingRod extends ItemFishingRod {
     //Create a custom fishing rod based on Player's prescription
-    public ItemGameFishingRod(String name, int reelRange, int tuggingAmount, int dragSpeed) {
-        super("game_fish_rod", 20, 1, 60);
+
+    public ItemGameFishingRod() {
+        super();
+        //super("game_fish_rod", 20, 1, 60);
     }
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
@@ -54,6 +57,7 @@ public class ItemGameFishingRod extends ItemBetterFishingRod {
                 worldIn.spawnEntity(gameHook);
 
             }
+
 
             playerIn.swingArm(handIn);
             playerIn.addStat(StatList.getObjectUseStats(this));
