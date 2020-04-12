@@ -78,6 +78,7 @@ public class GameFishingEvent  {
 //
 //                                if (canFish && fishingData.getFishDistance() >= fishingData.getFishDeepLevel()) {
                                     System.out.println("Spawn fish.........");
+                                    //TODO: test spawn_fish(), use one Item_stack, rather than the list
                                     ItemStack itemStack = testing.fish_testing();
                                     System.out.println(itemStack.getDisplayName());
                                     EntityFishHook hook = e.getHookEntity();

@@ -1,7 +1,9 @@
 package edu.ics.uci.minebike.minecraft.client.AI;
 import com.teammetallurgy.aquaculture.items.AquacultureItems;
+import com.teammetallurgy.aquaculture.items.ItemFish;
 import net.minecraft.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -26,8 +28,11 @@ public class FishingAI {
         return shrooma;
 
     }
-    public ItemStack spawn_fish(){
+    public ArrayList<ItemFish> spawn_fish(){
+        //TODO: Cole spawn many fishes, also EnumFishType fish: EnumFishType.values() on OldRod.java
+
         //AI using Heart Rate
+
         return null;
     }
     private float calc_avg(){
