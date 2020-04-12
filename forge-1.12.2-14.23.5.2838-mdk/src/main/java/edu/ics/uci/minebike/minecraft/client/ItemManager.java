@@ -1,6 +1,7 @@
 package edu.ics.uci.minebike.minecraft.client;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemFishingRod;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -11,7 +12,7 @@ import net.theawesomegem.fishingmadebetter.common.item.fishingrod.ItemBetterFish
 import static net.theawesomegem.fishingmadebetter.common.item.ItemManager.FISHING_ROD_DIAMOND;
 
 public class ItemManager {
-    public static final ItemBetterFishingRod GAME_FISHING_ROD = new ItemGameFishingRod("game_fish_rod", 20,5,1);
+    public static final ItemFishingRod GAME_FISHING_ROD = new ItemGameFishingRod();
 
 
     public ItemManager() {
@@ -23,8 +24,7 @@ public class ItemManager {
 
 
     public static void registerModels() {
-        GAME_FISHING_ROD.registerItemModel(GAME_FISHING_ROD
-        );
+//        GAME_FISHING_ROD.regiregisterItemModel(GAME_FISHING_ROD);
 
     }
 }
