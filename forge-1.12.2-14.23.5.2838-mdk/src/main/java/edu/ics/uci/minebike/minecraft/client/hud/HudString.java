@@ -131,7 +131,7 @@ public class HudString extends HudShape {
 
         this.color = 0xffffffff;
         this.shadow = true;
-        HudManager.getInstance(mc).strings.add(this);
+        HudManager.getInstance(mc).shapes.add(this);
     }
 
     /**

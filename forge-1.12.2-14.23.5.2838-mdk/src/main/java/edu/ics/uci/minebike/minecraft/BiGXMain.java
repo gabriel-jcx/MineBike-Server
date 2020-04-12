@@ -65,6 +65,7 @@ public class BiGXMain {
         if(event.getSide().isClient()){
             hudManager = HudManager.getInstance(Minecraft.getMinecraft());
             MinecraftForge.EVENT_BUS.register(hudManager);
+
         }
 
         logger.info("MineBike: Init finished");

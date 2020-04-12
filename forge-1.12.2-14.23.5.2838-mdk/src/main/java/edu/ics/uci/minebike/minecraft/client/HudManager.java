@@ -1,6 +1,7 @@
 package edu.ics.uci.minebike.minecraft.client;
 
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
+import edu.ics.uci.minebike.minecraft.client.hud.HudShape;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -20,6 +21,7 @@ public class HudManager extends GuiScreen {
     private static HudManager instance = null;
     public ArrayList<HudRectangle> rectangles = new ArrayList<>();
     public ArrayList<HudString> strings = new ArrayList<>();
+    public ArrayList<HudShape> shapes = new ArrayList<>();
 //    public Minecraft mc;
     public static int mcWidth;
     public static int mcHeight;

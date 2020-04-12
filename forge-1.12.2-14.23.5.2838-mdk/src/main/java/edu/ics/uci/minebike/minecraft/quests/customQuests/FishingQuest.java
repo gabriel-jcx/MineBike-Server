@@ -39,6 +39,10 @@ public class FishingQuest  extends AbstractCustomQuest {
         ServerUtils.telport((EntityPlayerMP) playerMP, questStartLocation, DIMID);
 
     }
+    @Override
+    public void start(){
+
+    }
 
     @Override
     public void start(EntityPlayerSP player) {

@@ -1,5 +1,7 @@
 package edu.ics.uci.minebike.minecraft.client.hud;
 
+import edu.ics.uci.minebike.minecraft.client.HudManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -17,5 +19,13 @@ public abstract class HudShape extends GuiScreen {
     protected void setCenter(int x, int y){
         this.x = x;
         this.y = y;
+    }
+
+    public boolean unregister(){
+        if(HudManager.getInstance(mc).shapes.contains(this)){
+            HudManager.getInstance(mc).shapes.remove(this);
+            return true;
+        }
+        return false;
     }
 }

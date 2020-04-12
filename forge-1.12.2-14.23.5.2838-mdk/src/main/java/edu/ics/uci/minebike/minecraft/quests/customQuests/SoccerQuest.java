@@ -10,8 +10,11 @@ import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
@@ -41,6 +44,9 @@ import java.util.Scanner;
 
 import static net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer;
 
+
+
+// NOTE: many of the fields can be more optimized i think, getting lazy now LOL
 public class SoccerQuest extends AbstractCustomQuest {
 
     private final long GAME_WAITING_TIME = 30000; // millisecond
@@ -55,28 +61,46 @@ public class SoccerQuest extends AbstractCustomQuest {
     public WorldServer soccerWS = null;
 
     // npc AI fields
-    public static List<int[]> npcPathList = new ArrayList<int[]>();
+    // public static List<int[]> npcPathList = new ArrayList<int[]>();
+
     // Player fields
     public ArrayList<EntityPlayerMP> playersInGame  = new ArrayList<>();
 
-    // Server Tracker
+    // Server waiting Tracker
     private long server_waitingStartTime = 0;
     private long server_waitingEndTime = 0;
     private long server_waitingTime = GAME_WAITING_TIME;
     private int server_waitingTime_seconds = (int)(GAME_WAITING_TIME/1000);
 
 
-    // Client Tracker
+    // Client waiting Tracker
     private long client_waitingTime  = 0;
     private long client_waitingStartTime = 0;
     private long client_waitingEndTime = 0;
     private int client_waitingTime_seconds = 0;
 
-    @SideOnly(Side.CLIENT)
+    // Server start Tracker
+
+
+    // Client start Tracker
+    private long client_startTime = 0;
+    private long client_endTime = 0;
+
+
+    // Soccer field goal locations
+//    BlockPos leftGoal
+
+//    @SideOnly(Side.CLIENT)
     private HudRectangle clockRect;
     private HudString clockStr;
-
+    private HudRectangle scoreLeftRect;
+    private HudString scoreLeftStr;
+    private HudRectangle scoreRightRect;
+    private HudString scoreRightStr;
     private long waitingEndTime;
+
+
+
 
     public boolean isWaiting = false;
 
@@ -90,8 +114,8 @@ public class SoccerQuest extends AbstractCustomQuest {
         this.isStarted = false;
         this.questStartLocation = new Vec3d (-160, 4,1142);
         //this.questStartLocation = new Vec3d(11,10,11);
-
-
+//        InventoryPlayer p = player.inventory;
+//        p.
 
     }
 
@@ -118,14 +142,15 @@ public class SoccerQuest extends AbstractCustomQuest {
                 isWaiting = true;
                 //waitingEndTime = waitingStartTime + waitingTime;
             }
-            Potion potion = Potion.getPotionById(2);
-            System.out.println(potion.getName());
-            int secs = QuestUtils.getRemainingSeconds(server_waitingTime);
+            Potion slow_potion = Potion.getPotionById(2);
+            Potion jump_anti_boost = Potion.getPotionById(8);
+            System.out.println(slow_potion.getName()+ " " + jump_anti_boost.getName());
+            int secs = QuestUtils.getRemainingSeconds(server_waitingEndTime -System.currentTimeMillis());
             System.out.println(secs);
-
-
             // I think the duration is in Ticks
-            player.addPotionEffect(new PotionEffect(potion,secs*20,1000000000));
+            player.addPotionEffect(new PotionEffect(slow_potion,secs*20,1000000000));
+
+            player.addPotionEffect(new PotionEffect(jump_anti_boost, secs*20, 128));
             ServerUtils.sendQuestData(EnumPacketServer.SoccerQueueingTime,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
             playersInGame.add((EntityPlayerMP)player);
             return true;
@@ -158,8 +183,7 @@ public class SoccerQuest extends AbstractCustomQuest {
 
     }
     @Override
-    public void start(EntityJoinWorldEvent event)
-    {
+    public void start(EntityJoinWorldEvent event) {
 //        if(isStarted){
 //            System.err.println("Error: The Soccer Quest is already started!");
 //            return;
@@ -214,18 +238,40 @@ public class SoccerQuest extends AbstractCustomQuest {
         // spawn associated NPC and ball if not spawned
     }
 
+
+    @Override
+    public void start(){ // This is the start for client
+
+        client_startTime = System.currentTimeMillis();
+        client_endTime = client_startTime + GAME_SESSION_TIME;
+        isWaiting = false;
+        isStarted = true;
+
+
+        // Here need to
+    }
     @Override
     public void end() {
-        int numDiamonds = 10;   //can multiply by a scalar depending on difficulty
-        for(EntityPlayer player: this.playersInGame){
-            giveItemToPlayer(player, new ItemStack(Items.DIAMOND, numDiamonds));
-            ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
+
+        if(soccerWS != null && !soccerWS.isRemote){
+            int numDiamonds = 10;   //can multiply by a scalar depending on difficulty
+            for(EntityPlayer player: this.playersInGame){
+                giveItemToPlayer(player, new ItemStack(Items.DIAMOND, numDiamonds));
+                ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
+            }
+            soccerWS.removeEntity(ball);
+
+            ball = null;
+
+        }else{
+            // Client side
+
+
+            // Remove the hud element
+            clockStr.unregister();
+            clockRect.unregister();
         }
-
-        soccerWS.removeEntity(ball);
-
-        ball = null;
-        isStarted = false;
+        isStarted = false; // set both client and server to not
         return;
     }
 
@@ -242,7 +288,7 @@ public class SoccerQuest extends AbstractCustomQuest {
                 this.serverStartTick(event);
             }
         }else{ // Client Side
-
+//            event.world.getChunkFromBlockCoords().
 //
         }
     }
@@ -255,12 +301,31 @@ public class SoccerQuest extends AbstractCustomQuest {
         }
     }
     private void serverStartTick(TickEvent.WorldTickEvent event){
-//        System.out.println("The ball is at " + ball.posX + " " + ball.posY + " " + ball.posX);
-//        this.end();
-        // need to check the ball locations
+        // server need to check position of the ball in each tick and determines if ball needs
+        // to be respawned back at the initial location
+
+        // Everytime a goal happens, need to transmit the packet to each client for updating the score
+    }
+
+
+    private boolean entityInsideLeftGoal (EntityLiving entity){
+        return false;
+    }
+    private boolean entityInsideRightGoal (EntityLiving entity){
+        return false;
     }
     private void clientStartTick(TickEvent.PlayerTickEvent event){
+        long curr = System.currentTimeMillis();
 
+        // The logic works based on the fact that the GAME last more than 3 seconds!!!
+        if(curr - client_startTime < 3000) // 3000ms for displaying GAMESTART!
+            clockStr.text = "GAME START! KICK THE BALL TOWARDS THE GOAL!~";
+        else if(curr > client_endTime)
+            this.end();
+        else{
+            long remaining_millisecs = client_endTime - curr;
+            clockStr.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(remaining_millisecs));
+        }
     }
 
 
@@ -272,7 +337,8 @@ public class SoccerQuest extends AbstractCustomQuest {
         if(elapsed_seconds < server_waitingTime_seconds){
             // Decrement milliseconds count for Client
 
-            server_waitingTime = server_waitingEndTime - curr;
+//            server_waitingTime = server_waitingEndTime - curr;  It seems unnecessary to do this computation here
+
         }else{
             // NOTE: this section re-initialize the waiting state and trigger start for User
 
@@ -310,13 +376,11 @@ public class SoccerQuest extends AbstractCustomQuest {
         clockRect = new HudRectangle(-30, 30, 60, 30, 0x000000ff, true, false);
         clockStr = new HudString(0,35, QuestUtils.formatSeconds(client_waitingTime_seconds),2.0f,true, false);
         isWaiting = true;
-
     }
     public void clientWaitingTick(TickEvent.PlayerTickEvent event){
 
 //        int elpased_seconds = QuestUtils.getRemainingSeconds(System.currentTimeMillis(),client_waitingStartTime);
         client_waitingTime = client_waitingEndTime - System.currentTimeMillis();
-
 
         int remaining_seconds = QuestUtils.getRemainingSeconds(client_waitingTime);
         if(remaining_seconds >= 0 ){

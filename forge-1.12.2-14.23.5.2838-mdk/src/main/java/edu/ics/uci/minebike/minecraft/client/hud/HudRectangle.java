@@ -20,7 +20,7 @@ public class HudRectangle extends HudShape {
         this.w = w;
         this.h = h;
         this.color = color;
-        HudManager.getInstance(mc).rectangles.add(this);
+        HudManager.getInstance(mc).shapes.add(this);
     }
 //    @Override
 ////    public void finalize(){
@@ -28,6 +28,8 @@ public class HudRectangle extends HudShape {
 ////        if(HudManager.getInstance(mc).rectangles.contains(this))
 ////            HudManager.getInstance(mc).rectangles.remove(this);
 //    }
+
+
     @Override
     public void draw(){
         int offsetX = (this.centerX ? HudManager.mcWidth/2 : 0);
