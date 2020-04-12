@@ -36,6 +36,11 @@ public class PacketHandlerClient {
             System.out.println("Current Waiting Time is " + waitingTime);
             SoccerQuest soccer = (SoccerQuest) CustomQuestManager.customQuests.get(222);
             soccer.clientStartWaiting(waitingTime);
+        }else if(type == EnumPacketServer.QuestStart){
+            String DIMID = CommonUtils.readString(buffer);
+            System.out.println("Client received a packet start on quest " + DIMID);
+
+            CustomQuestManager.findAndStart(Integer.parseInt(DIMID));
         }
         //EntityPlayer player = Minecraft.getMinecraft().player; // get the client side of the player
 //        if(player != null){

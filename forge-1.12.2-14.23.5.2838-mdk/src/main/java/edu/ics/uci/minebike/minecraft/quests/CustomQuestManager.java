@@ -37,6 +37,12 @@ public class CustomQuestManager {
         return;
     }
 
+    public static void findAndStart(int dimID){
+        AbstractCustomQuest quest = customQuests.get(dimID);
+        if(quest != null){
+            quest.start();
+        }
+    }
     public static void onWorldTick(TickEvent.WorldTickEvent event){
         AbstractCustomQuest quest = customQuests.get(event.world.provider.getDimension());
         if(quest != null){

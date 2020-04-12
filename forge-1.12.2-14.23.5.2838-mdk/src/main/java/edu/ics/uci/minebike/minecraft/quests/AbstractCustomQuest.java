@@ -42,6 +42,7 @@ public abstract class AbstractCustomQuest{
     @SideOnly(Side.CLIENT)
     public abstract void start(EntityPlayerSP player);
     public abstract void start(EntityJoinWorldEvent event);
+    public abstract void start(); // This is the start interface for client
     public abstract void end();
 
 
