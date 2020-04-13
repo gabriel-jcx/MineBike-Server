@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.init.Items;
 import net.minecraft.util.math.Vec3d;
@@ -50,8 +51,8 @@ import static net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer;
 // NOTE: many of the fields can be more optimized i think, getting lazy now LOL
 public class SoccerQuest extends AbstractCustomQuest {
 
-    private final long GAME_WAITING_TIME = 30000;//30000; // millisecond
-    private final long GAME_SESSION_TIME = 30000;//300000; // millisecond => equivalent to 5 mins
+    private final long GAME_WAITING_TIME = 10000;//30000; // millisecond
+    private final long GAME_SESSION_TIME = 300000;//300000; // millisecond => equivalent to 5 mins
     private final int GOAL_TICK_TIME = 5; // If ball stays in the goal for 5 ticks
 //    private final Vec3d ball_location = new Vec3d(-165, 4,1145);
     private final Vec3d ball_location = new Vec3d(-221,4,1138);
@@ -121,6 +122,7 @@ public class SoccerQuest extends AbstractCustomQuest {
 
     // Temp flag
     public boolean testFlag = false;
+    public int prev = 0;
 
     public SoccerQuest(){
         super();
@@ -335,10 +337,18 @@ public class SoccerQuest extends AbstractCustomQuest {
         }else if(isStarted){
             this.clientStartTick(event);
         }
+//        DimensionManager.getWorld(222).spawnParticle(EnumParticleTypes.WATER_WAKE);
     }
     private void serverStartTick(TickEvent.WorldTickEvent event){
         long curr = System.currentTimeMillis();
         if(ball != null){
+            int now = QuestUtils.getRemainingSeconds(curr);
+            if(prev != now){
+                System.out.println("ball is at " + ball.getPosition());
+                System.out.println("Red Goal " + redGoal);
+                System.out.println("Blue Goal " + blueGoal);
+                prev = now;
+            }
             if(isBallInsideGoal(ball.getPosition(),blueGoal) || isBallInsideGoal(ball.getPosition(), redGoal)){
                 this.ball_in_goal_tick++;
                 System.out.println("GOALLLLL!");
@@ -368,8 +378,10 @@ public class SoccerQuest extends AbstractCustomQuest {
     }
     private boolean isBallInsideGoal(BlockPos ball, GoalRectangle goal){
         if(ball.getX() > goal.x1 && ball.getX() < goal.x2
-        && ball.getY() > goal.y1 && ball.getY() < goal.y2)
+        && ball.getZ() > goal.y1 && ball.getZ() < goal.y2){
             return true;
+
+        }
         return false;
     }
 
