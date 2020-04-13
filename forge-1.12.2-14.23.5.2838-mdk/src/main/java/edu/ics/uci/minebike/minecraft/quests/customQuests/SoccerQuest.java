@@ -53,12 +53,12 @@ public class SoccerQuest extends AbstractCustomQuest {
     private final long GAME_WAITING_TIME = 10000;//30000; // millisecond
     private final long GAME_SESSION_TIME = 10000;//300000; // millisecond => equivalent to 5 mins
     private final int GOAL_TICK_TIME = 5; // If ball stays in the goal for 5 ticks
-    private final Vec3d ball_location = new Vec3d(-165, 4,1145);
-
+//    private final Vec3d ball_location = new Vec3d(-165, 4,1145);
+    private final Vec3d ball_location = new Vec3d(-164,4,1144);
 
     // A place holder for now for the goal locations
-    private final GoalRectangle blueGoal = new GoalRectangle(0,0,10,10);
-    private final GoalRectangle redGoal = new GoalRectangle(20,20,30, 30);
+    private final GoalRectangle blueGoal = new GoalRectangle(-161,1147,-155,1139);
+    private final GoalRectangle redGoal = new GoalRectangle(-277,1139,-283, 1147);
 
     // Soccer ball fields
     private EntitySoccerBall ball;
@@ -194,6 +194,8 @@ public class SoccerQuest extends AbstractCustomQuest {
     // This is the server side of starting, send a trigger packet to each Player for starting the quest!
     @Override
     public void start(EntityPlayerMP player) {
+//        if(ball != null)
+//            ball.setPosition(questStartLocation.x,questStartLocation.y, questStartLocation.z + 20);
         System.out.println("start is triggered for " + player.getName());
         // The DIMID is used for mapping QuestStart to this quest
         ServerUtils.sendQuestData(EnumPacketServer.QuestStart, player, Long.toString(this.DIMID));
@@ -273,6 +275,7 @@ public class SoccerQuest extends AbstractCustomQuest {
         // Hud Elements
         clockStr.y -= 20;
         clockStr.scale = 1.0f; // make it smaller during the game
+
 //        scoreLeftRect = new HudRectangle();
         scoreLeftStr = new HudString(-40,35, Integer.toString(scoreLeft), 1.5f, 0x00ff0000, true, false);
 ////        scoreRightRect = new HudString();
@@ -285,14 +288,17 @@ public class SoccerQuest extends AbstractCustomQuest {
     public void end() {
 
         if(soccerWS != null && !soccerWS.isRemote){
+            soccerWS.removeEntity(ball);
+            ball = null;
+            
             int numDiamonds = 10;   //can multiply by a scalar depending on difficulty
+
             for(EntityPlayer player: this.playersInGame){
                 giveItemToPlayer(player, new ItemStack(Items.DIAMOND, numDiamonds));
 //                ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
             }
             //ball.isDead = true;
-            soccerWS.removeEntity(ball);
-            ball = null;
+
 
         }else{
             clockStr.unregister();
@@ -342,6 +348,9 @@ public class SoccerQuest extends AbstractCustomQuest {
                 }else if(isBallInsideGoal(ball.getPosition(),redGoal)){
                     scoreRight++;
                 }
+
+                // DO I need to reset the players?
+
                 ball.setPosition(ball_location.x, ball_location.y, ball_location.z); // reset the ball pos
             }
         }
