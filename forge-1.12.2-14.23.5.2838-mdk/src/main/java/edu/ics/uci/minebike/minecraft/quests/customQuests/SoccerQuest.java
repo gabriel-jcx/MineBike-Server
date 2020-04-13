@@ -39,6 +39,7 @@ import noppes.npcs.entity.data.DataAI;
 
 import java.time.Clock;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -49,10 +50,15 @@ import static net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer;
 // NOTE: many of the fields can be more optimized i think, getting lazy now LOL
 public class SoccerQuest extends AbstractCustomQuest {
 
-    private final long GAME_WAITING_TIME = 30000; // millisecond
-    private final long GAME_SESSION_TIME = 300000; // millisecond => equivalent to 5 mins
+    private final long GAME_WAITING_TIME = 10000;//30000; // millisecond
+    private final long GAME_SESSION_TIME = 10000;//300000; // millisecond => equivalent to 5 mins
+    private final int GOAL_TICK_TIME = 5; // If ball stays in the goal for 5 ticks
     private final Vec3d ball_location = new Vec3d(-165, 4,1145);
 
+
+    // A place holder for now for the goal locations
+    private final GoalRectangle blueGoal = new GoalRectangle(0,0,10,10);
+    private final GoalRectangle redGoal = new GoalRectangle(20,20,30, 30);
 
     // Soccer ball fields
     private EntitySoccerBall ball;
@@ -80,6 +86,9 @@ public class SoccerQuest extends AbstractCustomQuest {
     private int client_waitingTime_seconds = 0;
 
     // Server start Tracker
+    private long server_endTime = 0;
+    private long server_startTime = 0;
+    private int ball_in_goal_tick = 0;
 
 
     // Client start Tracker
@@ -87,16 +96,20 @@ public class SoccerQuest extends AbstractCustomQuest {
     private long client_endTime = 0;
 
 
+
+
     // Soccer field goal locations
 //    BlockPos leftGoal
 
 //    @SideOnly(Side.CLIENT)
 
-    private HudRectangle clockRect;
+//    private HudRectangle clockRect;
     private HudString clockStr;
     private HudRectangle scoreLeftRect;
+    private int scoreLeft = 0;
     private HudString scoreLeftStr;
     private HudRectangle scoreRightRect;
+    private int scoreRight = 0;
     private HudString scoreRightStr;
     private long waitingEndTime;
 
@@ -137,9 +150,17 @@ public class SoccerQuest extends AbstractCustomQuest {
 
         // teleporting here seems to be a problem!
             if(!isWaiting) {
-
                 server_waitingStartTime = System.currentTimeMillis();
                 server_waitingEndTime = server_waitingStartTime + server_waitingTime;
+                WorldServer ws = DimensionManager.getWorld(this.DIMID);
+//                synchronized(ws.getLoadedEntityList()){
+//                    Iterator iter = ws.getLoadedEntityList().iterator();
+//                    while(iter.hasNext()){
+//                        Entity entity = (Entity)iter.next();
+//                        if(!(entity instanceof EntityPlayer))
+//                            entity.isDead = true;
+//                    }
+//                }
                 isWaiting = true;
                 //waitingEndTime = waitingStartTime + waitingTime;
             }
@@ -149,9 +170,9 @@ public class SoccerQuest extends AbstractCustomQuest {
             int secs = QuestUtils.getRemainingSeconds(server_waitingEndTime -System.currentTimeMillis());
             System.out.println(secs);
             // I think the duration is in Ticks
-            player.addPotionEffect(new PotionEffect(slow_potion,secs*20,1000000000));
+            //player.addPotionEffect(new PotionEffect(slow_potion,secs*20,1000000000));
 
-            player.addPotionEffect(new PotionEffect(jump_anti_boost, secs*20, 128));
+            //player.addPotionEffect(new PotionEffect(jump_anti_boost, secs*20, 128));
             ServerUtils.sendQuestData(EnumPacketServer.SoccerQueueingTime,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
             playersInGame.add((EntityPlayerMP)player);
             return true;
@@ -247,11 +268,17 @@ public class SoccerQuest extends AbstractCustomQuest {
         client_endTime = client_startTime + GAME_SESSION_TIME;
         isWaiting = false;
         isStarted = true;
-//
+
+
+        // Hud Elements
+        clockStr.y -= 20;
+        clockStr.scale = 1.0f; // make it smaller during the game
 //        scoreLeftRect = new HudRectangle();
-//        scoreLeftStr = new HudString();
-//        scoreRightRect = new HudString();
-//        scoreRightStr = new HudString();
+        scoreLeftStr = new HudString(-40,35, Integer.toString(scoreLeft), 1.5f, 0x00ff0000, true, false);
+////        scoreRightRect = new HudString();
+        scoreRightStr = new HudString(40,35, Integer.toString(scoreRight),1.5f, 0x000000ff, true, false);
+        System.out.println("Left = " + scoreLeft + " , Right = " + scoreRight );
+
         // Here need to
     }
     @Override
@@ -261,21 +288,17 @@ public class SoccerQuest extends AbstractCustomQuest {
             int numDiamonds = 10;   //can multiply by a scalar depending on difficulty
             for(EntityPlayer player: this.playersInGame){
                 giveItemToPlayer(player, new ItemStack(Items.DIAMOND, numDiamonds));
-                ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
+//                ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
             }
+            //ball.isDead = true;
             soccerWS.removeEntity(ball);
-
             ball = null;
 
         }else{
-            // Client side
-            // Remove the hud element
-            if(isWaiting){
-                clockStr.unregister();
-                clockRect.unregister();
-            }
+            clockStr.unregister();
             if(isStarted){
-
+                scoreLeftStr.unregister();
+                scoreRightStr.unregister();
             }
         }
         isStarted = false; // set both client and server to not
@@ -308,12 +331,37 @@ public class SoccerQuest extends AbstractCustomQuest {
         }
     }
     private void serverStartTick(TickEvent.WorldTickEvent event){
+        long curr = System.currentTimeMillis();
+        if(ball != null){
+            if(isBallInsideGoal(ball.getPosition(),blueGoal) || isBallInsideGoal(ball.getPosition(), redGoal)){
+                this.ball_in_goal_tick++;
+            }
+            if(ball_in_goal_tick > GOAL_TICK_TIME){
+                if(isBallInsideGoal(ball.getPosition(),blueGoal)){
+                    scoreLeft++;
+                }else if(isBallInsideGoal(ball.getPosition(),redGoal)){
+                    scoreRight++;
+                }
+                ball.setPosition(ball_location.x, ball_location.y, ball_location.z); // reset the ball pos
+            }
+        }
+        if(curr >= server_endTime){
+            // end the game session for everyone!
+            System.out.println("GAME ENDSSSSS");
+            isStarted = false;
+            this.end();
+        }
         // server need to check position of the ball in each tick and determines if ball needs
         // to be respawned back at the initial location
 
         // Everytime a goal happens, need to transmit the packet to each client for updating the score
     }
-
+    private boolean isBallInsideGoal(BlockPos ball, GoalRectangle goal){
+        if(ball.getX() > goal.x1 && ball.getX() < goal.x2
+        && ball.getY() > goal.y1 && ball.getY() < goal.y2)
+            return true;
+        return false;
+    }
 
     private boolean entityInsideLeftGoal (EntityLiving entity){
         return false;
@@ -325,10 +373,12 @@ public class SoccerQuest extends AbstractCustomQuest {
         long curr = System.currentTimeMillis();
 
         // The logic works based on the fact that the GAME last more than 3 seconds!!!
-        if(curr - client_startTime < 3000) // 3000ms for displaying GAMESTART!
+        if(curr - client_startTime < 5000) // 3000ms for displaying GAMESTART!
             clockStr.text = "GAME START! KICK THE BALL TOWARDS THE GOAL!~";
-        else if(curr > client_endTime)
+        else if(curr >= client_endTime){
+            System.out.println("Game END on client!");
             this.end();
+        }
         else{
             long remaining_millisecs = client_endTime - curr;
             clockStr.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(remaining_millisecs));
@@ -365,7 +415,8 @@ public class SoccerQuest extends AbstractCustomQuest {
             for(EntityPlayerMP player: this.playersInGame){
                 this.start(player); // event game start triggered
             }
-
+            server_startTime = System.currentTimeMillis();
+            server_endTime = server_startTime + GAME_SESSION_TIME;
             // Set game state
             isStarted = true;
             isWaiting = false;
@@ -380,8 +431,9 @@ public class SoccerQuest extends AbstractCustomQuest {
         System.out.println("Client waiting for " + client_waitingTime_seconds + " seconds");
 //        QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(client_waitingTime));
 
-        clockRect = new HudRectangle(-30, 30, 60, 30, 0x000000ff, true, false);
+        //clockRect = new HudRectangle(-30, 30, 60, 30, 0x00000000, true, false);
         clockStr = new HudString(0,35, QuestUtils.formatSeconds(client_waitingTime_seconds),2.0f,true, false);
+
         isWaiting = true;
     }
     public void clientWaitingTick(TickEvent.PlayerTickEvent event){

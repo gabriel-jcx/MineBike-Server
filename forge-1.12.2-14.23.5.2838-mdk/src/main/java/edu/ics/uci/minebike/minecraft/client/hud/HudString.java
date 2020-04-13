@@ -17,42 +17,51 @@ public class HudString extends HudShape {
     public float scale;
     public String text;
     public int color;
+    public String getText(){
+        return this.text;
+    }
     @Override
     public void draw() {
         this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        //translate to where it is going to be displayed, then scale it
-        GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_TEXTURE_BIT);
-        GL11.glPushAttrib(GL11.GL_COLOR);
-        GL11.glTranslatef(
-                (int) (this.x + (this.centerX ?
+        int offset_x = (int)(this.x + (this.centerX ?
                         (HudManager.mcWidth/2-fontRenderer.getStringWidth(this.text)/2 * this.scale)
-                        : 0)),
-                this.y + (this.centerY ? HudManager.mcHeight/2 : 0),
-                0.0f);
-
-        GL11.glScalef(this.scale, this.scale, this.scale);
-//					this breaks the other textures
-        if (this.shadow)
-        {
-            fontRenderer.drawStringWithShadow(
-                    this.text,
-                    0,
-                    0,
-                    this.color >> 8);
-        }
-        else
-        {
-            fontRenderer.drawString(
-                    this.text,
-                    0,
-                    0,
-                    this.color >> 8);
-        }
-        GL11.glScalef(1.0f, 1.0f, 1.0f);
-        GL11.glPopAttrib();
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
+                        : 0));
+        int offset_y = (this.y + (this.centerY ? HudManager.mcHeight/2 : 0));
+        this.drawString(fontRenderer,this.text,offset_x,offset_y,this.color);
+//        this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
+//        //translate to where it is going to be displayed, then scale it
+//        GL11.glPushMatrix();
+//        GL11.glPushAttrib(GL11.GL_TEXTURE_BIT);
+//        GL11.glPushAttrib(GL11.GL_COLOR);
+//        GL11.glTranslatef(
+//                (int) (this.x + (this.centerX ?
+//                        (HudManager.mcWidth/2-fontRenderer.getStringWidth(this.text)/2 * this.scale)
+//                        : 0)),
+//                this.y + (this.centerY ? HudManager.mcHeight/2 : 0),
+//                0.0f);
+//
+//        GL11.glScalef(this.scale, this.scale, this.scale);
+////					this breaks the other textures
+//        if (this.shadow)
+//        {
+//            fontRenderer.drawStringWithShadow(
+//                    this.text,
+//                    0,
+//                    0,
+//                    this.color >> 8);
+//        }
+//        else
+//        {
+//            fontRenderer.drawString(
+//                    this.text,
+//                    0,
+//                    0,
+//                    this.color >> 8);
+//        }
+//        GL11.glScalef(1.0f, 1.0f, 1.0f);
+//        GL11.glPopAttrib();
+//        GL11.glPopAttrib();
+//        GL11.glPopMatrix();
 //        drawHoveringText(this.text, this.x , this.y);
     }
     /**
@@ -159,9 +168,9 @@ public class HudString extends HudShape {
         this.centerY = centerY;
 
         this.text = text;
-
+        System.out.println("String is " +  text);
         this.color = color;
-        this.shadow = true;
+        this.shadow = false;
         HudManager.getInstance(mc).shapes.add(this);
     }
 

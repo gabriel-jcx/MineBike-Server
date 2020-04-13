@@ -95,7 +95,7 @@ public class HudRectangle extends HudShape {
     public void draw(){
         int offsetX = (this.centerX ? HudManager.mcWidth/2 : 0);
         int offsetY = (this.centerY ? HudManager.mcHeight/2 : 0);
-        this.drawRectangle(
+        this.drawRect(
                 this.x + offsetX,
                 this.y + offsetY,
                 this.x + this.w + offsetX,

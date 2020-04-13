@@ -57,6 +57,10 @@ public class HudManager extends GuiScreen {
 
         updateResolution();
         for(HudShape shape : shapes){
+//            if(shape instanceof  HudString){
+//                HudString str = (HudString)shape;
+//                System.out.println(str.text);
+//            }
             shape.draw();
         }
 ////        System.out.println("not returned");
