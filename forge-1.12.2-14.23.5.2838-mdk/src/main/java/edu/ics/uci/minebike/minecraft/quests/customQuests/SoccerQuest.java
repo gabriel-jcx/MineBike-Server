@@ -339,25 +339,37 @@ public class SoccerQuest extends AbstractCustomQuest {
         }
 //        DimensionManager.getWorld(222).spawnParticle(EnumParticleTypes.WATER_WAKE);
     }
+    public void leftScoreUpdate(){
+        scoreLeftStr.text = Integer.toString(++scoreLeft);
+    }
+    public void rightScoreUpdate(){
+        scoreRightStr.text = Integer.toString(++scoreRight);
+    }
     private void serverStartTick(TickEvent.WorldTickEvent event){
         long curr = System.currentTimeMillis();
         if(ball != null){
-            int now = QuestUtils.getRemainingSeconds(curr);
-            if(prev != now){
-                System.out.println("ball is at " + ball.getPosition());
-                System.out.println("Red Goal " + redGoal);
-                System.out.println("Blue Goal " + blueGoal);
-                prev = now;
-            }
+//            int now = QuestUtils.getRemainingSeconds(curr);
+//            if(prev != now){
+//                System.out.println("ball is at " + ball.getPosition());
+//                System.out.println("Red Goal " + redGoal);
+//                System.out.println("Blue Goal " + blueGoal);
+//                prev = now;
+//            }
             if(isBallInsideGoal(ball.getPosition(),blueGoal) || isBallInsideGoal(ball.getPosition(), redGoal)){
                 this.ball_in_goal_tick++;
                 System.out.println("GOALLLLL!");
             }
             if(ball_in_goal_tick > GOAL_TICK_TIME){
                 if(isBallInsideGoal(ball.getPosition(),blueGoal)){
-                    scoreLeftStr.text = Integer.toString(++scoreLeft);
+                    for(EntityPlayerMP playerMP: playersInGame){
+                        ServerUtils.sendQuestData(EnumPacketServer.SoccerLeftScoreUpdate,playerMP);
+                    }
+//                    scoreLeftStr.text = Integer.toString(++scoreLeft);
                 }else if(isBallInsideGoal(ball.getPosition(),redGoal)){
-                    scoreRightStr.text = Integer.toString(++scoreRight);
+                    for(EntityPlayerMP playerMP:playersInGame){
+                        ServerUtils.sendQuestData(EnumPacketServer.SoccerRightScoreUpdate,playerMP);
+                    }
+//                    scoreRightStr.text = Integer.toString(++scoreRight);
                 }
                 ball_in_goal_tick = 0;
                 // DO I need to reset the players?

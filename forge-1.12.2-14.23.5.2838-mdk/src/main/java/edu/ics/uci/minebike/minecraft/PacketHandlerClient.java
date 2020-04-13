@@ -41,6 +41,12 @@ public class PacketHandlerClient {
             System.out.println("Client received a packet start on quest " + DIMID);
 
             CustomQuestManager.findAndStart(Integer.parseInt(DIMID));
+        }else if(type == EnumPacketServer.SoccerLeftScoreUpdate){
+            SoccerQuest soccer = (SoccerQuest) CustomQuestManager.customQuests.get(222);
+            soccer.leftScoreUpdate();
+        }else if(type == EnumPacketServer.SoccerRightScoreUpdate){
+            SoccerQuest soccer = (SoccerQuest) CustomQuestManager.customQuests.get(222);
+            soccer.rightScoreUpdate();
         }
         //EntityPlayer player = Minecraft.getMinecraft().player; // get the client side of the player
 //        if(player != null){
