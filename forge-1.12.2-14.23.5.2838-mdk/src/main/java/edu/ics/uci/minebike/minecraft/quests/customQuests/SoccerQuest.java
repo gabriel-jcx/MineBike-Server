@@ -50,11 +50,11 @@ import static net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer;
 // NOTE: many of the fields can be more optimized i think, getting lazy now LOL
 public class SoccerQuest extends AbstractCustomQuest {
 
-    private final long GAME_WAITING_TIME = 10000;//30000; // millisecond
-    private final long GAME_SESSION_TIME = 10000;//300000; // millisecond => equivalent to 5 mins
+    private final long GAME_WAITING_TIME = 30000;//30000; // millisecond
+    private final long GAME_SESSION_TIME = 30000;//300000; // millisecond => equivalent to 5 mins
     private final int GOAL_TICK_TIME = 5; // If ball stays in the goal for 5 ticks
 //    private final Vec3d ball_location = new Vec3d(-165, 4,1145);
-    private final Vec3d ball_location = new Vec3d(-164,4,1144);
+    private final Vec3d ball_location = new Vec3d(-221,4,1138);
 
     // A place holder for now for the goal locations
     private final GoalRectangle blueGoal = new GoalRectangle(-161,1147,-155,1139);
@@ -170,9 +170,9 @@ public class SoccerQuest extends AbstractCustomQuest {
             int secs = QuestUtils.getRemainingSeconds(server_waitingEndTime -System.currentTimeMillis());
             System.out.println(secs);
             // I think the duration is in Ticks
-            //player.addPotionEffect(new PotionEffect(slow_potion,secs*20,1000000000));
+            player.addPotionEffect(new PotionEffect(slow_potion,secs*20,1000000000));
 
-            //player.addPotionEffect(new PotionEffect(jump_anti_boost, secs*20, 128));
+            player.addPotionEffect(new PotionEffect(jump_anti_boost, secs*20, 128));
             ServerUtils.sendQuestData(EnumPacketServer.SoccerQueueingTime,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
             playersInGame.add((EntityPlayerMP)player);
             return true;
@@ -341,14 +341,15 @@ public class SoccerQuest extends AbstractCustomQuest {
         if(ball != null){
             if(isBallInsideGoal(ball.getPosition(),blueGoal) || isBallInsideGoal(ball.getPosition(), redGoal)){
                 this.ball_in_goal_tick++;
+                System.out.println("GOALLLLL!");
             }
             if(ball_in_goal_tick > GOAL_TICK_TIME){
                 if(isBallInsideGoal(ball.getPosition(),blueGoal)){
-                    scoreLeft++;
+                    scoreLeftStr.text = Integer.toString(++scoreLeft);
                 }else if(isBallInsideGoal(ball.getPosition(),redGoal)){
-                    scoreRight++;
+                    scoreRightStr.text = Integer.toString(++scoreRight);
                 }
-
+                ball_in_goal_tick = 0;
                 // DO I need to reset the players?
 
                 ball.setPosition(ball_location.x, ball_location.y, ball_location.z); // reset the ball pos
