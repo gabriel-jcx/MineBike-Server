@@ -12,14 +12,15 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
+import net.theawesomegem.fishingmadebetter.common.item.fishingrod.ItemBetterFishingRod;
 //import net.theawesomegem.fishingmadebetter.common.item.fishingrod.ItemBetterFishingRod;
 
-public class ItemGameFishingRod extends ItemFishingRod {
+public class ItemGameFishingRod extends ItemBetterFishingRod {
     //Create a custom fishing rod based on Player's prescription
 
     public ItemGameFishingRod() {
 //        super();
-        //super("game_fish_rod", 20, 1, 60);
+        super("game_fish_rod", 20, 1, 60);
     }
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {

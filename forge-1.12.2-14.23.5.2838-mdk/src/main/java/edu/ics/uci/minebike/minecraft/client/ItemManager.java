@@ -19,7 +19,7 @@ public class ItemManager {
     }
 
     public static void register(IForgeRegistry<Item> registry) {
-//        registry.registerAll(new Item[]{GAME_FISHING_ROD});
+        registry.registerAll(new Item[]{GAME_FISHING_ROD});
     }
 
 
