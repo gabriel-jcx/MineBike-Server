@@ -35,12 +35,13 @@ import net.theawesomegem.fishingmadebetter.util.RandomUtil;
 import java.util.List;
 import java.util.Random;
 
-public class GameFishingEvent  {
+public class GameFishingEvent extends FishingEventHandler {
     public FishingAI testing = new FishingAI();
     public GameFishingEvent(){
         super();
     }
 
+    @Override
     @SubscribeEvent
     public void onPlayerFish(ItemFishedEvent e) {
         System.out.println("OnPlayerFish.......");
@@ -111,16 +112,16 @@ public class GameFishingEvent  {
 
     //@Override
     //@SubscribeEvent
-    public void onPlayerTick(TickEvent.PlayerTickEvent e) {
-        //System.out.println("onPlayerTick..........");
-
-        EntityPlayer player = e.player;
-        EntityFishHook hook = player.fishEntity;
-        if (!player.world.isRemote) {
-            //this.checkForFishInventory(player);
-            IFishingData fishingData = (IFishingData) player.getCapability(FishingCapabilityProvider.FISHING_DATA_CAP, (EnumFacing) null);
-            //System.out.println("IFishing Data"+fishingData);
-//            if (fishingData != null) {
+//    public void onPlayerTick(TickEvent.PlayerTickEvent e) {
+//        //System.out.println("onPlayerTick..........");
+//
+//        EntityPlayer player = e.player;
+//        EntityFishHook hook = player.fishEntity;
+//        if (!player.world.isRemote) {
+//            //this.checkForFishInventory(player);
+//            IFishingData fishingData = (IFishingData) player.getCapability(FishingCapabilityProvider.FISHING_DATA_CAP, (EnumFacing) null);
+//            //System.out.println("IFishing Data"+fishingData);
+////            if (fishingData != null) {
 ////                this.updateFishingData(player, fishingData);
 //                if (hook != null && !hook.isDead) {
 ////                    if (this.usingVanillaFishingRod(player)) {
@@ -207,8 +208,8 @@ public class GameFishingEvent  {
 //                } else {
 //                    fishingData.reset();
 //                }
-            }
-        }
+//            }
+//        }
 
     private boolean shouldChangeReelAmount(Random random, int lastFishTime) {
 

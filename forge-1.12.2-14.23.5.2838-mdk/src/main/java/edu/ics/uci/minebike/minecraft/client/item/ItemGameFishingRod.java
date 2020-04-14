@@ -40,7 +40,7 @@ public class ItemGameFishingRod extends ItemBetterFishingRod {
             if (!worldIn.isRemote)
             {
                 System.out.println("New Hook bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-                EntityFishHook gameHook = new EntityFishHook(worldIn, playerIn);
+                EntityFishHook gameHook = new CustomHook(worldIn, playerIn);
                 int j = EnchantmentHelper.getFishingSpeedBonus(itemstack);
 
                 if (j > 0)

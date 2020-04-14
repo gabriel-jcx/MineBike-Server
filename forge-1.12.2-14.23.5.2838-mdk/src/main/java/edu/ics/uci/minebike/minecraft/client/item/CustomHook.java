@@ -1,5 +1,7 @@
 package edu.ics.uci.minebike.minecraft.client.item;
 
+
+
 import com.teammetallurgy.aquaculture.items.AquacultureItems;
 import com.teammetallurgy.aquaculture.items.ItemFish;
 import edu.ics.uci.minebike.minecraft.client.AI.FishingAI;
@@ -69,7 +71,7 @@ import static edu.ics.uci.minebike.minecraft.client.ItemManager.GAME_FISHING_ROD
 //import org.ngs.bigx.minecraft.context.BigxClientContext;
 //import org.ngs.bigx.minecraft.items.EnumFishType;
 
-public class OldRod extends EntityFishHook
+public class CustomHook extends EntityFishHook
 {
 
     private int xTile;
@@ -154,7 +156,7 @@ public class OldRod extends EntityFishHook
     //Used to make catching go twice as fast when bonus is active
     public static int doubleTime = 1;
 
-    ItemGameHook entityitem;
+    EntityItem entityitem;
     FishingAI fishingAI=new FishingAI();
 
     /*
@@ -182,7 +184,7 @@ public class OldRod extends EntityFishHook
 //    }
 
     //The Custom constructor, instantiates custom fish items
-    public OldRod (World worldIn, EntityPlayer fishingPlayer)
+    public CustomHook (World worldIn, EntityPlayer fishingPlayer)
     {
         super(worldIn, fishingPlayer);
         justSpawned = true;
@@ -284,7 +286,8 @@ public class OldRod extends EntityFishHook
         if (beginPull == false && this.ticksCatchable > 0)
         {
             beginPulling();
-            entityitem = new ItemGameHook(this.world, this.angler, this.posX, this.posY, this.posZ);
+            //entityitem is the fish that the getFishingResult() choose
+            entityitem = new EntityItem(this.world, this.posX, this.posY, this.posZ,this.getFishingResult());
         }
 
         //Stops the players movement
@@ -497,11 +500,11 @@ public class OldRod extends EntityFishHook
 //                if (this.angler.isDead || !this.angler.isEntityAlive() || itemstack == null || itemstack.getItem() != GAME_FISHING_ROD || this.getDistanceSqToEntity(this.angler) > 1024.0D)
                 if (this.angler.isDead || !this.angler.isEntityAlive() || itemstack == null || itemstack.getItem() != GAME_FISHING_ROD || this.getDistance(this.angler) > 1024.0D)
                 {
-                unRegister();
-                beginPull = false;
-                this.setDead();
-                this.angler.fishEntity = null;
-                return;
+                    unRegister();
+                    beginPull = false;
+                    this.setDead();
+                    this.angler.fishEntity = null;
+                    return;
                 }
 
                 if (this.caughtEntity != null)
@@ -752,7 +755,7 @@ public class OldRod extends EntityFishHook
                                 if (this.rand.nextFloat() < 0.15F)
                                 {
 //                                    worldserver.func_147487_a("bubble", d11, d5 - 0.10000000149011612D, d6, 1, (double)f7, 0.1D, (double)f2, 0.0D);
-                                      DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_BUBBLE, d11, d5 - 0.10000000149011612D, d6, 1, (double)f7, 0.1D, (double)f2, 0.0D);
+                                    DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_BUBBLE, d11, d5 - 0.10000000149011612D, d6, 1, (double)f7, 0.1D, (double)f2, 0.0D);
                                 }
 
                                 float f3 = f7 * 0.04F;
@@ -1106,7 +1109,7 @@ public class OldRod extends EntityFishHook
 //                difficulty = ((ItemFish)(itemstack.getItem())).getRarity();
 //                break;
         }
-        //Todo: testing
+        //Todo: testing return red shrooma
         return fishingAI.fish_testing();
     }
 }
