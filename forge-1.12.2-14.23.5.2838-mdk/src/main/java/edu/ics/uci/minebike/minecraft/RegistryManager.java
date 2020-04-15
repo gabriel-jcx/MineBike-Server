@@ -8,7 +8,7 @@ import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import edu.ics.uci.minebike.minecraft.client.ItemManager;
+import edu.ics.uci.minebike.minecraft.item.ItemManager;
 
 public class RegistryManager {
     public RegistryManager() {

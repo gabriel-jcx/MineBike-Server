@@ -145,7 +145,7 @@ public class CustomHook extends EntityFishHook
     public static int difficulty; // 4 7 6 3
 
     //Sets the required power level they need to reach in order to catch the fish, based on difficulty
-    public static int requiredPower;
+    public int requiredPower=1;
 
     //The Number of fish the player had caught
     public static int numFish = 0;
@@ -156,24 +156,20 @@ public class CustomHook extends EntityFishHook
     //Used to make catching go twice as fast when bonus is active
     public static int doubleTime = 1;
 
+    //Remaining distance to catch the fish
+    public int distance = 4;
+
+    public static int bar_min= -70;
+    public static int bar_max=65;
     EntityItem entityitem;
     FishingAI fishingAI=new FishingAI();
 
-    /*
-     *
-     */
+    //Store all the fishes with their weights
     private List<ArrayList<ItemFish>> fishingSpots = new ArrayList<ArrayList<ItemFish>>();
 
 
     //The Gui for the Power Level Display
 
-    //List that stores the catchable custom fish
-//    public static List<WeightedRandomFishable> temp2;
-//
-//    public static List<WeightedRandomFishable> func_174855_j()
-//    {
-//        return temp2;
-//    }
     public static HudString powerString;
     public static HudRectangle powerLvl;
     public static HudRectangle boxLeft;
@@ -182,6 +178,10 @@ public class CustomHook extends EntityFishHook
     public static HudRectangle boxTop;
     public static HudString holdTime;
     public static HudString failTime;
+    public static HudRectangle powerBar;
+    public static HudRectangle powerLine;
+    public static HudString distanceString;
+
     //The Custom constructor, instantiates custom fish items
     public CustomHook (World worldIn, EntityPlayer fishingPlayer)
     {
@@ -206,14 +206,21 @@ public class CustomHook extends EntityFishHook
         this.motionZ = (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI) * f);
         this.motionY = (double)(-MathHelper.sin(this.rotationPitch / 180.0F * (float)Math.PI) * f);
         this.handleHookCasting(this.motionX, this.motionY, this.motionZ, 1.5F, 1.0F);
+
+        //The total range of the bar is x:(-70,65] because the line's w is 5
+
         this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
-        this.powerLvl = new HudRectangle(-145, 60, 40, 0, 0xe4344aff, true, true); // -145 60 40 -210
-        this.boxLeft = new HudRectangle(-148, 63, 3, -215, 0xff0000ff, true, true);
-        this.boxRight = new HudRectangle(-105, 63, 3, -215, 0x0000ffff, true, true);
-        this.boxBottom = new HudRectangle(-148, 63, 46, -3, 0x00ff00ff, true, true);
-        this.boxTop = new HudRectangle(-148, -152, 46, 3, 0x000000ff, true, true);
-        this.holdTime = new HudString(0, 0, "Hold for " + time + " Seconds", 5, true, true);
-        this.failTime = new HudString(0, 0, "Failure in " + 5 + " Seconds", 5, true, true);
+        this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
+        this.powerBar= new HudRectangle(-70,0, 140, 30, 0xe4344aff,true,false);
+        this.powerLine = new HudRectangle(-70,0, 5, 30, 0xffffffff,true,false);
+
+//        this.powerLvl = new HudRectangle(-145, 60, 40, 0, 0xe4344aff, true, true); // -145 60 40 -210
+//        this.boxLeft = new HudRectangle(-148, 63, 3, -215, 0xff0000ff, true, true);
+//        this.boxRight = new HudRectangle(-105, 63, 3, -215, 0x0000ffff, true, true);
+//        this.boxBottom = new HudRectangle(-148, 63, 46, -3, 0x00ff00ff, true, true);
+//        this.boxTop = new HudRectangle(-148, -152, 46, 3, 0x000000ff, true, true);
+//        this.holdTime = new HudString(0, 0, "Hold for " + time + " Seconds", 5, true, true);
+//        this.failTime = new HudString(0, 0, "Failure in " + 5 + " Seconds", 5, true, true);
 
         //Todo: If is possible, implement the following method for spawning the fishingSpots.
         //adds all the common fish to every fish location
@@ -272,576 +279,611 @@ public class CustomHook extends EntityFishHook
     /*Contains the new Fishing Mechanic
      * The start of the onUpdate method outlines the custom fishing mechanic
      */
+    public void refresh_powerline(){
+        int tempx=powerLine.getX();
+        if (this.requiredPower==getPower()&&tempx+5<=bar_max) {
+                this.powerLine.unregister();
+                this.powerLine = new HudRectangle(tempx + 5, 0, 5, 30, 0xffffffff, true, false);
+
+        }else if (this.requiredPower!=getPower()&&tempx-5>=bar_min)
+        {
+            this.powerLine.unregister();
+            this.powerLine = new HudRectangle(tempx - 5, 0, 5, 30, 0xffffffff, true, false);
+        }
+    }
+    public void reduce_distance(){
+        if (this.powerLine.getX()==bar_max && distance-1>=0)
+        {
+            distance-=1;
+            this.distanceString.unregister();
+            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
+        }
+    }
+    //@Override
+//    public void onPlayerTick(){
+//        if (powerLine.getX()==bar_max && distance-1>=0)
+//        {
+//
+//        }
+//    }
     @Override
     public void onUpdate()
     {
         this.onEntityUpdate();
         this.extinguish();
+        refresh_powerline();
+        reduce_distance();
+        //Todo: erase hud if fish rod is not in hand, retract hook, spawn fish
+//        if (distance==0)
+//        {
+//            super.onUpdate();
+//            entityitem = new EntityItem(this.world, this.posX, this.posY, this.posZ,this.getFishingResult());
+//        }
 
 //        BiGX.instance().clientContext.lock(true);
-
-        if (justSpawned)
-        {
-//            BiGX.instance().clientContext.lock(true);
-            justSpawned = false;
-        }
-
-
-        //New Fishing Mechanic Code
-
-        //Causes the fishing mechanic to instantly trigger when the hook bobs bellow the water
-        if (beginPull == false && this.ticksCatchable > 0)
-        {
-            beginPulling();
-            //entityitem is the fish that the getFishingResult() choose
-            entityitem = new EntityItem(this.world, this.posX, this.posY, this.posZ,this.getFishingResult());
-        }
-
-        //Stops the players movement
-//    	angler.addPotionEffect(new PotionEffect(2, 100, 1000000000));
-//        Minecraft mc = Minecraft.getMinecraft();
-
-        //Start of the pull mechanic
-        if(beginPull == true)
-        {
-            tickCount++;
-            //ClickRate here for debugging
-            clickRate -= .6;
-//    		clickRate += .4;
-            clickRate = Math.max(0, clickRate);
-            checkHeight = getHeight();
-
-            /*
-             * Checks to see if the player failed to catch the fish
-             * Waits 3 seconds for player to start fishing then if they are under half the power level
-             * the failTime will start
-             */
-            if(tickCount >= 80)
-            {
-//                if(powerLvl.height >= -105)
-//                {
-//                    tickFail++;
 //
-//                    if(checkFail == false)
-//                    {
-//                        failTime.text = "Failure in " + 5 + " Seconds";
-////                        HudManager.registerString(failTime);
-//                        checkFail = true;
-//                    }
-//
-//                    if(tickFail % 20 == 0)
-//                    {
-//                        timeF -= 1;
-//                        failTime.text = "Failure in " + timeF + " Seconds";
-//                    }
-//
-//                    if(tickFail >= 100)
-//                    {
-////                        powerLvl.unregister();
-////                        boxLeft.unregister();
-////                        boxRight.unregister();
-////                        boxBottom.unregister();
-////                        boxTop.unregister();
-////                        powerString.unregister();
-////                        failTime.unregister();
-//
-////                        HudManager.unregisterRectangle(powerLvl);
-////                        HudManager.unregisterRectangle(boxLeft);
-////                        HudManager.unregisterRectangle(boxRight);
-////                        HudManager.unregisterRectangle(boxBottom);
-////                        HudManager.unregisterRectangle(boxTop);
-////                        HudManager.unregisterString(powerString);
-////                        HudManager.unregisterString(failTime);
-//                        //Todo:func_146034_e
-//                        //angler.fishEntity.func_146034_e();
-//
-//                        checkFail = false;
-//                        timeF = 5;
-//                        beginPull = false;
-//                    }
-//                }
-//                else
-//                {
-//                    timeF = 5;
-//                    checkFail = false;
-//                    tickFail = 0;
-//                    failTime.unregister();
-////                    HudManager.unregisterString(failTime);
-//                }
-            }
-
-            //Changes the power bar's color and adjusts its height
-//            if(checkHeight > -210)
-//            {
-//                powerLvl.height = checkHeight;
-//                //powerLvl.setColor(color(powerLvl.height));
-//            }
-//
-//            else if(checkHeight >= 0)
-//            {
-//                powerLvl.height = 0;
-//            }
-//            //If the max height is reacher, make sure the height and color remains the same
-//            else
-//            {
-//                powerLvl.height = -210;
-//                //powerLvl.setColor(0x65f040ff);
-//            }
+//        if (justSpawned)
+//        {
+////            BiGX.instance().clientContext.lock(true);
+//            justSpawned = false;
+//        }
 //
 //
-//            //Sends in game message to player for specific data values
-//            if(tickCount % 20 == 0)
-//            {
-//                mc.player.sendChatMessage("Power Level: " + clickRate);
-//                mc.player.sendChatMessage("Height: " + powerLvl.height);
-////                mc.player.sendChatMessage("CHANGE: " + BiGXPacketHandler.change);
-//            }
+//        //New Fishing Mechanic Code
 //
-//            /*Once player has achieved required power level for specified tickSuccess, GUI gets unregistered
-//             * and hook is retracted
+//        //Causes the fishing mechanic to instantly trigger when the hook bobs bellow the water
+//        if (beginPull == false && this.ticksCatchable > 0)
+//        {
+//            beginPulling();
+//            //entityitem is the fish that the getFishingResult() choose
+//            entityitem = new EntityItem(this.world, this.posX, this.posY, this.posZ,this.getFishingResult());
+//        }
+//
+//        //Stops the players movement
+////    	angler.addPotionEffect(new PotionEffect(2, 100, 1000000000));
+////        Minecraft mc = Minecraft.getMinecraft();
+//
+//        //Start of the pull mechanic
+//        if(beginPull == true)
+//        {
+//            tickCount++;
+//            //ClickRate here for debugging
+//            clickRate -= .6;
+////    		clickRate += .4;
+//            clickRate = Math.max(0, clickRate);
+//            checkHeight = getHeight();
+//
+//            /*
+//             * Checks to see if the player failed to catch the fish
+//             * Waits 3 seconds for player to start fishing then if they are under half the power level
+//             * the failTime will start
 //             */
-//            if(getPower() >= getRequiredPower()) //30 52.5
+//            if(tickCount >= 80)
 //            {
-//                failTime.unregister();
-////                HudManager.unregisterString(failTime);
-//                if(getPower() >= getBonus())
-//                    doubleTime = 2;
-//                else
-//                    doubleTime = 1;
-//
-//                if(checkTime == false)
-//                {
-//                    holdTime.text = "Hold for " + 5 + " Seconds";
-//                    holdTime.unregister();
-////                    HudManager.registerString(holdTime);
-//                    checkTime = true;
-//                }
-//
-//                tickSuccess++;
-//
-//                //If the player is going a specified speed above required power, catching takes half the time
-//                if(tickSuccess % ((int)(5) / doubleTime) == 0)
-//                {
-////                    if(powerLvl.getColor() == 0x65f040ff)
-////                        powerLvl.setColor(0x40bd24ff);
-//////                        powerLvl.color = 0x40bd24ff;
-////                    else
-////                        powerLvl.setColor(0x65f040ff);
-//
-//
-//                }
-//
-//                //If the player is going a specified speed above required power, catching takes half the time
-//                if(tickSuccess % (20 / doubleTime) == 0)
-//                {
-//                    time -= 1;
-//                    holdTime.text = "Hold for " + time + " Seconds";
-//                }
-//
-//                //When time = 0 that means they have caught the fish so it unregisters everything and ends
-//                //the mechanic
-//                if(time == 0)
-//                {
-//                    retractHook();
-//                    //TODo:func
-////                    angler.fishEntity.func_146034_e();
-
-//                    beginPull = false;
-////                    powerLvl.unregister();
-////                    boxLeft.unregister();
-////                    boxRight.unregister();
-////                    boxBottom.unregister();
-////                    boxTop.unregister();
-////                    powerString.unregister();
+////                if(powerLvl.height >= -105)
+////                {
+////                    tickFail++;
+////
+////                    if(checkFail == false)
+////                    {
+////                        failTime.text = "Failure in " + 5 + " Seconds";
+//////                        HudManager.registerString(failTime);
+////                        checkFail = true;
+////                    }
+////
+////                    if(tickFail % 20 == 0)
+////                    {
+////                        timeF -= 1;
+////                        failTime.text = "Failure in " + timeF + " Seconds";
+////                    }
+////
+////                    if(tickFail >= 100)
+////                    {
+//////                        powerLvl.unregister();
+//////                        boxLeft.unregister();
+//////                        boxRight.unregister();
+//////                        boxBottom.unregister();
+//////                        boxTop.unregister();
+//////                        powerString.unregister();
+//////                        failTime.unregister();
+////
+//////                        HudManager.unregisterRectangle(powerLvl);
+//////                        HudManager.unregisterRectangle(boxLeft);
+//////                        HudManager.unregisterRectangle(boxRight);
+//////                        HudManager.unregisterRectangle(boxBottom);
+//////                        HudManager.unregisterRectangle(boxTop);
+//////                        HudManager.unregisterString(powerString);
+//////                        HudManager.unregisterString(failTime);
+////                        //Todo:func_146034_e
+////                        //angler.fishEntity.func_146034_e();
+////
+////                        checkFail = false;
+////                        timeF = 5;
+////                        beginPull = false;
+////                    }
+////                }
+////                else
+////                {
+////                    timeF = 5;
+////                    checkFail = false;
+////                    tickFail = 0;
 ////                    failTime.unregister();
+//////                    HudManager.unregisterString(failTime);
+////                }
+//            }
+//
+//            //Changes the power bar's color and adjusts its height
+////            if(checkHeight > -210)
+////            {
+////                powerLvl.height = checkHeight;
+////                //powerLvl.setColor(color(powerLvl.height));
+////            }
+////
+////            else if(checkHeight >= 0)
+////            {
+////                powerLvl.height = 0;
+////            }
+////            //If the max height is reacher, make sure the height and color remains the same
+////            else
+////            {
+////                powerLvl.height = -210;
+////                //powerLvl.setColor(0x65f040ff);
+////            }
+////
+////
+////            //Sends in game message to player for specific data values
+////            if(tickCount % 20 == 0)
+////            {
+////                mc.player.sendChatMessage("Power Level: " + clickRate);
+////                mc.player.sendChatMessage("Height: " + powerLvl.height);
+//////                mc.player.sendChatMessage("CHANGE: " + BiGXPacketHandler.change);
+////            }
+////
+////            /*Once player has achieved required power level for specified tickSuccess, GUI gets unregistered
+////             * and hook is retracted
+////             */
+////            if(getPower() >= getRequiredPower()) //30 52.5
+////            {
+////                failTime.unregister();
+//////                HudManager.unregisterString(failTime);
+////                if(getPower() >= getBonus())
+////                    doubleTime = 2;
+////                else
+////                    doubleTime = 1;
+////
+////                if(checkTime == false)
+////                {
+////                    holdTime.text = "Hold for " + 5 + " Seconds";
 ////                    holdTime.unregister();
-////                    HudManager.unregisterRectangle(powerLvl);
-////                    HudManager.unregisterRectangle(boxLeft);
-////                    HudManager.unregisterRectangle(boxRight);
-////                    HudManager.unregisterRectangle(boxBottom);
-////                    HudManager.unregisterRectangle(boxTop);
-////                    HudManager.unregisterString(powerString);
-////                    HudManager.unregisterString(failTime);
-////                    HudManager.unregisterString(holdTime);
-//                    checkTime = false;
-//                    doubleTime = 1;
-//                    clickRate = 0;
+//////                    HudManager.registerString(holdTime);
+////                    checkTime = true;
+////                }
+////
+////                tickSuccess++;
+////
+////                //If the player is going a specified speed above required power, catching takes half the time
+////                if(tickSuccess % ((int)(5) / doubleTime) == 0)
+////                {
+//////                    if(powerLvl.getColor() == 0x65f040ff)
+//////                        powerLvl.setColor(0x40bd24ff);
+////////                        powerLvl.color = 0x40bd24ff;
+//////                    else
+//////                        powerLvl.setColor(0x65f040ff);
+////
+////
+////                }
+////
+////                //If the player is going a specified speed above required power, catching takes half the time
+////                if(tickSuccess % (20 / doubleTime) == 0)
+////                {
+////                    time -= 1;
+////                    holdTime.text = "Hold for " + time + " Seconds";
+////                }
+////
+////                //When time = 0 that means they have caught the fish so it unregisters everything and ends
+////                //the mechanic
+////                if(time == 0)
+////                {
+////                    retractHook();
+////                    //TODo:func
+//////                    angler.fishEntity.func_146034_e();
+//
+////                    beginPull = false;
+//////                    powerLvl.unregister();
+//////                    boxLeft.unregister();
+//////                    boxRight.unregister();
+//////                    boxBottom.unregister();
+//////                    boxTop.unregister();
+//////                    powerString.unregister();
+//////                    failTime.unregister();
+//////                    holdTime.unregister();
+//////                    HudManager.unregisterRectangle(powerLvl);
+//////                    HudManager.unregisterRectangle(boxLeft);
+//////                    HudManager.unregisterRectangle(boxRight);
+//////                    HudManager.unregisterRectangle(boxBottom);
+//////                    HudManager.unregisterRectangle(boxTop);
+//////                    HudManager.unregisterString(powerString);
+//////                    HudManager.unregisterString(failTime);
+//////                    HudManager.unregisterString(holdTime);
+////                    checkTime = false;
+////                    doubleTime = 1;
+////                    clickRate = 0;
+////                }
+////            }
+////            else
+////            {
+////                time = 5;
+////                tickSuccess = 0;
+////                holdTime.unregister();
+//////                HudManager.unregisterString(holdTime);
+////                doubleTime = 1;
+////                checkTime = false;
+////            }
+//        }
+//
+//
+//
+//
+//        //Normal OnUpdate Method
+//        //DONT WORRY ABOUT THE REST IN ONUPDATE, IT SERVES TO FUNCTION AS A VANILLA FISHING ROD
+//        if (this.fishPosRotationIncrements > 0)
+//        {
+//            double d7 = this.posX + (this.fishX - this.posX) / (double)this.fishPosRotationIncrements;
+//            double d8 = this.posY + (this.fishY - this.posY) / (double)this.fishPosRotationIncrements;
+//            double d9 = this.posZ + (this.fishZ - this.posZ) / (double)this.fishPosRotationIncrements;
+////            double d1 = MathHelper.wrapAngleTo180_double(this.fishYaw - (double)this.rotationYaw);
+//            double d1 = MathHelper.wrapDegrees(this.fishYaw - (double)this.rotationYaw);
+//
+//            this.rotationYaw = (float)((double)this.rotationYaw + d1 / (double)this.fishPosRotationIncrements);
+//            this.rotationPitch = (float)((double)this.rotationPitch + (this.fishPitch - (double)this.rotationPitch) / (double)this.fishPosRotationIncrements);
+//            --this.fishPosRotationIncrements;
+//            this.setPosition(d7, d8, d9);
+//            this.setRotation(this.rotationYaw, this.rotationPitch);
+//        }
+//        else
+//        {
+//            if (!this.world.isRemote)
+//            {
+////                ItemStack itemstack = this.angler.eqgetCurrentEquippedItem();
+//                ItemStack itemstack = this.angler.getHeldItemMainhand();
+//
+////                if (this.angler.isDead || !this.angler.isEntityAlive() || itemstack == null || itemstack.getItem() != GAME_FISHING_ROD || this.getDistanceSqToEntity(this.angler) > 1024.0D)
+//                if (this.angler.isDead || !this.angler.isEntityAlive() || itemstack == null || itemstack.getItem() != GAME_FISHING_ROD || this.getDistance(this.angler) > 1024.0D)
+//                {
+//                    //unRegister();
+//                    beginPull = false;
+//                    this.setDead();
+//                    this.angler.fishEntity = null;
+//                    return;
 //                }
+//
+//                if (this.caughtEntity != null)
+//                {
+//                    if (!this.caughtEntity.isDead)
+//                    {
+//                        this.posX = this.caughtEntity.posX;
+//                        double d12 = (double)this.caughtEntity.height;
+////                        this.posY = this.caughtEntity.boundingBox.minY + d12 * 0.8D;
+//                        this.posY = this.caughtEntity.getEntityBoundingBox().minY + d12 * 0.8D;
+//
+//                        this.posZ = this.caughtEntity.posZ;
+//                        return;
+//                    }
+//
+//                    this.caughtEntity = null;
+//                }
+//            }
+//
+//            if (this.shake > 0)
+//            {
+//                --this.shake;
+//            }
+//
+//            if (this.inGround)
+//            {
+//                if (this.world.getBlockState(new BlockPos(this.xTile, this.yTile, this.zTile)).getBlock() == this.inTile)
+//                {
+//                    ++this.ticksInGround;
+//
+//                    if (this.ticksInGround == 1200)
+//                    {
+//                        this.setDead();
+//                    }
+//
+//                    return;
+//                }
+//
+//                this.inGround = false;
+//                this.motionX *= (double)(this.rand.nextFloat() * 0.2F);
+//                this.motionY *= (double)(this.rand.nextFloat() * 0.2F);
+//                this.motionZ *= (double)(this.rand.nextFloat() * 0.2F);
+//                this.ticksInGround = 0;
+//                this.ticksInAir = 0;
 //            }
 //            else
 //            {
-//                time = 5;
-//                tickSuccess = 0;
-//                holdTime.unregister();
-////                HudManager.unregisterString(holdTime);
-//                doubleTime = 1;
-//                checkTime = false;
+//                ++this.ticksInAir;
 //            }
-        }
-
-
-
-
-        //Normal OnUpdate Method
-        //DONT WORRY ABOUT THE REST IN ONUPDATE, IT SERVES TO FUNCTION AS A VANILLA FISHING ROD
-        if (this.fishPosRotationIncrements > 0)
-        {
-            double d7 = this.posX + (this.fishX - this.posX) / (double)this.fishPosRotationIncrements;
-            double d8 = this.posY + (this.fishY - this.posY) / (double)this.fishPosRotationIncrements;
-            double d9 = this.posZ + (this.fishZ - this.posZ) / (double)this.fishPosRotationIncrements;
-//            double d1 = MathHelper.wrapAngleTo180_double(this.fishYaw - (double)this.rotationYaw);
-            double d1 = MathHelper.wrapDegrees(this.fishYaw - (double)this.rotationYaw);
-
-            this.rotationYaw = (float)((double)this.rotationYaw + d1 / (double)this.fishPosRotationIncrements);
-            this.rotationPitch = (float)((double)this.rotationPitch + (this.fishPitch - (double)this.rotationPitch) / (double)this.fishPosRotationIncrements);
-            --this.fishPosRotationIncrements;
-            this.setPosition(d7, d8, d9);
-            this.setRotation(this.rotationYaw, this.rotationPitch);
-        }
-        else
-        {
-            if (!this.world.isRemote)
-            {
-//                ItemStack itemstack = this.angler.eqgetCurrentEquippedItem();
-                ItemStack itemstack = this.angler.getHeldItemMainhand();
-
-//                if (this.angler.isDead || !this.angler.isEntityAlive() || itemstack == null || itemstack.getItem() != GAME_FISHING_ROD || this.getDistanceSqToEntity(this.angler) > 1024.0D)
-                if (this.angler.isDead || !this.angler.isEntityAlive() || itemstack == null || itemstack.getItem() != GAME_FISHING_ROD || this.getDistance(this.angler) > 1024.0D)
-                {
-                    //unRegister();
-                    beginPull = false;
-                    this.setDead();
-                    this.angler.fishEntity = null;
-                    return;
-                }
-
-                if (this.caughtEntity != null)
-                {
-                    if (!this.caughtEntity.isDead)
-                    {
-                        this.posX = this.caughtEntity.posX;
-                        double d12 = (double)this.caughtEntity.height;
-//                        this.posY = this.caughtEntity.boundingBox.minY + d12 * 0.8D;
-                        this.posY = this.caughtEntity.getEntityBoundingBox().minY + d12 * 0.8D;
-
-                        this.posZ = this.caughtEntity.posZ;
-                        return;
-                    }
-
-                    this.caughtEntity = null;
-                }
-            }
-
-            if (this.shake > 0)
-            {
-                --this.shake;
-            }
-
-            if (this.inGround)
-            {
-                if (this.world.getBlockState(new BlockPos(this.xTile, this.yTile, this.zTile)).getBlock() == this.inTile)
-                {
-                    ++this.ticksInGround;
-
-                    if (this.ticksInGround == 1200)
-                    {
-                        this.setDead();
-                    }
-
-                    return;
-                }
-
-                this.inGround = false;
-                this.motionX *= (double)(this.rand.nextFloat() * 0.2F);
-                this.motionY *= (double)(this.rand.nextFloat() * 0.2F);
-                this.motionZ *= (double)(this.rand.nextFloat() * 0.2F);
-                this.ticksInGround = 0;
-                this.ticksInAir = 0;
-            }
-            else
-            {
-                ++this.ticksInAir;
-            }
-
-            Vec3d vec31 = new Vec3d(this.posX, this.posY, this.posZ);
-            Vec3d vec3 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
-            RayTraceResult movingobjectposition = this.world.rayTraceBlocks(vec31, vec3);
-
-            vec31 = new Vec3d(this.posX, this.posY, this.posZ);
-            vec3 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
-
-            if (movingobjectposition != null)
-            {
-                vec3 = new Vec3d(movingobjectposition.hitVec.x, movingobjectposition.hitVec.y, movingobjectposition.hitVec.z);
-            }
-
-            Entity entity = null;
-
-            List<?> list = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().grow(this.motionX, this.motionY, this.motionZ).expand(1.0D, 1.0D, 1.0D));
-            double d0 = 0.0D;
-            double d2;
-
-            for (int i = 0; i < list.size(); ++i)
-            {
-                Entity entity1 = (Entity)list.get(i);
-
-                if (entity1.canBeCollidedWith() && (entity1 != this.angler || this.ticksInAir >= 5))
-                {
-                    float f = 0.3F;
-                    AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand((double)f, (double)f, (double)f);
-                    RayTraceResult movingobjectposition1 = axisalignedbb.calculateIntercept(vec31, vec3);
-
-                    if (movingobjectposition1 != null)
-                    {
-                        d2 = vec31.distanceTo(movingobjectposition1.hitVec);
-
-                        if (d2 < d0 || d0 == 0.0D)
-                        {
-                            entity = entity1;
-                            d0 = d2;
-                        }
-                    }
-                }
-            }
-
-            if (entity != null)
-            {
-//                movingobjectposition = new MovingObjectPosition(entity);
-                movingobjectposition = new RayTraceResult(entity);
-
-            }
-
-            if (movingobjectposition != null)
-            {
-                if (movingobjectposition.entityHit != null)
-                {
-                    if (movingobjectposition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.angler), 0.0F))
-                    {
-                        this.caughtEntity = movingobjectposition.entityHit;
-                    }
-                }
-                else
-                {
-                    this.inGround = true;
-                }
-            }
-
-            if (!this.inGround)
-            {
-                //Todo: moveEntity
-//                this.moveEntity(this.motionX, this.motionY, this.motionZ);
-                this.move(MoverType.SELF,this.motionX, this.motionY, this.motionZ);
-                float f5 = MathHelper.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
-                this.rotationYaw = (float)(Math.atan2(this.motionX, this.motionZ) * 180.0D / Math.PI);
-
-                for (this.rotationPitch = (float)(Math.atan2(this.motionY, (double)f5) * 180.0D / Math.PI); this.rotationPitch - this.prevRotationPitch < -180.0F; this.prevRotationPitch -= 360.0F)
-                {
-                    ;
-                }
-
-                while (this.rotationPitch - this.prevRotationPitch >= 180.0F)
-                {
-                    this.prevRotationPitch += 360.0F;
-                }
-
-                while (this.rotationYaw - this.prevRotationYaw < -180.0F)
-                {
-                    this.prevRotationYaw -= 360.0F;
-                }
-
-                while (this.rotationYaw - this.prevRotationYaw >= 180.0F)
-                {
-                    this.prevRotationYaw += 360.0F;
-                }
-
-                this.rotationPitch = this.prevRotationPitch + (this.rotationPitch - this.prevRotationPitch) * 0.2F;
-                this.rotationYaw = this.prevRotationYaw + (this.rotationYaw - this.prevRotationYaw) * 0.2F;
-                float f6 = 0.92F;
-
-                if (this.onGround || this.collidedHorizontally)
-                {
-                    f6 = 0.5F;
-                }
-
-                byte b0 = 5;
-                double d10 = 0.0D;
-                double d5;
-
-                for (int j = 0; j < b0; ++j)
-                {
-//                    AxisAlignedBB axisalignedbb1 = this.boundingBox;
-                    AxisAlignedBB axisalignedbb1 = this.getEntityBoundingBox();
-
-                    double d3 = axisalignedbb1.maxY - axisalignedbb1.minY;
-                    double d4 = axisalignedbb1.minY + d3 * (double)j / (double)b0;
-                    d5 = axisalignedbb1.minY + d3 * (double)(j + 1) / (double)b0;
-                    AxisAlignedBB axisalignedbb2 = new AxisAlignedBB(axisalignedbb1.minX, d4, axisalignedbb1.minZ, axisalignedbb1.maxX, d5, axisalignedbb1.maxZ);
-
-//                    if (this.worldObj.isAABBInMaterial(axisalignedbb2, Material.water))
-                    if (this.world.isMaterialInBB(axisalignedbb2, Material.WATER))
-
-                    {
-                        d10 += 1.0D / (double)b0;
-                    }
-//                    if (this.worldObj.isAABBInMaterial(axisalignedbb2, Material.lava))
-                    if (this.world.isMaterialInBB(axisalignedbb2, Material.LAVA))
-                    {
-                        d10 += 1.0D / (double)b0;
-                    }
-                }
-
-                if (!this.world.isRemote && d10 > 0.0D)
-                {
-                    WorldServer worldserver = (WorldServer)this.world;
-                    int k = 1;
-
-//                    if (this.rand.nextFloat() < 0.25F && this.world.canLightningStrikeAt(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ))
-                    if (this.rand.nextFloat() < 0.25F && this.world.checkLight( new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ))))
-
-                    {
-                        k = 2;
-                    }
-
-//                    if (this.rand.nextFloat() < 0.5F && !this.world.canBlockSeeTheSky(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ)))
-                    if (this.rand.nextFloat() < 0.5F && !this.world.checkLight(new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ))))
-
-                    {
-                        --k;
-                    }
-
-                    if (this.ticksCatchable > 0)
-                    {
-                        --this.ticksCatchable;
-
-                        if (this.ticksCatchable <= 0)
-                        {
-                            this.ticksCaughtDelay = 0;
-                            this.ticksCatchableDelay = 0;
-                        }
-                    }
-                    else
-                    {
-                        float f1;
-                        float f2;
-                        double d6;
-                        float f7;
-                        double d11;
-
-                        if (this.ticksCatchableDelay > 0)
-                        {
-                            this.ticksCatchableDelay -= k;
-
-                            if (this.ticksCatchableDelay <= 0)
-                            {
-                                this.motionY -= 0.20000000298023224D;
-
-                                this.playSound(SoundEvents.ENTITY_BOBBER_SPLASH, 0.25F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
-
-//                                this.playSound("random.splash", 0.25F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
-                                f1 = (float)MathHelper.floor(this.getEntityBoundingBox().minY);
-//                                worldserver.func_147487_a("bubble", this.posX, (double)(f1 + 1.0F), this.posZ, (int)(1.0F + this.width * 20.0F), (double)this.width, 0.0D, (double)this.width, 0.20000000298023224D);
-                                DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_BUBBLE,this.posX, (double)(f1 + 1.0F), this.posZ, (int)(1.0F + this.width * 20.0F), (double)this.width, 0.0D, (double)this.width, 0.20000000298023224D);
-
-//                                worldserver.func_147487_a("wake", this.posX, (double)(f1 + 1.0F), this.posZ, (int)(1.0F + this.width * 20.0F), (double)this.width, 0.0D, (double)this.width, 0.20000000298023224D);
-                                DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_WAKE, this.posX, (double)(f1 + 1.0F), this.posZ, (int)(1.0F + this.width * 20.0F), (double)this.width, 0.0D, (double)this.width, 0.20000000298023224D);
-
-                                //Todo: random fish here?
-//                                this.ticksCatchable = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
-                                this.ticksCatchable = 1;
-                            }
-                            else
-                            {
-                                this.fishApproachAngle = (float)((double)this.fishApproachAngle + this.rand.nextGaussian() * 4.0D);
-                                f1 = this.fishApproachAngle * 0.017453292F;
-                                f7 = MathHelper.sin(f1);
-                                f2 = MathHelper.cos(f1);
-                                d5 = this.posX + (double)(f7 * (float)this.ticksCatchableDelay * 0.1F);
-//                                d11 = (double)((float)MathHelper.floor(this.boundingBox.minY) + 1.0F);
-                                d11 = (double)((float)MathHelper.floor(this.getEntityBoundingBox().minY) + 1.0F);
-                                d6 = this.posZ + (double)(f2 * (float)this.ticksCatchableDelay * 0.1F);
-
-                                if (this.rand.nextFloat() < 0.15F)
-                                {
-//                                    worldserver.func_147487_a("bubble", d11, d5 - 0.10000000149011612D, d6, 1, (double)f7, 0.1D, (double)f2, 0.0D);
-                                    DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_BUBBLE, d11, d5 - 0.10000000149011612D, d6, 1, (double)f7, 0.1D, (double)f2, 0.0D);
-                                }
-
-                                float f3 = f7 * 0.04F;
-                                float f4 = f2 * 0.04F;
-//                                worldserver.func_147487_a("wake", d11, d5, d6, 0, (double)f4, 0.01D, (double)(-f3), 1.0D);
-                                DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_WAKE, d11, d5, d6, 0, (double)f4, 0.01D, (double)(-f3), 1.0D);
-//                                worldserver.func_147487_a("wake", d11, d5, d6, 0, (double)(-f4), 0.01D, (double)f3, 1.0D);
-                                DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_WAKE, d11, d5, d6, 0, (double)-f4, 0.01D, (double)(f3), 1.0D);
-                            }
-                        }
-                        else if (this.ticksCaughtDelay > 0)
-                        {
-                            this.ticksCaughtDelay -= k;
-                            f1 = 0.15F;
-
-                            if (this.ticksCaughtDelay < 20)
-                            {
-                                f1 = (float)((double)f1 + (double)(20 - this.ticksCaughtDelay) * 0.05D);
-                            }
-                            else if (this.ticksCaughtDelay < 40)
-                            {
-                                f1 = (float)((double)f1 + (double)(40 - this.ticksCaughtDelay) * 0.02D);
-                            }
-                            else if (this.ticksCaughtDelay < 60)
-                            {
-                                f1 = (float)((double)f1 + (double)(60 - this.ticksCaughtDelay) * 0.01D);
-                            }
-
-                            if (this.rand.nextFloat() < f1)
-                            {
-
-//                                f7 = MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292F;
-//                                f2 = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
-                                f7= MathHelper.clamp(this.rand.nextInt(), 0.0F, 360.0F) * 0.017453292F;
-                                f2 = MathHelper.clamp(this.rand.nextInt(), 25.0F, 60.0F);
-
-                                d5 = this.posX + (double)(MathHelper.sin(f7) * f2 * 0.1F);
-                                d11 = (double)((float)MathHelper.floor(this.getEntityBoundingBox().minY) + 1.0F);
-                                d6 = this.posZ + (double)(MathHelper.cos(f7) * f2 * 0.1F);
-//                                worldserver.func_147487_a("splash", d11, d5, d6, 2 + this.rand.nextInt(2), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
-                                DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_SPLASH, d11, d5, d6, 2 + this.rand.nextInt(2), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
-
-                            }
-
-                            if (this.ticksCaughtDelay <= 0)
-                            {
-//                                this.fishApproachAngle = MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F);
-                                this.fishApproachAngle = MathHelper.clamp(this.rand.nextInt(), 0.0F, 360.0F);
-                                this.ticksCatchableDelay = 20;//MathHelper.getRandomIntegerInRange(this.rand, 20, 80);
-                            }
-                        }
-                        else
-                        {
-                            this.ticksCaughtDelay = 20;//MathHelper.getRandomIntegerInRange(this.rand, 20, 20);
-                        }
-                    }
-
-                    if (this.ticksCatchable > 0)
-                    {
-                        this.motionY -= (double)(this.rand.nextFloat() * this.rand.nextFloat() * this.rand.nextFloat()) * 0.2D;
-                    }
-                }
-
-                d2 = d10 * 2.0D - 1.0D;
-                this.motionY += 0.03999999910593033D * d2;
-
-                if (d10 > 0.0D)
-                {
-                    f6 = (float)((double)f6 * 0.9D);
-                    this.motionY *= 0.8D;
-                }
-
-                this.motionX *= (double)f6;
-                this.motionY *= (double)f6;
-                this.motionZ *= (double)f6;
-                this.setPosition(this.posX, this.posY, this.posZ);
-            }
-        }
+//
+//            Vec3d vec31 = new Vec3d(this.posX, this.posY, this.posZ);
+//            Vec3d vec3 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+//            RayTraceResult movingobjectposition = this.world.rayTraceBlocks(vec31, vec3);
+//
+//            vec31 = new Vec3d(this.posX, this.posY, this.posZ);
+//            vec3 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+//
+//            if (movingobjectposition != null)
+//            {
+//                vec3 = new Vec3d(movingobjectposition.hitVec.x, movingobjectposition.hitVec.y, movingobjectposition.hitVec.z);
+//            }
+//
+//            Entity entity = null;
+//
+//            List<?> list = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().grow(this.motionX, this.motionY, this.motionZ).expand(1.0D, 1.0D, 1.0D));
+//            double d0 = 0.0D;
+//            double d2;
+//
+//            for (int i = 0; i < list.size(); ++i)
+//            {
+//                Entity entity1 = (Entity)list.get(i);
+//
+//                if (entity1.canBeCollidedWith() && (entity1 != this.angler || this.ticksInAir >= 5))
+//                {
+//                    float f = 0.3F;
+//                    AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand((double)f, (double)f, (double)f);
+//                    RayTraceResult movingobjectposition1 = axisalignedbb.calculateIntercept(vec31, vec3);
+//
+//                    if (movingobjectposition1 != null)
+//                    {
+//                        d2 = vec31.distanceTo(movingobjectposition1.hitVec);
+//
+//                        if (d2 < d0 || d0 == 0.0D)
+//                        {
+//                            entity = entity1;
+//                            d0 = d2;
+//                        }
+//                    }
+//                }
+//            }
+//
+//            if (entity != null)
+//            {
+////                movingobjectposition = new MovingObjectPosition(entity);
+//                movingobjectposition = new RayTraceResult(entity);
+//
+//            }
+//
+//            if (movingobjectposition != null)
+//            {
+//                if (movingobjectposition.entityHit != null)
+//                {
+//                    if (movingobjectposition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.angler), 0.0F))
+//                    {
+//                        this.caughtEntity = movingobjectposition.entityHit;
+//                    }
+//                }
+//                else
+//                {
+//                    this.inGround = true;
+//                }
+//            }
+//
+//            if (!this.inGround)
+//            {
+//                //Todo: moveEntity
+////                this.moveEntity(this.motionX, this.motionY, this.motionZ);
+//                this.move(MoverType.SELF,this.motionX, this.motionY, this.motionZ);
+//                float f5 = MathHelper.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+//                this.rotationYaw = (float)(Math.atan2(this.motionX, this.motionZ) * 180.0D / Math.PI);
+//
+//                for (this.rotationPitch = (float)(Math.atan2(this.motionY, (double)f5) * 180.0D / Math.PI); this.rotationPitch - this.prevRotationPitch < -180.0F; this.prevRotationPitch -= 360.0F)
+//                {
+//                    ;
+//                }
+//
+//                while (this.rotationPitch - this.prevRotationPitch >= 180.0F)
+//                {
+//                    this.prevRotationPitch += 360.0F;
+//                }
+//
+//                while (this.rotationYaw - this.prevRotationYaw < -180.0F)
+//                {
+//                    this.prevRotationYaw -= 360.0F;
+//                }
+//
+//                while (this.rotationYaw - this.prevRotationYaw >= 180.0F)
+//                {
+//                    this.prevRotationYaw += 360.0F;
+//                }
+//
+//                this.rotationPitch = this.prevRotationPitch + (this.rotationPitch - this.prevRotationPitch) * 0.2F;
+//                this.rotationYaw = this.prevRotationYaw + (this.rotationYaw - this.prevRotationYaw) * 0.2F;
+//                float f6 = 0.92F;
+//
+//                if (this.onGround || this.collidedHorizontally)
+//                {
+//                    f6 = 0.5F;
+//                }
+//
+//                byte b0 = 5;
+//                double d10 = 0.0D;
+//                double d5;
+//
+//                for (int j = 0; j < b0; ++j)
+//                {
+////                    AxisAlignedBB axisalignedbb1 = this.boundingBox;
+//                    AxisAlignedBB axisalignedbb1 = this.getEntityBoundingBox();
+//
+//                    double d3 = axisalignedbb1.maxY - axisalignedbb1.minY;
+//                    double d4 = axisalignedbb1.minY + d3 * (double)j / (double)b0;
+//                    d5 = axisalignedbb1.minY + d3 * (double)(j + 1) / (double)b0;
+//                    AxisAlignedBB axisalignedbb2 = new AxisAlignedBB(axisalignedbb1.minX, d4, axisalignedbb1.minZ, axisalignedbb1.maxX, d5, axisalignedbb1.maxZ);
+//
+////                    if (this.worldObj.isAABBInMaterial(axisalignedbb2, Material.water))
+//                    if (this.world.isMaterialInBB(axisalignedbb2, Material.WATER))
+//
+//                    {
+//                        d10 += 1.0D / (double)b0;
+//                    }
+////                    if (this.worldObj.isAABBInMaterial(axisalignedbb2, Material.lava))
+//                    if (this.world.isMaterialInBB(axisalignedbb2, Material.LAVA))
+//                    {
+//                        d10 += 1.0D / (double)b0;
+//                    }
+//                }
+//
+//                if (!this.world.isRemote && d10 > 0.0D)
+//                {
+//                    WorldServer worldserver = (WorldServer)this.world;
+//                    int k = 1;
+//
+////                    if (this.rand.nextFloat() < 0.25F && this.world.canLightningStrikeAt(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ))
+//                    if (this.rand.nextFloat() < 0.25F && this.world.checkLight( new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ))))
+//
+//                    {
+//                        k = 2;
+//                    }
+//
+////                    if (this.rand.nextFloat() < 0.5F && !this.world.canBlockSeeTheSky(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ)))
+//                    if (this.rand.nextFloat() < 0.5F && !this.world.checkLight(new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ))))
+//
+//                    {
+//                        --k;
+//                    }
+//
+//                    if (this.ticksCatchable > 0)
+//                    {
+//                        --this.ticksCatchable;
+//
+//                        if (this.ticksCatchable <= 0)
+//                        {
+//                            this.ticksCaughtDelay = 0;
+//                            this.ticksCatchableDelay = 0;
+//                        }
+//                    }
+//                    else
+//                    {
+//                        float f1;
+//                        float f2;
+//                        double d6;
+//                        float f7;
+//                        double d11;
+//
+//                        if (this.ticksCatchableDelay > 0)
+//                        {
+//                            this.ticksCatchableDelay -= k;
+//
+//                            if (this.ticksCatchableDelay <= 0)
+//                            {
+//                                this.motionY -= 0.20000000298023224D;
+//
+//                                this.playSound(SoundEvents.ENTITY_BOBBER_SPLASH, 0.25F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
+//
+////                                this.playSound("random.splash", 0.25F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
+//                                f1 = (float)MathHelper.floor(this.getEntityBoundingBox().minY);
+////                                worldserver.func_147487_a("bubble", this.posX, (double)(f1 + 1.0F), this.posZ, (int)(1.0F + this.width * 20.0F), (double)this.width, 0.0D, (double)this.width, 0.20000000298023224D);
+//                                DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_BUBBLE,this.posX, (double)(f1 + 1.0F), this.posZ, (int)(1.0F + this.width * 20.0F), (double)this.width, 0.0D, (double)this.width, 0.20000000298023224D);
+//
+////                                worldserver.func_147487_a("wake", this.posX, (double)(f1 + 1.0F), this.posZ, (int)(1.0F + this.width * 20.0F), (double)this.width, 0.0D, (double)this.width, 0.20000000298023224D);
+//                                DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_WAKE, this.posX, (double)(f1 + 1.0F), this.posZ, (int)(1.0F + this.width * 20.0F), (double)this.width, 0.0D, (double)this.width, 0.20000000298023224D);
+//
+//                                //Todo: random fish here?
+////                                this.ticksCatchable = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
+//                                this.ticksCatchable = 1;
+//                            }
+//                            else
+//                            {
+//                                this.fishApproachAngle = (float)((double)this.fishApproachAngle + this.rand.nextGaussian() * 4.0D);
+//                                f1 = this.fishApproachAngle * 0.017453292F;
+//                                f7 = MathHelper.sin(f1);
+//                                f2 = MathHelper.cos(f1);
+//                                d5 = this.posX + (double)(f7 * (float)this.ticksCatchableDelay * 0.1F);
+////                                d11 = (double)((float)MathHelper.floor(this.boundingBox.minY) + 1.0F);
+//                                d11 = (double)((float)MathHelper.floor(this.getEntityBoundingBox().minY) + 1.0F);
+//                                d6 = this.posZ + (double)(f2 * (float)this.ticksCatchableDelay * 0.1F);
+//
+//                                if (this.rand.nextFloat() < 0.15F)
+//                                {
+////                                    worldserver.func_147487_a("bubble", d11, d5 - 0.10000000149011612D, d6, 1, (double)f7, 0.1D, (double)f2, 0.0D);
+//                                    DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_BUBBLE, d11, d5 - 0.10000000149011612D, d6, 1, (double)f7, 0.1D, (double)f2, 0.0D);
+//                                }
+//
+//                                float f3 = f7 * 0.04F;
+//                                float f4 = f2 * 0.04F;
+////                                worldserver.func_147487_a("wake", d11, d5, d6, 0, (double)f4, 0.01D, (double)(-f3), 1.0D);
+//                                DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_WAKE, d11, d5, d6, 0, (double)f4, 0.01D, (double)(-f3), 1.0D);
+////                                worldserver.func_147487_a("wake", d11, d5, d6, 0, (double)(-f4), 0.01D, (double)f3, 1.0D);
+//                                DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_WAKE, d11, d5, d6, 0, (double)-f4, 0.01D, (double)(f3), 1.0D);
+//                            }
+//                        }
+//                        else if (this.ticksCaughtDelay > 0)
+//                        {
+//                            this.ticksCaughtDelay -= k;
+//                            f1 = 0.15F;
+//
+//                            if (this.ticksCaughtDelay < 20)
+//                            {
+//                                f1 = (float)((double)f1 + (double)(20 - this.ticksCaughtDelay) * 0.05D);
+//                            }
+//                            else if (this.ticksCaughtDelay < 40)
+//                            {
+//                                f1 = (float)((double)f1 + (double)(40 - this.ticksCaughtDelay) * 0.02D);
+//                            }
+//                            else if (this.ticksCaughtDelay < 60)
+//                            {
+//                                f1 = (float)((double)f1 + (double)(60 - this.ticksCaughtDelay) * 0.01D);
+//                            }
+//
+//                            if (this.rand.nextFloat() < f1)
+//                            {
+//
+////                                f7 = MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292F;
+////                                f2 = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
+//                                f7= MathHelper.clamp(this.rand.nextInt(), 0.0F, 360.0F) * 0.017453292F;
+//                                f2 = MathHelper.clamp(this.rand.nextInt(), 25.0F, 60.0F);
+//
+//                                d5 = this.posX + (double)(MathHelper.sin(f7) * f2 * 0.1F);
+//                                d11 = (double)((float)MathHelper.floor(this.getEntityBoundingBox().minY) + 1.0F);
+//                                d6 = this.posZ + (double)(MathHelper.cos(f7) * f2 * 0.1F);
+////                                worldserver.func_147487_a("splash", d11, d5, d6, 2 + this.rand.nextInt(2), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
+//                                DimensionManager.getWorld(223).spawnParticle(EnumParticleTypes.WATER_SPLASH, d11, d5, d6, 2 + this.rand.nextInt(2), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
+//
+//                            }
+//
+//                            if (this.ticksCaughtDelay <= 0)
+//                            {
+////                                this.fishApproachAngle = MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F);
+//                                this.fishApproachAngle = MathHelper.clamp(this.rand.nextInt(), 0.0F, 360.0F);
+//                                this.ticksCatchableDelay = 20;//MathHelper.getRandomIntegerInRange(this.rand, 20, 80);
+//                            }
+//                        }
+//                        else
+//                        {
+//                            this.ticksCaughtDelay = 20;//MathHelper.getRandomIntegerInRange(this.rand, 20, 20);
+//                        }
+//                    }
+//
+//                    if (this.ticksCatchable > 0)
+//                    {
+//                        this.motionY -= (double)(this.rand.nextFloat() * this.rand.nextFloat() * this.rand.nextFloat()) * 0.2D;
+//                    }
+//                }
+//
+//                d2 = d10 * 2.0D - 1.0D;
+//                this.motionY += 0.03999999910593033D * d2;
+//
+//                if (d10 > 0.0D)
+//                {
+//                    f6 = (float)((double)f6 * 0.9D);
+//                    this.motionY *= 0.8D;
+//                }
+//
+//                this.motionX *= (double)f6;
+//                this.motionY *= (double)f6;
+//                this.motionZ *= (double)f6;
+//                this.setPosition(this.posX, this.posY, this.posZ);
+//            }
+//        }
     }
 
 
