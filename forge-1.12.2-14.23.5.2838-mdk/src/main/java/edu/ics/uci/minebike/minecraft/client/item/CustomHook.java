@@ -166,14 +166,6 @@ public class CustomHook extends EntityFishHook
 
 
     //The Gui for the Power Level Display
-    public static HudString powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
-    public static HudRectangle powerLvl = new HudRectangle(-145, 60, 40, 0, 0xe4344aff, true, true); // -145 60 40 -210
-    public static HudRectangle boxLeft = new HudRectangle(-148, 63, 3, -215, 0x000000ff, true, true);
-    public static HudRectangle boxRight = new HudRectangle(-105, 63, 3, -215, 0x000000ff, true, true);
-    public static HudRectangle boxBottom = new HudRectangle(-148, 63, 46, -3, 0x000000ff, true, true);
-    public static HudRectangle boxTop = new HudRectangle(-148, -152, 46, 3, 0x000000ff, true, true);
-    public static HudString holdTime = new HudString(0, 0, "Hold for " + time + " Seconds", 5, true, true);
-    public static HudString failTime = new HudString(0, 0, "Failure in " + 5 + " Seconds", 5, true, true);
 
     //List that stores the catchable custom fish
 //    public static List<WeightedRandomFishable> temp2;
@@ -182,7 +174,14 @@ public class CustomHook extends EntityFishHook
 //    {
 //        return temp2;
 //    }
-
+    public static HudString powerString;
+    public static HudRectangle powerLvl;
+    public static HudRectangle boxLeft;
+    public static HudRectangle boxRight;
+    public static HudRectangle boxBottom;
+    public static HudRectangle boxTop;
+    public static HudString holdTime;
+    public static HudString failTime;
     //The Custom constructor, instantiates custom fish items
     public CustomHook (World worldIn, EntityPlayer fishingPlayer)
     {
@@ -193,7 +192,7 @@ public class CustomHook extends EntityFishHook
         this.zTile = -1;
         this.ignoreFrustumCheck = true;
         this.angler = fishingPlayer;
-
+        System.out.println("Hook constructor called");;
         //if(worldIn.isRemote) System.out.println(this.angler.getCommandSenderName() + "<client");
 
         this.setSize(0.25F, 0.25F);
@@ -207,6 +206,14 @@ public class CustomHook extends EntityFishHook
         this.motionZ = (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI) * f);
         this.motionY = (double)(-MathHelper.sin(this.rotationPitch / 180.0F * (float)Math.PI) * f);
         this.handleHookCasting(this.motionX, this.motionY, this.motionZ, 1.5F, 1.0F);
+        this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
+        this.powerLvl = new HudRectangle(-145, 60, 40, 0, 0xe4344aff, true, true); // -145 60 40 -210
+        this.boxLeft = new HudRectangle(-148, 63, 3, -215, 0xff0000ff, true, true);
+        this.boxRight = new HudRectangle(-105, 63, 3, -215, 0x0000ffff, true, true);
+        this.boxBottom = new HudRectangle(-148, 63, 46, -3, 0x00ff00ff, true, true);
+        this.boxTop = new HudRectangle(-148, -152, 46, 3, 0x000000ff, true, true);
+        this.holdTime = new HudString(0, 0, "Hold for " + time + " Seconds", 5, true, true);
+        this.failTime = new HudString(0, 0, "Failure in " + 5 + " Seconds", 5, true, true);
 
         //Todo: If is possible, implement the following method for spawning the fishingSpots.
         //adds all the common fish to every fish location
@@ -292,7 +299,7 @@ public class CustomHook extends EntityFishHook
 
         //Stops the players movement
 //    	angler.addPotionEffect(new PotionEffect(2, 100, 1000000000));
-        Minecraft mc = Minecraft.getMinecraft();
+//        Minecraft mc = Minecraft.getMinecraft();
 
         //Start of the pull mechanic
         if(beginPull == true)
@@ -311,164 +318,165 @@ public class CustomHook extends EntityFishHook
              */
             if(tickCount >= 80)
             {
-                if(powerLvl.height >= -105)
-                {
-                    tickFail++;
-
-                    if(checkFail == false)
-                    {
-                        failTime.text = "Failure in " + 5 + " Seconds";
-//                        HudManager.registerString(failTime);
-                        checkFail = true;
-                    }
-
-                    if(tickFail % 20 == 0)
-                    {
-                        timeF -= 1;
-                        failTime.text = "Failure in " + timeF + " Seconds";
-                    }
-
-                    if(tickFail >= 100)
-                    {
-                        powerLvl.unregister();
-                        boxLeft.unregister();
-                        boxRight.unregister();
-                        boxBottom.unregister();
-                        boxTop.unregister();
-                        powerString.unregister();
-                        failTime.unregister();
-
-//                        HudManager.unregisterRectangle(powerLvl);
-//                        HudManager.unregisterRectangle(boxLeft);
-//                        HudManager.unregisterRectangle(boxRight);
-//                        HudManager.unregisterRectangle(boxBottom);
-//                        HudManager.unregisterRectangle(boxTop);
-//                        HudManager.unregisterString(powerString);
-//                        HudManager.unregisterString(failTime);
-                        //Todo:func_146034_e
-                        //angler.fishEntity.func_146034_e();
-
-                        checkFail = false;
-                        timeF = 5;
-                        beginPull = false;
-                    }
-                }
-                else
-                {
-                    timeF = 5;
-                    checkFail = false;
-                    tickFail = 0;
-                    failTime.unregister();
-//                    HudManager.unregisterString(failTime);
-                }
+//                if(powerLvl.height >= -105)
+//                {
+//                    tickFail++;
+//
+//                    if(checkFail == false)
+//                    {
+//                        failTime.text = "Failure in " + 5 + " Seconds";
+////                        HudManager.registerString(failTime);
+//                        checkFail = true;
+//                    }
+//
+//                    if(tickFail % 20 == 0)
+//                    {
+//                        timeF -= 1;
+//                        failTime.text = "Failure in " + timeF + " Seconds";
+//                    }
+//
+//                    if(tickFail >= 100)
+//                    {
+////                        powerLvl.unregister();
+////                        boxLeft.unregister();
+////                        boxRight.unregister();
+////                        boxBottom.unregister();
+////                        boxTop.unregister();
+////                        powerString.unregister();
+////                        failTime.unregister();
+//
+////                        HudManager.unregisterRectangle(powerLvl);
+////                        HudManager.unregisterRectangle(boxLeft);
+////                        HudManager.unregisterRectangle(boxRight);
+////                        HudManager.unregisterRectangle(boxBottom);
+////                        HudManager.unregisterRectangle(boxTop);
+////                        HudManager.unregisterString(powerString);
+////                        HudManager.unregisterString(failTime);
+//                        //Todo:func_146034_e
+//                        //angler.fishEntity.func_146034_e();
+//
+//                        checkFail = false;
+//                        timeF = 5;
+//                        beginPull = false;
+//                    }
+//                }
+//                else
+//                {
+//                    timeF = 5;
+//                    checkFail = false;
+//                    tickFail = 0;
+//                    failTime.unregister();
+////                    HudManager.unregisterString(failTime);
+//                }
             }
 
             //Changes the power bar's color and adjusts its height
-            if(checkHeight > -210)
-            {
-                powerLvl.height = checkHeight;
-                powerLvl.setColor(color(powerLvl.height));
-            }
+//            if(checkHeight > -210)
+//            {
+//                powerLvl.height = checkHeight;
+//                //powerLvl.setColor(color(powerLvl.height));
+//            }
+//
+//            else if(checkHeight >= 0)
+//            {
+//                powerLvl.height = 0;
+//            }
+//            //If the max height is reacher, make sure the height and color remains the same
+//            else
+//            {
+//                powerLvl.height = -210;
+//                //powerLvl.setColor(0x65f040ff);
+//            }
+//
+//
+//            //Sends in game message to player for specific data values
+//            if(tickCount % 20 == 0)
+//            {
+//                mc.player.sendChatMessage("Power Level: " + clickRate);
+//                mc.player.sendChatMessage("Height: " + powerLvl.height);
+////                mc.player.sendChatMessage("CHANGE: " + BiGXPacketHandler.change);
+//            }
+//
+//            /*Once player has achieved required power level for specified tickSuccess, GUI gets unregistered
+//             * and hook is retracted
+//             */
+//            if(getPower() >= getRequiredPower()) //30 52.5
+//            {
+//                failTime.unregister();
+////                HudManager.unregisterString(failTime);
+//                if(getPower() >= getBonus())
+//                    doubleTime = 2;
+//                else
+//                    doubleTime = 1;
+//
+//                if(checkTime == false)
+//                {
+//                    holdTime.text = "Hold for " + 5 + " Seconds";
+//                    holdTime.unregister();
+////                    HudManager.registerString(holdTime);
+//                    checkTime = true;
+//                }
+//
+//                tickSuccess++;
+//
+//                //If the player is going a specified speed above required power, catching takes half the time
+//                if(tickSuccess % ((int)(5) / doubleTime) == 0)
+//                {
+////                    if(powerLvl.getColor() == 0x65f040ff)
+////                        powerLvl.setColor(0x40bd24ff);
+//////                        powerLvl.color = 0x40bd24ff;
+////                    else
+////                        powerLvl.setColor(0x65f040ff);
+//
+//
+//                }
+//
+//                //If the player is going a specified speed above required power, catching takes half the time
+//                if(tickSuccess % (20 / doubleTime) == 0)
+//                {
+//                    time -= 1;
+//                    holdTime.text = "Hold for " + time + " Seconds";
+//                }
+//
+//                //When time = 0 that means they have caught the fish so it unregisters everything and ends
+//                //the mechanic
+//                if(time == 0)
+//                {
+//                    retractHook();
+//                    //TODo:func
+////                    angler.fishEntity.func_146034_e();
 
-            else if(checkHeight >= 0)
-            {
-                powerLvl.height = 0;
-            }
-            //If the max height is reacher, make sure the height and color remains the same
-            else
-            {
-                powerLvl.height = -210;
-                powerLvl.setColor(0x65f040ff);
-            }
-
-
-            //Sends in game message to player for specific data values
-            if(tickCount % 20 == 0)
-            {
-                mc.player.sendChatMessage("Power Level: " + clickRate);
-                mc.player.sendChatMessage("Height: " + powerLvl.height);
-//                mc.player.sendChatMessage("CHANGE: " + BiGXPacketHandler.change);
-            }
-
-            /*Once player has achieved required power level for specified tickSuccess, GUI gets unregistered
-             * and hook is retracted
-             */
-            if(getPower() >= getRequiredPower()) //30 52.5
-            {
-                failTime.unregister();
-//                HudManager.unregisterString(failTime);
-                if(getPower() >= getBonus())
-                    doubleTime = 2;
-                else
-                    doubleTime = 1;
-
-                if(checkTime == false)
-                {
-                    holdTime.text = "Hold for " + 5 + " Seconds";
-                    holdTime.unregister();
-//                    HudManager.registerString(holdTime);
-                    checkTime = true;
-                }
-
-                tickSuccess++;
-
-                //If the player is going a specified speed above required power, catching takes half the time
-                if(tickSuccess % ((int)(5) / doubleTime) == 0)
-                {
-                    if(powerLvl.getColor() == 0x65f040ff)
-                        powerLvl.setColor(0x40bd24ff);
-//                        powerLvl.color = 0x40bd24ff;
-                    else
-                        powerLvl.setColor(0x65f040ff);
-
-
-                }
-
-                //If the player is going a specified speed above required power, catching takes half the time
-                if(tickSuccess % (20 / doubleTime) == 0)
-                {
-                    time -= 1;
-                    holdTime.text = "Hold for " + time + " Seconds";
-                }
-
-                //When time = 0 that means they have caught the fish so it unregisters everything and ends
-                //the mechanic
-                if(time == 0)
-                {
-                    retractHook();
-                    //TODo:func
-//                    angler.fishEntity.func_146034_e();
-                    beginPull = false;
-                    powerLvl.unregister();
-                    boxLeft.unregister();
-                    boxRight.unregister();
-                    boxBottom.unregister();
-                    boxTop.unregister();
-                    powerString.unregister();
-                    failTime.unregister();
-                    holdTime.unregister();
-//                    HudManager.unregisterRectangle(powerLvl);
-//                    HudManager.unregisterRectangle(boxLeft);
-//                    HudManager.unregisterRectangle(boxRight);
-//                    HudManager.unregisterRectangle(boxBottom);
-//                    HudManager.unregisterRectangle(boxTop);
-//                    HudManager.unregisterString(powerString);
-//                    HudManager.unregisterString(failTime);
-//                    HudManager.unregisterString(holdTime);
-                    checkTime = false;
-                    doubleTime = 1;
-                    clickRate = 0;
-                }
-            }
-            else
-            {
-                time = 5;
-                tickSuccess = 0;
-                holdTime.unregister();
-//                HudManager.unregisterString(holdTime);
-                doubleTime = 1;
-                checkTime = false;
-            }
+//                    beginPull = false;
+////                    powerLvl.unregister();
+////                    boxLeft.unregister();
+////                    boxRight.unregister();
+////                    boxBottom.unregister();
+////                    boxTop.unregister();
+////                    powerString.unregister();
+////                    failTime.unregister();
+////                    holdTime.unregister();
+////                    HudManager.unregisterRectangle(powerLvl);
+////                    HudManager.unregisterRectangle(boxLeft);
+////                    HudManager.unregisterRectangle(boxRight);
+////                    HudManager.unregisterRectangle(boxBottom);
+////                    HudManager.unregisterRectangle(boxTop);
+////                    HudManager.unregisterString(powerString);
+////                    HudManager.unregisterString(failTime);
+////                    HudManager.unregisterString(holdTime);
+//                    checkTime = false;
+//                    doubleTime = 1;
+//                    clickRate = 0;
+//                }
+//            }
+//            else
+//            {
+//                time = 5;
+//                tickSuccess = 0;
+//                holdTime.unregister();
+////                HudManager.unregisterString(holdTime);
+//                doubleTime = 1;
+//                checkTime = false;
+//            }
         }
 
 
@@ -500,7 +508,7 @@ public class CustomHook extends EntityFishHook
 //                if (this.angler.isDead || !this.angler.isEntityAlive() || itemstack == null || itemstack.getItem() != GAME_FISHING_ROD || this.getDistanceSqToEntity(this.angler) > 1024.0D)
                 if (this.angler.isDead || !this.angler.isEntityAlive() || itemstack == null || itemstack.getItem() != GAME_FISHING_ROD || this.getDistance(this.angler) > 1024.0D)
                 {
-                    unRegister();
+                    //unRegister();
                     beginPull = false;
                     this.setDead();
                     this.angler.fishEntity = null;
@@ -846,7 +854,7 @@ public class CustomHook extends EntityFishHook
     public int handleHookRetraction()
     {
         byte b0 = 0;
-
+        retractHook();
         //If they have caught a fish, activate new pull mechanic
         if(beginPull == true)
         {
@@ -889,12 +897,12 @@ public class CustomHook extends EntityFishHook
     public void beginPulling()
     {
         beginPull = true;
-        powerLvl.unregister();
-        boxLeft.unregister();
-        boxRight.unregister();
-        boxBottom.unregister();
-        boxTop.unregister();
-        powerString.unregister();
+//        powerLvl.unregister();
+//        boxLeft.unregister();
+//        boxRight.unregister();
+//        boxBottom.unregister();
+//        boxTop.unregister();
+//        powerString.unregister();
 
 //        HudManager.registerRectangle(powerLvl);
 //        HudManager.registerRectangle(boxLeft);
@@ -943,9 +951,9 @@ public class CustomHook extends EntityFishHook
         double d5 = this.angler.posZ - this.posZ;
         double d7 = (double)MathHelper.sqrt(d1 * d1 + d3 * d3 + d5 * d5);
         double d9 = 0.1D;
-        entityitem.motionX = d1 * d9;
-        entityitem.motionY = d3 * d9 + (double)MathHelper.sqrt(d7) * 0.08D;
-        entityitem.motionZ = d5 * d9;
+//        entityitem.motionX = d1 * d9;
+//        entityitem.motionY = d3 * d9 + (double)MathHelper.sqrt(d7) * 0.08D;
+//        entityitem.motionZ = d5 * d9;
         //Todo: testing
         ItemStack fish = fishingAI.fish_testing();
 //        ResourceLocation fishLocation = new ResourceLocation("customnpcs", "textures/items/" + ((ItemFish)fish.getItem()).getName() + ".png");
@@ -973,20 +981,20 @@ public class CustomHook extends EntityFishHook
                 break;
         }
 
-        this.angler.world.spawnEntity(new EntityXPOrb(this.angler.world, this.angler.posX, this.angler.posY + 0.5D, this.angler.posZ + 0.5D, this.rand.nextInt(6) + 1));
+//        this.angler.world.spawnEntity(new EntityXPOrb(this.angler.world, this.angler.posX, this.angler.posY + 0.5D, this.angler.posZ + 0.5D, this.rand.nextInt(6) + 1));
     }
 
     //Unregisters all the GUI related to the fishing mechanic
     public static void unRegister()
     {
-        powerLvl.unregister();
-        boxLeft.unregister();
-        boxRight.unregister();
-        boxBottom.unregister();
-        boxTop.unregister();
-        powerString.unregister();
-        failTime.unregister();
-        holdTime.unregister();
+//        powerLvl.unregister();
+//        boxLeft.unregister();
+//        boxRight.unregister();
+//        boxBottom.unregister();
+//        boxTop.unregister();
+//        powerString.unregister();
+//        failTime.unregister();
+//        holdTime.unregister();
 //        HudManager.unregisterRectangle(powerLvl);
 //        HudManager.unregisterRectangle(boxLeft);
 //        HudManager.unregisterRectangle(boxRight);
