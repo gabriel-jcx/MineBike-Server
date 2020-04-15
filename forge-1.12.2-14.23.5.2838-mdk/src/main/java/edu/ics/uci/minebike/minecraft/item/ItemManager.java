@@ -1,15 +1,10 @@
-package edu.ics.uci.minebike.minecraft.client;
+package edu.ics.uci.minebike.minecraft.item;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFishingRod;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 //import org.ngs.bigx.dictionary.objects.clinical.BiGXPatientPrescription;
-import edu.ics.uci.minebike.minecraft.client.item.ItemGameFishingRod;
-import net.theawesomegem.fishingmadebetter.common.item.fishingrod.ItemBetterFishingRod;
-
-import static net.theawesomegem.fishingmadebetter.common.item.ItemManager.FISHING_ROD_DIAMOND;
+import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 
 public class ItemManager {
     public static final ItemFishingRod GAME_FISHING_ROD = new ItemGameFishingRod();

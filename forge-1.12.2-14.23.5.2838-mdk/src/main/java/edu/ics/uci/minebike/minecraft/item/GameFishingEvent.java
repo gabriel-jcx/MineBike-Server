@@ -1,4 +1,4 @@
-package edu.ics.uci.minebike.minecraft.client.item;
+package edu.ics.uci.minebike.minecraft.item;
 import edu.ics.uci.minebike.minecraft.client.AI.FishingAI;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
 import net.minecraft.entity.item.EntityItem;

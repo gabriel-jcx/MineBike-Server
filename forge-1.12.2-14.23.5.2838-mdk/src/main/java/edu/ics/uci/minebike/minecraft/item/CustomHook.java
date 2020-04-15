@@ -1,4 +1,4 @@
-package edu.ics.uci.minebike.minecraft.client.item;
+package edu.ics.uci.minebike.minecraft.item;
 
 
 
@@ -8,7 +8,7 @@ import edu.ics.uci.minebike.minecraft.client.AI.FishingAI;
 import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
-import edu.ics.uci.minebike.minecraft.client.item.ItemGameHook;
+import edu.ics.uci.minebike.minecraft.item.ItemGameHook;
 import io.netty.buffer.ByteBuf;
 
 import java.awt.Color;
@@ -60,7 +60,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.client.RenderChatMessages;
 
-import static edu.ics.uci.minebike.minecraft.client.ItemManager.GAME_FISHING_ROD;
+import static edu.ics.uci.minebike.minecraft.item.ItemManager.GAME_FISHING_ROD;
 
 //import org.ngs.bigx.minecraft.BiGX;
 //import org.ngs.bigx.minecraft.bike.BiGXPacketHandler;

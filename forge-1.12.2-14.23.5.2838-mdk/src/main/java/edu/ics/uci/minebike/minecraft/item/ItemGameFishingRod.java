@@ -1,10 +1,9 @@
-package edu.ics.uci.minebike.minecraft.client.item;
+package edu.ics.uci.minebike.minecraft.item;
 
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;

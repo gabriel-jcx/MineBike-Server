@@ -1,22 +1,18 @@
 package edu.ics.uci.minebike.minecraft;
 
 import edu.ics.uci.minebike.minecraft.client.HudManager;
-import edu.ics.uci.minebike.minecraft.client.item.GameFishingEvent;
+import edu.ics.uci.minebike.minecraft.item.GameFishingEvent;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import edu.ics.uci.minebike.minecraft.serverSave.ServerSaveManager;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import org.apache.logging.log4j.Logger;
 @Mod(modid = BiGXMain.MOD_ID,name = BiGXMain.MOD_NAME, version = BiGXMain.MOD_VERSION, dependencies = "required-after:soccer")
 public class BiGXMain {
