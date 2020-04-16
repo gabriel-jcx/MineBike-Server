@@ -6,7 +6,8 @@ public enum EnumPacketServer {
     SoccerLeftScoreUpdate,
     SoccerRightScoreUpdate,
     QuestEnd,
-    QuestJoinFailed;
+    QuestJoinFailed,
+    FishingDistance;
     private EnumPacketServer(){
 
     }

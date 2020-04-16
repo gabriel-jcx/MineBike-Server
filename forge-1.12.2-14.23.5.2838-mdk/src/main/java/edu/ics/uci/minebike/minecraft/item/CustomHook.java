@@ -4,10 +4,12 @@ package edu.ics.uci.minebike.minecraft.item;
 
 import com.teammetallurgy.aquaculture.items.AquacultureItems;
 import com.teammetallurgy.aquaculture.items.ItemFish;
+import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.client.AI.FishingAI;
 import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
+import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import edu.ics.uci.minebike.minecraft.item.ItemGameHook;
 import io.netty.buffer.ByteBuf;
 
@@ -32,6 +34,7 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -59,6 +62,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.client.config.GuiMessageDialog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import noppes.npcs.Server;
 import noppes.npcs.client.RenderChatMessages;
 
 import static edu.ics.uci.minebike.minecraft.item.ItemManager.GAME_FISHING_ROD;
@@ -115,7 +119,7 @@ public class CustomHook extends EntityFishHook
     /*When fishing mechanic starts the tick count will count every tick that happens in a second
       This is used to keep track of each second*/
     private int tickCount = 0;
-
+    //public int i = 0;
     //Activated when the required power level is achieved and counts how long they maintain the required power
     private int tickSuccess = 0;
 
@@ -159,14 +163,13 @@ public class CustomHook extends EntityFishHook
     public static int doubleTime = 1;
 
     //Remaining distance to catch the fish
-    public int distance = 4;
+    public static int distance = 4;
 
     public int timer = 10;
-    public static int bar_min= -70;
-    public static int bar_max=65;
+
     EntityItem entityitem;
     FishingAI fishingAI=new FishingAI();
-    private int current_t=0;
+
     //Store all the fishes with their weights
     private List<ArrayList<ItemFish>> fishingSpots = new ArrayList<ArrayList<ItemFish>>();
 
@@ -278,29 +281,17 @@ public class CustomHook extends EntityFishHook
     @Override
     public void onUpdate()
     {
+        ServerUtils.sendQuestData(EnumPacketServer.FishingDistance, (EntityPlayerMP)this.angler, distance);
         this.onEntityUpdate();
         this.extinguish();
-        if(this.world.isRemote) {
-            refresh_powerline();
-            reduce_distance();
 
-            if (current_t != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
-                current_t = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-                timer -= 1;
-
-                // You don't need to new here, you can just simply modify this.timerString.text
-                this.timerString.unregister();
-                this.timerString = new HudString(-10, 45, "The fish will run away in:  " + timer + " seconds", true, false);
-            }
-        }
         //Todo: erase hud if fish rod is not in hand, retract hook, spawn fish
         if (distance==0)
         {
             angler.fishEntity.setDead();
-            if(this.world.isRemote)
-                unreg_hud();
             entityitem = new EntityItem(this.world, this.posX, this.posY, this.posZ,this.getFishingResult());
             spawn_fish();
+
         }
 
     }
@@ -338,33 +329,13 @@ public class CustomHook extends EntityFishHook
         return redValue + greenValue + alpha;
     }
 
-    public void refresh_powerline(){
-        int tempx=powerLine.getX();
-        if (this.requiredPower==getPower()&&tempx+5<=bar_max) {
-            this.powerLine.unregister();
-            this.powerLine = new HudRectangle(tempx + 5, 0, 5, 30, 0xffffffff, true, false);
+    public void pull(){
+        this.beginPull=!this.beginPull;
+    }
+    public boolean get_pull(){
+        return this.beginPull;
+    }
 
-        }else if (this.requiredPower!=getPower()&&tempx-5>=bar_min)
-        {
-            this.powerLine.unregister();
-            this.powerLine = new HudRectangle(tempx - 5, 0, 5, 30, 0xffffffff, true, false);
-        }
-    }
-    public void reduce_distance(){
-        if (this.powerLine.getX()==bar_max && distance-1>=0)
-        {
-            distance-=1;
-            this.distanceString.unregister();
-            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
-        }
-    }
-    public void unreg_hud(){
-        this.powerLine.unregister();
-        this.distanceString.unregister();
-        this.powerBar.unregister();
-        this.powerString.unregister();
-        this.timerString.unregister();
-    }
     private void spawn_fish(){
         this.angler.world.spawnEntity(entityitem);
         //player.field_70170_p.func_72838_d(entityitem);

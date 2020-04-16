@@ -1,11 +1,14 @@
 package edu.ics.uci.minebike.minecraft;
 
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
+import edu.ics.uci.minebike.minecraft.item.CustomHook;
+import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemFishingRod;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -48,6 +51,8 @@ public class PacketHandlerClient {
             SoccerQuest soccer = (SoccerQuest) CustomQuestManager.customQuests.get(222);
             soccer.rightScoreUpdate();
         }
+
+
         //EntityPlayer player = Minecraft.getMinecraft().player; // get the client side of the player
 //        if(player != null){
 //            ByteBuf buffer = event.getPacket().payload(); // get the packet payload

@@ -3,6 +3,8 @@ package edu.ics.uci.minebike.minecraft;
 import com.google.common.base.Charsets;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
+import edu.ics.uci.minebike.minecraft.item.CustomHook;
+import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -55,6 +57,9 @@ public class PacketHandlerServer {
             int a = Integer.parseInt(questNum);
             System.out.println("a = " + a);
             CustomQuestManager.customQuests.get(Integer.parseInt(questNum)).onPlayerJoin(player);
+        }else if (num == EnumPacketClient.FishingDistance)
+        {
+            CustomHook.distance= buffer.readInt();
         }
         //System.out.println(readString(buffer));
         // teleport and start the quest here!!!!
