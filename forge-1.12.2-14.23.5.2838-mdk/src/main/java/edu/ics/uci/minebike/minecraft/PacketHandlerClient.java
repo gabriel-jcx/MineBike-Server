@@ -4,6 +4,7 @@ import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import edu.ics.uci.minebike.minecraft.item.CustomHook;
 import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -50,6 +51,9 @@ public class PacketHandlerClient {
         }else if(type == EnumPacketServer.SoccerRightScoreUpdate){
             SoccerQuest soccer = (SoccerQuest) CustomQuestManager.customQuests.get(222);
             soccer.rightScoreUpdate();
+        }else if (type == EnumPacketServer.FishRetract) {
+            FishingQuest fishingQuest = (FishingQuest) CustomQuestManager.customQuests.get(223);
+            fishingQuest.retract=buffer.readInt();
         }
 
 

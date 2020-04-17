@@ -281,7 +281,7 @@ public class CustomHook extends EntityFishHook
     @Override
     public void onUpdate()
     {
-        ServerUtils.sendQuestData(EnumPacketServer.FishingDistance, (EntityPlayerMP)this.angler, distance);
+        //ServerUtils.sendQuestData(EnumPacketServer.FishingDistance, (EntityPlayerMP)this.angler, distance);
         this.onEntityUpdate();
         this.extinguish();
 
