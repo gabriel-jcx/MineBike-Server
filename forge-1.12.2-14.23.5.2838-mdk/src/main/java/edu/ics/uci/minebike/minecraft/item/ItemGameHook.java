@@ -1,4 +1,4 @@
-package edu.ics.uci.minebike.minecraft.client.item;
+package edu.ics.uci.minebike.minecraft.item;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFishHook;

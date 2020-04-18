@@ -31,6 +31,9 @@ public class HudRectangle extends HudShape {
 ////        if(HudManager.getInstance(mc).rectangles.contains(this))
 ////            HudManager.getInstance(mc).rectangles.remove(this);
 //    }
+    public int getX(){
+        return this.x;
+    }
     //@Override
     protected void drawRectangle(int x1, int y1, int x2, int y2, int color)
     {

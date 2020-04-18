@@ -51,7 +51,7 @@ import static net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer;
 // NOTE: many of the fields can be more optimized i think, getting lazy now LOL
 public class SoccerQuest extends AbstractCustomQuest {
 
-    private final long GAME_WAITING_TIME = 10000;//30000; // millisecond
+    private final long GAME_WAITING_TIME = 30000;//30000; // millisecond
     private final long GAME_SESSION_TIME = 300000;//300000; // millisecond => equivalent to 5 mins
     private final int GOAL_TICK_TIME = 5; // If ball stays in the goal for 5 ticks
 //    private final Vec3d ball_location = new Vec3d(-165, 4,1145);
@@ -72,6 +72,10 @@ public class SoccerQuest extends AbstractCustomQuest {
 
     // Player fields
     public ArrayList<EntityPlayerMP> playersInGame  = new ArrayList<>();
+
+    // Player spwan locations
+    public ArrayList<BlockPos> playerSpawnLocations = new ArrayList<>();
+    public int curr_player_count = 0; //
 
     // Server waiting Tracker
     private long server_waitingStartTime = 0;
@@ -97,22 +101,12 @@ public class SoccerQuest extends AbstractCustomQuest {
     private long client_endTime = 0;
 
 
-
-
-    // Soccer field goal locations
-//    BlockPos leftGoal
-
-//    @SideOnly(Side.CLIENT)
-
-//    private HudRectangle clockRect;
+    // Client Hud Elements
     private HudString clockStr;
-    private HudRectangle scoreLeftRect;
     private int scoreLeft = 0;
     private HudString scoreLeftStr;
-    private HudRectangle scoreRightRect;
     private int scoreRight = 0;
     private HudString scoreRightStr;
-    private long waitingEndTime;
 
 
 
@@ -145,6 +139,7 @@ public class SoccerQuest extends AbstractCustomQuest {
         if(isStarted){
 
             System.out.println("There's an ongoing soccer session, please wait!");
+            ServerUtils.telport((EntityPlayerMP)player,Jaya.LOCATION,0);
             ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
 
             return false;
@@ -164,7 +159,7 @@ public class SoccerQuest extends AbstractCustomQuest {
 //                    }
 //                }
                 isWaiting = true;
-                //waitingEndTime = waitingStartTime + waitingTime;
+            //waitingEndTime = waitingStartTime + waitingTime;
             }
             Potion slow_potion = Potion.getPotionById(2);
             Potion jump_anti_boost = Potion.getPotionById(8);
@@ -339,25 +334,37 @@ public class SoccerQuest extends AbstractCustomQuest {
         }
 //        DimensionManager.getWorld(222).spawnParticle(EnumParticleTypes.WATER_WAKE);
     }
+    public void leftScoreUpdate(){
+        scoreLeftStr.text = Integer.toString(++scoreLeft);
+    }
+    public void rightScoreUpdate(){
+        scoreRightStr.text = Integer.toString(++scoreRight);
+    }
     private void serverStartTick(TickEvent.WorldTickEvent event){
         long curr = System.currentTimeMillis();
         if(ball != null){
-            int now = QuestUtils.getRemainingSeconds(curr);
-            if(prev != now){
-                System.out.println("ball is at " + ball.getPosition());
-                System.out.println("Red Goal " + redGoal);
-                System.out.println("Blue Goal " + blueGoal);
-                prev = now;
-            }
+//            int now = QuestUtils.getRemainingSeconds(curr);
+//            if(prev != now){
+//                System.out.println("ball is at " + ball.getPosition());
+//                System.out.println("Red Goal " + redGoal);
+//                System.out.println("Blue Goal " + blueGoal);
+//                prev = now;
+//            }
             if(isBallInsideGoal(ball.getPosition(),blueGoal) || isBallInsideGoal(ball.getPosition(), redGoal)){
                 this.ball_in_goal_tick++;
                 System.out.println("GOALLLLL!");
             }
             if(ball_in_goal_tick > GOAL_TICK_TIME){
                 if(isBallInsideGoal(ball.getPosition(),blueGoal)){
-                    scoreLeftStr.text = Integer.toString(++scoreLeft);
+                    for(EntityPlayerMP playerMP: playersInGame){
+                        ServerUtils.sendQuestData(EnumPacketServer.SoccerLeftScoreUpdate,playerMP);
+                    }
+//                    scoreLeftStr.text = Integer.toString(++scoreLeft);
                 }else if(isBallInsideGoal(ball.getPosition(),redGoal)){
-                    scoreRightStr.text = Integer.toString(++scoreRight);
+                    for(EntityPlayerMP playerMP:playersInGame){
+                        ServerUtils.sendQuestData(EnumPacketServer.SoccerRightScoreUpdate,playerMP);
+                    }
+//                    scoreRightStr.text = Integer.toString(++scoreRight);
                 }
                 ball_in_goal_tick = 0;
                 // DO I need to reset the players?

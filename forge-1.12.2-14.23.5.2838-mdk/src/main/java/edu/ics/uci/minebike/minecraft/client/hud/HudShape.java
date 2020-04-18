@@ -8,8 +8,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public abstract class HudShape extends GuiScreen {
-    protected int x;
-    protected int y;
+    public int x;
+    public int y;
     protected boolean centerX;
     protected boolean centerY;
     protected int color;

@@ -3,6 +3,7 @@ package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
+import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
@@ -37,24 +38,14 @@ public class Ada extends AbstractCustomNpc {
 
     }
     //@SideOnly(Side.CLIENT)
-    public static void give_rod(EntityPlayer playerSP){
-        //ResourceLocation resourcelocation = new ResourceLocation("minebikemod:game_rod"); //
-        //Fishing rod name
-        ResourceLocation resourcelocation = new ResourceLocation("minebikemod:game_fish_rod");
-        Item rod = Item.REGISTRY.getObject(resourcelocation);
-        ItemStack itemstack = new ItemStack(rod,1);
-        playerSP.inventory.addItemStackToInventory(itemstack);
-        playerSP.world.playSound((EntityPlayer)null, playerSP.posX, playerSP.posY, playerSP.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((playerSP.getRNG().nextFloat() - playerSP.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
-        playerSP.inventoryContainer.detectAndSendChanges();
 
-    }
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent e) {
         if(!e.player.world.isRemote){
 
         }
     }
-        @Override
+    @Override
     public void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event) {
         System.out.println("Ada was interacted");
         for(EntityCustomNpc npc: NpcDatabase.npc_entities){
@@ -65,30 +56,23 @@ public class Ada extends AbstractCustomNpc {
             }
         }
         AbstractCustomQuest fishing = CustomQuestManager.customQuests.get(WorldProviderFishing.DIM_ID);
-        boolean isJoinSuccess = fishing.onPlayerJoin(player);
-        if(isJoinSuccess){
-            if(event.getWorld().isRemote){  // Client side send message
-                FishingQuest fishingQuest = new FishingQuest();
-                System.out.println(" Start Fishing quest ");
-                //TODO: The Dialog
-                //TextComponentString give = new TextComponentString(String.format("/give %s fishingmadebetter:diamond_fishing_rod ", player.getName()));
-                //give_rod( player);
-                ClientUtils.sendData(EnumPacketClient.PlayerJoin,"223");
+       // ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
 
-                System.out.println("is Client Side!!!!");
-            }
-            else {
-                give_rod( player);
-                //ServerUtils.telport((EntityPlayerMP)player, fishing.questStartLocation,fishing.DIMID);
-            }
+        //boolean isJoinSuccess = fishing.onPlayerJoin(player);
+        if(event.getWorld().isRemote){  // Client side send message
+            ClientUtils.sendData(EnumPacketClient.PlayerJoin,"223");
+            System.out.println("is Client Side!!!!");
+        }
+        else {
+            System.out.println("fish start location: "+fishing.questStartLocation+"   "+fishing.DIMID);
+            ServerUtils.telport((EntityPlayerMP)player, fishing.questStartLocation,fishing.DIMID);
+//            give_rod( player);
+            //ServerUtils.telport((EntityPlayerMP)player, fishing.questStartLocation,fishing.DIMID);
+        }
 //            if(!event.getWorld().isRemote){
 //
 //                //telport((EntityPlayerMP) player, FishingQuest.questStartLocation, WorldProviderFishing.DIM_ID);
 //            }
-        }else{
 
-            System.out.println(player.getName() + " join ");
-            // Show soccer join error message here!
-        }
     }
 }

@@ -1,11 +1,15 @@
 package edu.ics.uci.minebike.minecraft;
 
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
+import edu.ics.uci.minebike.minecraft.item.CustomHook;
+import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemFishingRod;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -41,7 +45,18 @@ public class PacketHandlerClient {
             System.out.println("Client received a packet start on quest " + DIMID);
 
             CustomQuestManager.findAndStart(Integer.parseInt(DIMID));
+        }else if(type == EnumPacketServer.SoccerLeftScoreUpdate){
+            SoccerQuest soccer = (SoccerQuest) CustomQuestManager.customQuests.get(222);
+            soccer.leftScoreUpdate();
+        }else if(type == EnumPacketServer.SoccerRightScoreUpdate){
+            SoccerQuest soccer = (SoccerQuest) CustomQuestManager.customQuests.get(222);
+            soccer.rightScoreUpdate();
+        }else if (type == EnumPacketServer.FishRetract) {
+            FishingQuest fishingQuest = (FishingQuest) CustomQuestManager.customQuests.get(223);
+            fishingQuest.retract=buffer.readInt();
         }
+
+
         //EntityPlayer player = Minecraft.getMinecraft().player; // get the client side of the player
 //        if(player != null){
 //            ByteBuf buffer = event.getPacket().payload(); // get the packet payload
