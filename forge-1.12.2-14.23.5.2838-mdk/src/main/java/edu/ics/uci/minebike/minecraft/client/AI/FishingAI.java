@@ -3,17 +3,23 @@ import com.teammetallurgy.aquaculture.items.AquacultureItems;
 import com.teammetallurgy.aquaculture.items.ItemFish;
 import net.minecraft.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.Float.sum;
 
 public class FishingAI {
+    public Map<Integer, ItemStack> fishes= new HashMap<Integer, ItemStack>();
+    ItemStack shrooma = AquacultureItems.fish.getItemStackFish("Red Shrooma");
+    ItemStack goldfish = AquacultureItems.fish.getItemStackFish("Goldfish");
+    ItemStack whale = AquacultureItems.fish.getItemStackFish("Whale");
+
+
     public List<Float> heart_rate;
     //public Float avg;
     public FishingAI(){
-
+        fishes.put(0,shrooma);
+        fishes.put(1,goldfish);
+        fishes.put(2,whale);
     }
     public FishingAI(float h){
 
@@ -23,9 +29,14 @@ public class FishingAI {
     }
 
     public ItemStack fish_testing(){
-        ItemStack shrooma = AquacultureItems.fish.getItemStackFish("Red Shrooma");
-        System.out.println("fish_testing creat fish.......................");
-        return shrooma;
+        Random random= new Random();
+        int i= random.nextInt(3);
+        ItemStack r= fishes.get(i);
+
+        System.out.println("fish_testing creat fish......................."+ r.getDisplayName());
+
+
+        return r;
 
     }
     public ArrayList<ItemFish> spawn_fish(){
@@ -43,4 +54,5 @@ public class FishingAI {
         return s/heart_rate.size();
 
     }
+
 }

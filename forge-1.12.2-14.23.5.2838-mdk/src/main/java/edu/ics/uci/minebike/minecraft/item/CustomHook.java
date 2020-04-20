@@ -209,13 +209,7 @@ public class CustomHook extends EntityFishHook
 
         //The total range of the bar is x:(-70,65] because the line's w is 5
 
-        if(worldIn.isRemote){
-            this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
-            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
-            this.timerString = new HudString(-10, 45, "The fish will run away in:  "+ timer+" seconds", true, false);
-            this.powerBar= new HudRectangle(-70,0, 140, 30, 0xe4344aff,true,false);
-            this.powerLine = new HudRectangle(-70,0, 5, 30, 0xffffffff,true,false);
-        }
+
 
 
         //Todo: If is possible, implement the following method for spawning the fishingSpots.
@@ -284,13 +278,15 @@ public class CustomHook extends EntityFishHook
         //ServerUtils.sendQuestData(EnumPacketServer.FishingDistance, (EntityPlayerMP)this.angler, distance);
         this.onEntityUpdate();
         this.extinguish();
+        //super.onUpdate();
 
         //Todo: erase hud if fish rod is not in hand, retract hook, spawn fish
         if (distance==0)
         {
-            angler.fishEntity.setDead();
+            this.setDead();
             entityitem = new EntityItem(this.world, this.posX, this.posY, this.posZ,this.getFishingResult());
             spawn_fish();
+            distance=4;
 
         }
 

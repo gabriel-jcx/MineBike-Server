@@ -113,33 +113,38 @@ public class FishingQuest  extends AbstractCustomQuest {
 
     @Override
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (retract==1){
-            retract =3;
+        if (retract==2){
+            retract=0;
+            System.out.println("retract");
+            unreg_hud();
+            distance=4;
+            timer=10;
+
+        }
+        else if(retract==1)
+        {
+
             System.out.println("throw");
             this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
             this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
             this.timerString = new HudString(-10, 45, "The fish will run away in:  "+ timer+" seconds", true, false);
             this.powerBar= new HudRectangle(-70,0, 140, 30, 0xe4344aff,true,false);
             this.powerLine = new HudRectangle(-70,0, 5, 30, 0xffffffff,true,false);
-        }
-        else if(retract==2)
-        {
-            retract=0;
-            System.out.println("retract");
-            unreg_hud();
-            distance=4;
-            timer=10;
+            retract=3;
         }
         else if (retract==3){
             refresh_powerline();
             reduce_distance();
             refresh_timerString();
             if (distance == 0) {
-                retract=2;
+                retract=0;
 
-
+                unreg_hud();
+                distance=4;
+                timer=10;
             }
         }
+
     }
     private int getPower()
     {
@@ -179,7 +184,11 @@ public class FishingQuest  extends AbstractCustomQuest {
         {
             distance-=1;
             this.distanceString.text= "Distance "+ distance;
-            ClientUtils.sendData(EnumPacketClient.FishingDistance,distance);
+            if(distance==0)
+            {
+                ClientUtils.sendData(EnumPacketClient.FishingDistance,distance);
+            }
+
 //            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
         }
     }
