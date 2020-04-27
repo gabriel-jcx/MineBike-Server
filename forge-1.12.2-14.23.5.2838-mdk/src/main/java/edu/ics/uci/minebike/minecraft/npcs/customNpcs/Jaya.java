@@ -48,8 +48,8 @@ public class Jaya extends AbstractCustomNpc {
 
         if(event.getWorld().isRemote) // client send packet
             ClientUtils.sendData(EnumPacketClient.PlayerJoin,"222");
-        else    // server teleport the user
-            ServerUtils.telport((EntityPlayerMP)player, soccer.questStartLocation,soccer.DIMID);
+//        else    // server teleport the user
+//            ServerUtils.telport((EntityPlayerMP)player, soccer.questStartLocation,soccer.DIMID);
 
 
     }

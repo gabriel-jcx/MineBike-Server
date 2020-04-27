@@ -48,12 +48,17 @@ import static net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer;
 
 
 
+
 // NOTE: many of the fields can be more optimized i think, getting lazy now LOL
 public class SoccerQuest extends AbstractCustomQuest {
 
     private final long GAME_WAITING_TIME = 30000;//30000; // millisecond
     private final long GAME_SESSION_TIME = 300000;//300000; // millisecond => equivalent to 5 mins
     private final int GOAL_TICK_TIME = 5; // If ball stays in the goal for 5 ticks
+    private final int MAX_PLAYER_COUNT = 22;
+
+
+
 //    private final Vec3d ball_location = new Vec3d(-165, 4,1145);
     private final Vec3d ball_location = new Vec3d(-221,4,1138);
 
@@ -61,20 +66,20 @@ public class SoccerQuest extends AbstractCustomQuest {
     private final GoalRectangle blueGoal = new GoalRectangle(-161,1147,-155,1139);
     private final GoalRectangle redGoal = new GoalRectangle(-277,1139,-283, 1147);
 
+
     // Soccer ball fields
     private EntitySoccerBall ball;
 
     // WorldServer
     public WorldServer soccerWS = null;
 
-    // npc AI fields
-    // public static List<int[]> npcPathList = new ArrayList<int[]>();
+
 
     // Player fields
     public ArrayList<EntityPlayerMP> playersInGame  = new ArrayList<>();
 
     // Player spwan locations
-    public ArrayList<BlockPos> playerSpawnLocations = new ArrayList<>();
+    public ArrayList<BlockPos> playerSpawnLocations = new ArrayList<>(); //
     public int curr_player_count = 0; //
 
     // Server waiting Tracker
@@ -123,6 +128,7 @@ public class SoccerQuest extends AbstractCustomQuest {
         this.DIMID = 222;
         this.isStarted = false;
         this.questStartLocation = new Vec3d (-160, 4,1142);
+        QuestUtils.populateSoccerPlayerLocations(playerSpawnLocations,this.MAX_PLAYER_COUNT);
         //this.questStartLocation = new Vec3d(11,10,11);
 //        InventoryPlayer p = player.inventory;
 //        p.
@@ -146,10 +152,10 @@ public class SoccerQuest extends AbstractCustomQuest {
         }
 
         // teleporting here seems to be a problem!
-            if(!isWaiting) {
-                server_waitingStartTime = System.currentTimeMillis();
-                server_waitingEndTime = server_waitingStartTime + server_waitingTime;
-                WorldServer ws = DimensionManager.getWorld(this.DIMID);
+        if(!isWaiting) {
+            server_waitingStartTime = System.currentTimeMillis();
+            server_waitingEndTime = server_waitingStartTime + server_waitingTime;
+            WorldServer ws = DimensionManager.getWorld(this.DIMID);
 //                synchronized(ws.getLoadedEntityList()){
 //                    Iterator iter = ws.getLoadedEntityList().iterator();
 //                    while(iter.hasNext()){
@@ -158,21 +164,23 @@ public class SoccerQuest extends AbstractCustomQuest {
 //                            entity.isDead = true;
 //                    }
 //                }
-                isWaiting = true;
-            //waitingEndTime = waitingStartTime + waitingTime;
-            }
-            Potion slow_potion = Potion.getPotionById(2);
-            Potion jump_anti_boost = Potion.getPotionById(8);
-            System.out.println(slow_potion.getName()+ " " + jump_anti_boost.getName());
-            int secs = QuestUtils.getRemainingSeconds(server_waitingEndTime -System.currentTimeMillis());
-            System.out.println(secs);
-            // I think the duration is in Ticks
-            player.addPotionEffect(new PotionEffect(slow_potion,secs*20,1000000000));
+            isWaiting = true;
+        //waitingEndTime = waitingStartTime + waitingTime;
+        }
 
-            player.addPotionEffect(new PotionEffect(jump_anti_boost, secs*20, 128));
-            ServerUtils.sendQuestData(EnumPacketServer.SoccerQueueingTime,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
-            playersInGame.add((EntityPlayerMP)player);
-            return true;
+        Potion slow_potion = Potion.getPotionById(2);
+        Potion jump_anti_boost = Potion.getPotionById(8);
+        System.out.println(slow_potion.getName()+ " " + jump_anti_boost.getName());
+        int secs = QuestUtils.getRemainingSeconds(server_waitingEndTime -System.currentTimeMillis());
+        System.out.println(secs);
+        // I think the duration is in Ticks
+        player.addPotionEffect(new PotionEffect(slow_potion,secs*20,1000000000));
+
+        player.addPotionEffect(new PotionEffect(jump_anti_boost, secs*20, 128));
+//        player.setPosition()
+        ServerUtils.sendQuestData(EnumPacketServer.SoccerQueueingTime,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
+        playersInGame.add((EntityPlayerMP)player);
+        return true;
 
     }
 
@@ -285,17 +293,25 @@ public class SoccerQuest extends AbstractCustomQuest {
     public void end() {
 
         if(soccerWS != null && !soccerWS.isRemote){
-            soccerWS.removeEntity(ball);
-            ball = null;
-            
-            int numDiamonds = 10;   //can multiply by a scalar depending on difficulty
-
-            for(EntityPlayer player: this.playersInGame){
-                giveItemToPlayer(player, new ItemStack(Items.DIAMOND, numDiamonds));
-//                ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
+            if(ball != null){
+                soccerWS.removeEntity(ball);
+                ball = null;
             }
-            //ball.isDead = true;
 
+
+            int numDiamonds = 10;   //can multiply by a scalar depending on difficulty
+            if(isFinished){
+                for(EntityPlayer player: this.playersInGame){
+                    giveItemToPlayer(player, new ItemStack(Items.DIAMOND, numDiamonds));
+//                ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
+                }
+                isFinished = false;
+            }
+
+            //ball.isDead = true;
+            isStarted = false;
+            isWaiting = false;
+            System.out.println("Quest ENDS");
 
         }else{
             clockStr.unregister();

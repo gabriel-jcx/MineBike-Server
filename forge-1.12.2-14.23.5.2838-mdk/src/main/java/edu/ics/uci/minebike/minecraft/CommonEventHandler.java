@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft;
 
+import com.sun.media.jfxmedia.events.PlayerStateEvent;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.npcs.NpcEventHandler;
 import edu.ics.uci.minebike.minecraft.npcs.NpcUtils;
@@ -10,6 +11,7 @@ import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -96,6 +98,14 @@ public class CommonEventHandler {
     public void onPlayerLogout(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event){
         System.out.println(event.player.dimension);
         System.out.println(event.player.getName() + " has logged out");
+
+        if(event.player.world.provider.getDimension() == WorldProviderSoccerQuest.DIM_ID){
+            SoccerQuest soccer = (SoccerQuest)CustomQuestManager.customQuests.get(222);
+            soccer.playersInGame.remove((EntityPlayerMP)event.player);
+            if(soccer.playersInGame.isEmpty()){
+                soccer.end();
+            }
+        }
 
     }
     @SubscribeEvent
