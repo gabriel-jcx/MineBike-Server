@@ -123,6 +123,11 @@ public class FishingQuest  extends AbstractCustomQuest {
         }
         else if(retract==1)
         {
+            if (powerLine!=null)
+            {
+                unreg_hud();
+//                System.out.println("unreg_hud");
+            }
 
             System.out.println("throw");
             this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
