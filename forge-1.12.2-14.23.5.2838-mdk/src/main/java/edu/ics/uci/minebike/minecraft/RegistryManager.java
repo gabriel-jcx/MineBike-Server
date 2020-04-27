@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -37,5 +38,9 @@ public class RegistryManager {
 //        public static void onRegisterSound(Register<SoundEvent> e) {
 ////
 //        }
+        @SubscribeEvent
+        public static void onModelRegister(ModelRegistryEvent event){
+            ItemManager.registerModels();
+        }
     }
 }
