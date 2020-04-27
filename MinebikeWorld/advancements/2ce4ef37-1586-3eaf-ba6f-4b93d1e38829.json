@@ -1,0 +1,21 @@
+{
+  "minecraft:recipes/misc/light_gray_dye_from_oxeye_daisy": {
+    "criteria": {
+      "has_red_flower": "2020-03-06 01:39:09 -0800"
+    },
+    "done": true
+  },
+  "biomesoplenty:biomesoplenty/root": {
+    "criteria": {
+      "yellow_flower": "2020-03-06 01:39:09 -0800",
+      "red_flower": "2020-03-06 01:39:09 -0800"
+    },
+    "done": true
+  },
+  "minecraft:adventure/adventuring_time": {
+    "criteria": {
+      "plains": "2020-03-06 01:37:57 -0800"
+    },
+    "done": false
+  }
+}
