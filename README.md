@@ -7,11 +7,13 @@ run:
 ```
 ./gradlew setupDecompWorkspace --refresh-dependencies
 ```
+
 For IntelliJ:
+  Run ```./gradlew idea```
   Goto File->New->Project from Existing Source
-  Choose File ```forge-1.12.2-14.23.5.2838-mdk/build.gradle```
+  Choose the created intelliJ project file.
   Click Ok
-  Remember to Check "Use auto-import"
+
  
 After the import is done:
   Goto File->Project Structure
