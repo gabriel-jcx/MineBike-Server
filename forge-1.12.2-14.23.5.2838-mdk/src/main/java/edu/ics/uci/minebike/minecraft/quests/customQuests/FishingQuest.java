@@ -2,12 +2,15 @@ package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
 import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
+import edu.ics.uci.minebike.minecraft.client.AI.FishingAI;
+import edu.ics.uci.minebike.minecraft.client.AI.QuestHeartRate;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
+import javafx.util.Pair;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,23 +28,35 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
+import static java.lang.Math.abs;
 
 public class FishingQuest  extends AbstractCustomQuest {
     EntityPlayer player = null;
     private int current_t=0;
+    private int current_tt=0;
     public static int distance=4;
     public static int timer=10;
     public static int retract=0;
     public static int bar_min= -70;
     public static int bar_max=65;
     public int requiredPower=1;
+    public int game_t=240;
     public static ItemGameFishingRod rod;
     public static HudString powerString;
     public static HudString timerString;
     public static HudRectangle powerBar;
     public static HudRectangle powerLine;
     public static HudString distanceString;
+    public static HudString gameTime;
+    public static Integer fish_id;
+    FishingAI fishingAI =new FishingAI();
+    Random random= new Random();
+    private Pair<Integer, ItemStack> current_fish;
     //private Vec3d ball_location = new Vec3d(10,10,10);
 
     public FishingQuest(){
@@ -81,11 +96,13 @@ public class FishingQuest  extends AbstractCustomQuest {
 //        this.player.sendMessage(give);
         System.out.println("Trying to teleport " + playerMP.getName() + " to DIM" + this.DIMID);
         ServerUtils.telport((EntityPlayerMP) playerMP, questStartLocation, DIMID);
+        this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
+        fishingAI.select_pond(1);
 
     }
     @Override
     public void start(){
-            }
+    }
 
     @Override
     public void start(EntityPlayerSP player) {
@@ -113,12 +130,14 @@ public class FishingQuest  extends AbstractCustomQuest {
 
     @Override
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        refresh_count_down();
         if (retract==2){
             retract=0;
             System.out.println("retract");
             unreg_hud();
             distance=4;
             timer=10;
+            fishingAI.fish_run_away=2;
 
         }
         else if(retract==1)
@@ -130,6 +149,14 @@ public class FishingQuest  extends AbstractCustomQuest {
             }
 
             System.out.println("throw");
+
+            current_fish=fishingAI.change_fish();
+
+            timer = current_fish.getKey()+10;
+            int i= random.nextInt(6);
+            distance= abs(current_fish.getKey()*2-i);
+            current_fish=fishingAI.change_fish();
+            this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
             this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
             this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
             this.timerString = new HudString(-10, 45, "The fish will run away in:  "+ timer+" seconds", true, false);
@@ -145,8 +172,13 @@ public class FishingQuest  extends AbstractCustomQuest {
                 retract=0;
 
                 unreg_hud();
-                distance=4;
-                timer=10;
+                fishingAI.fish_run_away=0;
+            }
+            if(timer==0&&distance!=0)
+            {
+                retract=0;
+                unreg_hud();
+                fishingAI.fish_run_away=1;
             }
         }
 
@@ -156,6 +188,17 @@ public class FishingQuest  extends AbstractCustomQuest {
         //Todo:for bigx
         //return (BiGXPacketHandler.change * 4);
         return 1;
+    }
+
+    public void fishing_heart_rate(int hr){
+
+    }
+    public void refresh_count_down() {
+        if (current_tt != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
+            current_tt = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+            game_t -= 1;
+            this.gameTime.text= "Time: "+game_t;
+        }
     }
     public void refresh_timerString(){
         System.out.println("refreshing...................................");
@@ -192,6 +235,7 @@ public class FishingQuest  extends AbstractCustomQuest {
             if(distance==0)
             {
                 ClientUtils.sendData(EnumPacketClient.FishingDistance,distance);
+                ClientUtils.sendData(EnumPacketClient.Fish,current_fish);
             }
 
 //            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
