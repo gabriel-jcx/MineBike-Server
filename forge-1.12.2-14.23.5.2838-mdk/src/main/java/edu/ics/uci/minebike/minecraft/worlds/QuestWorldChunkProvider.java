@@ -43,7 +43,6 @@ public class QuestWorldChunkProvider implements IChunkGenerator {
         terrianGenerator.setup(worldObj, rand_seed);
         baseGenerator = TerrainGen.getModdedMapGen(baseGenerator, InitMapGenEvent.EventType.CUSTOM);
 
-
     }
     @Override
     public Chunk generateChunk(int x, int z) {

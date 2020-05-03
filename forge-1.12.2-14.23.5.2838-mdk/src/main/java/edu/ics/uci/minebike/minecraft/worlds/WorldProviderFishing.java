@@ -25,9 +25,11 @@ public class WorldProviderFishing extends WorldProviderFlat {
 	private WorldGenerator custumGen;
 	private int x= 100;
 	private int z= 100;
+
 	//x and z are world location
 	@Override
 	public DimensionType getDimensionType() {
+
 		return DimensionType.getById(DIM_ID);
 	}
 
