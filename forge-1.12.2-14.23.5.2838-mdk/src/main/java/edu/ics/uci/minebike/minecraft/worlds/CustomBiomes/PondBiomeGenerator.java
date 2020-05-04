@@ -25,6 +25,7 @@ public class PondBiomeGenerator extends BasicBiomeGenerator{
                                 primer.setBlockState(x4*4+x, h ,z4*4+z,Blocks.WATER.getDefaultState());
                                 water_count ++;
                             }else{
+                                
                                 if(primer.getBlockState(x4*4+x,h,z4*4+z).getBlock().getBlockState() == Blocks.GRASS.getDefaultState()){
                                     System.out.println("Current BLOCK is Grass");
                                 }else{
