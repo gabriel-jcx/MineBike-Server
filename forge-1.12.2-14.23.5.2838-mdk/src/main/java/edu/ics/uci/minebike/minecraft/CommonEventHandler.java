@@ -1,6 +1,5 @@
 package edu.ics.uci.minebike.minecraft;
 
-import com.sun.media.jfxmedia.events.PlayerStateEvent;
 import edu.ics.uci.minebike.minecraft.item.ItemManager;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.npcs.NpcEventHandler;
