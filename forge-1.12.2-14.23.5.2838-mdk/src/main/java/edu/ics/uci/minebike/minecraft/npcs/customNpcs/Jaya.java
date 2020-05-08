@@ -15,6 +15,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 
+
+/*
+    Jaya is the costum NPC for the soccer quest
+    Mainly performs sending the custom packet : PlayerJoin, to the server
+*/
 public class Jaya extends AbstractCustomNpc {
     public static final String NAME = "Jaya";
     //    public static final Vec3d LOCATION = new Vec3d(10,70,13);

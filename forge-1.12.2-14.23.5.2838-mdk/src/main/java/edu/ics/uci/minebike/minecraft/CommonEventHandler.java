@@ -1,6 +1,6 @@
 package edu.ics.uci.minebike.minecraft;
 
-import com.sun.media.jfxmedia.events.PlayerStateEvent;
+import edu.ics.uci.minebike.minecraft.item.ItemManager;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.npcs.NpcEventHandler;
 import edu.ics.uci.minebike.minecraft.npcs.NpcUtils;
@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -22,6 +23,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
 import noppes.npcs.entity.EntityCustomNpc;
 
 import java.util.Iterator;
@@ -39,7 +41,10 @@ public class CommonEventHandler {
     public void spawn(){
         //spawnNpcDatabase();
     }
-
+//    @SubscribeEvent
+//    public static void onRegisterModel(ModelRegistryEvent e) {
+//        ItemManager.registerModels();
+//    }
 
     public void spawnNpcDatabase(int worldId, BlockPos pos, World worldIn){
 
@@ -48,18 +53,17 @@ public class CommonEventHandler {
         System.out.printf("Number of Worlds = %s\n", DimensionManager.getWorlds().length);
         System.out.println("World Server get");
         //if(NpcDatabase.npcs.size() != 0) {
-            for (Map.Entry<String,AbstractCustomNpc> iter: NpcDatabase.npcs.entrySet()) {
-                AbstractCustomNpc npc = iter.getValue();
-                if(npc.isSpawned) continue;
-                EntityCustomNpc npcEntity = NpcUtils.spawnNpc(npc.getLocation(), ws,worldIn,npc.getName(), npc.getTexture());
-                //NpcDatabase.npc_entities.add(npcEntity);
-                BlockPos location = npcEntity.getPosition();
-                npc.setUUID(npcEntity.getUniqueID().toString());
-                //BlockPos pos = temp_npc.getPos();
-                System.out.println(npc.getName() + " is spwaned at " + location);
-                //System.out.println(npc.getKey() + " is spwaned at " + "(" + pos.getX() + "," + pos.getY() + "," + pos.getZ()+ ")");
-            }
-        //}
+        for (Map.Entry<String,AbstractCustomNpc> iter: NpcDatabase.npcs.entrySet()) {
+            AbstractCustomNpc npc = iter.getValue();
+            if(npc.isSpawned) continue;
+            EntityCustomNpc npcEntity = NpcUtils.spawnNpc(npc.getLocation(), ws,worldIn,npc.getName(), npc.getTexture());
+            //NpcDatabase.npc_entities.add(npcEntity);
+            BlockPos location = npcEntity.getPosition();
+            npc.setUUID(npcEntity.getUniqueID().toString());
+            //BlockPos pos = temp_npc.getPos();
+            System.out.println(npc.getName() + " is spwaned at " + location);
+            //System.out.println(npc.getKey() + " is spwaned at " + "(" + pos.getX() + "," + pos.getY() + "," + pos.getZ()+ ")");
+        }
     }
     private void spawnCustomClient(){
         NpcDatabase.registerNpcs();

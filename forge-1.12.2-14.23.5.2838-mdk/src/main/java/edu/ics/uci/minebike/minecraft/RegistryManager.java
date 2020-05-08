@@ -30,7 +30,7 @@ public class RegistryManager {
 
         @SubscribeEvent
         public static void onRegisterItem(Register<Item> e) {
-
+            System.out.println(e.getName());
             ItemManager.register(e.getRegistry());
         }
 
@@ -42,5 +42,7 @@ public class RegistryManager {
         public static void onModelRegister(ModelRegistryEvent event){
             ItemManager.registerModels();
         }
+
+
     }
 }

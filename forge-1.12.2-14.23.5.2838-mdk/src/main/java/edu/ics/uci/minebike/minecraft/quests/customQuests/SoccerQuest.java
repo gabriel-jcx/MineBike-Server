@@ -145,7 +145,7 @@ public class SoccerQuest extends AbstractCustomQuest {
         if(isStarted){
 
             System.out.println("There's an ongoing soccer session, please wait!");
-            ServerUtils.telport((EntityPlayerMP)player,Jaya.LOCATION,0);
+            //ServerUtils.telport((EntityPlayerMP)player,Jaya.LOCATION,0);
             ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
 
             return false;
@@ -167,6 +167,7 @@ public class SoccerQuest extends AbstractCustomQuest {
             isWaiting = true;
         //waitingEndTime = waitingStartTime + waitingTime;
         }
+        ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
 
         Potion slow_potion = Potion.getPotionById(2);
         Potion jump_anti_boost = Potion.getPotionById(8);
@@ -303,7 +304,8 @@ public class SoccerQuest extends AbstractCustomQuest {
             if(isFinished){
                 for(EntityPlayer player: this.playersInGame){
                     giveItemToPlayer(player, new ItemStack(Items.DIAMOND, numDiamonds));
-//                ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
+                    // add teleporting back to Jaya
+                    ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
                 }
                 isFinished = false;
             }

@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;
@@ -35,11 +36,24 @@ public class ItemGameFishingRod extends ItemBetterFishingRod {
     public static HudRectangle powerBar;
     public static HudRectangle powerLine;
     public static HudString distanceString;
-
+//    protected final int reelRange;
+//    protected final int tuggingAmount;
+//    protected final int dragSpeed;
     public ItemGameFishingRod() {
-
+//        super();
+//        this.setRegistryName("game_fish_rod");
+//
+//        //this.func_77655_b("fishingmadebetter." + name);
+//        this.reelRange = 20;
+//        this.tuggingAmount = 1;
+//        this.dragSpeed = 60;
 //        super();
         super("game_fish_rod", 20, 1, 60);
+        this.setUnlocalizedName("game_fish_rod");
+        System.out.println("This tiggered new register event?");
+//        this.setRegistryName("game_fish_rod");
+        System.out.println("This tiggered new register event?");
+        //this.setRegistryName("game_fish_rod");
     }
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
@@ -70,9 +84,6 @@ public class ItemGameFishingRod extends ItemBetterFishingRod {
                 ServerUtils.sendQuestData(EnumPacketServer.FishRetract,(EntityPlayerMP)playerIn, 1);
 //                System.out.println("New Hook bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
                 gameHook = new CustomHook(worldIn, playerIn);
-
-
-
                 int j = EnchantmentHelper.getFishingSpeedBonus(itemstack);
 
                 if (j > 0)

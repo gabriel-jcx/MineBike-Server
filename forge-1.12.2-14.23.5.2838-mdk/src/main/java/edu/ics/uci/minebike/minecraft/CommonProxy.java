@@ -2,6 +2,7 @@ package edu.ics.uci.minebike.minecraft;
 
 //import biomesoplenty.common.biome.overworld.BiomeGenWhiteBeach;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishingOcean;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.DimensionType;
@@ -18,6 +19,8 @@ public class CommonProxy implements IGuiHandler {
         DimensionManager.registerDimension(soccerDType.getId(),soccerDType);
         DimensionType fishingDtype = DimensionType.register("fishingDim", "customDim", WorldProviderFishing.DIM_ID,WorldProviderFishing.class ,true);
         DimensionManager.registerDimension(fishingDtype.getId(),fishingDtype);
+        DimensionType fishingOceanDtype = DimensionType.register("oceanDim", "customDim", WorldProviderFishingOcean.DIM_ID, WorldProviderFishingOcean.class, true);
+        DimensionManager.registerDimension(fishingOceanDtype.getId(), fishingOceanDtype);
     }
     public void load(){
         BiGXMain.Channel.register(new PacketHandlerClient());
