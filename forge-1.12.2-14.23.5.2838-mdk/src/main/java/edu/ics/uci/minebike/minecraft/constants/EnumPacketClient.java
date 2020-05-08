@@ -4,6 +4,7 @@ public enum EnumPacketClient {
     Teleport,
     PlayerJoin,
     FishingDistance,
+    Fish,
     QuestEnd;
 
 

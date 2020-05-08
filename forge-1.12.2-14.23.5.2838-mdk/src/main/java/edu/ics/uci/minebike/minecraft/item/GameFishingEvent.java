@@ -1,33 +1,20 @@
 package edu.ics.uci.minebike.minecraft.item;
+
 import edu.ics.uci.minebike.minecraft.client.AI.FishingAI;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.entity.player.ItemFishedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.theawesomegem.fishingmadebetter.BetterFishUtil;
-import net.theawesomegem.fishingmadebetter.common.capability.fishing.FishingCapabilityProvider;
 import net.theawesomegem.fishingmadebetter.common.capability.fishing.IFishingData;
-import net.theawesomegem.fishingmadebetter.common.capability.world.ChunkCapabilityProvider;
-import net.theawesomegem.fishingmadebetter.common.capability.world.IChunkFishingData;
-import net.theawesomegem.fishingmadebetter.common.configuration.ConfigurationManager;
-import net.theawesomegem.fishingmadebetter.common.data.FishCaughtData;
 import net.theawesomegem.fishingmadebetter.common.event.FishingEventHandler;
-import net.theawesomegem.fishingmadebetter.common.item.fishingrod.ItemBetterFishingRod;
-import net.theawesomegem.fishingmadebetter.common.networking.PrimaryPacketHandler;
-import net.theawesomegem.fishingmadebetter.common.networking.packet.PacketReelingC;
-import net.theawesomegem.fishingmadebetter.common.registry.RegistryManager;
 import net.theawesomegem.fishingmadebetter.util.ItemStackUtil;
 import net.theawesomegem.fishingmadebetter.util.MathUtil;
 import net.theawesomegem.fishingmadebetter.util.RandomUtil;
@@ -80,7 +67,7 @@ public class GameFishingEvent extends FishingEventHandler {
 //                                if (canFish && fishingData.getFishDistance() >= fishingData.getFishDeepLevel()) {
                                     System.out.println("Spawn fish.........");
                                     //TODO: test spawn_fish(), use one Item_stack, rather than the list
-                                    ItemStack itemStack = testing.fish_testing();
+                                    ItemStack itemStack = testing.change_fish().getValue();
                                     System.out.println(itemStack.getDisplayName());
                                     EntityFishHook hook = e.getHookEntity();
                                     EntityItem entityitem = new EntityItem(player.world, hook.posX, hook.posY, hook.posZ, itemStack);

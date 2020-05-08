@@ -61,6 +61,11 @@ public class PacketHandlerServer {
         {
             CustomHook.distance= buffer.readInt();
         }
+        else if (num == EnumPacketClient.Fish)
+        {
+
+            CustomHook.current_fish= buffer;
+        }
         //System.out.println(readString(buffer));
         // teleport and start the quest here!!!!
     }
