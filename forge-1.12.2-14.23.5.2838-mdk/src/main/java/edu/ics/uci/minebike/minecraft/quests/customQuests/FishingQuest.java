@@ -235,7 +235,7 @@ public class FishingQuest  extends AbstractCustomQuest {
             if(distance==0)
             {
                 ClientUtils.sendData(EnumPacketClient.FishingDistance,distance);
-                ClientUtils.sendData(EnumPacketClient.Fish,current_fish);
+
             }
 
 //            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
