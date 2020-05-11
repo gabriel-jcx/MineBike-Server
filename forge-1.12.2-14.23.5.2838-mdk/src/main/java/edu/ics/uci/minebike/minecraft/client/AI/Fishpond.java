@@ -1,4 +1,4 @@
-package edu.ics.uci.minebike.minecraft.item;
+package edu.ics.uci.minebike.minecraft.client.AI;
 
 import com.teammetallurgy.aquaculture.items.AquacultureItems;
 import javafx.util.Pair;

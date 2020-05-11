@@ -1,17 +1,8 @@
 package edu.ics.uci.minebike.minecraft.client.AI;
-import com.teammetallurgy.aquaculture.items.AquacultureItems;
-import com.teammetallurgy.aquaculture.items.ItemFish;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
-import edu.ics.uci.minebike.minecraft.item.Fishpond;
-import javafx.util.Pair;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.player.ItemFishedEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.*;
-
-import static java.lang.Float.sum;
 
 public class FishingAI extends QuestHeartRate {
 
@@ -19,7 +10,7 @@ public class FishingAI extends QuestHeartRate {
     //    public List<Float> heart_rate_per_fish;
 //    private float avg_hr_last_fish;
     //2 retract(random), 0 false, 1 true
-    public int fish_run_away = 2;
+    public FishStatus fish_run_away = FishStatus.QUIT;
     public boolean hr_goal_reached = false;
     public int level = 1;
     private Fishpond pond= new Fishpond();
@@ -55,13 +46,13 @@ public class FishingAI extends QuestHeartRate {
 
     public Integer change_fish() {
         //Heart Rate reached
-        if (fish_run_away == 2 || last_fish==null) {
+        if (fish_run_away == FishStatus.QUIT || last_fish==null) {
             Integer l=crunchifyKeys.length;
             return random_fish(l);
         }
         if (avg <= p.getTargetMax() && avg >= p.getTargetMin()) {
             //smaller fish
-            if (fish_run_away == 1) {
+            if (fish_run_away == FishStatus.ESCAPE) {
 //                int l=current_pond.get(last_fish);
 
                 Integer l = Arrays.asList(crunchifyKeys).indexOf(last_fish);
@@ -106,5 +97,11 @@ public class FishingAI extends QuestHeartRate {
         ClientUtils.sendData(EnumPacketClient.Fish,last_fish);
         return current_pond.get(key);
     }
+    public enum FishStatus {
+        ESCAPE,
+        CAUGHT,
+        QUIT
+    }
+
 }
 
