@@ -41,7 +41,7 @@ public class FishingQuest  extends AbstractCustomQuest {
     private int current_tt=0;
     public static int distance=4;
     public static int timer=10;
-    public static int retract=0;
+    public static Movement retract=Movement.INIT;
     public static int bar_min= -70;
     public static int bar_max=65;
     public int requiredPower=1;
@@ -56,7 +56,7 @@ public class FishingQuest  extends AbstractCustomQuest {
     public static Integer fish_id;
     FishingAI fishingAI =new FishingAI();
     Random random= new Random();
-    private Pair<Integer, ItemStack> current_fish;
+    private Integer current_fish;
     //private Vec3d ball_location = new Vec3d(10,10,10);
 
     public FishingQuest(){
@@ -131,16 +131,16 @@ public class FishingQuest  extends AbstractCustomQuest {
     @Override
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         refresh_count_down();
-        if (retract==2){
-            retract=0;
+        if (retract==Movement.RETRACT){
+            retract=Movement.INIT;
             System.out.println("retract");
             unreg_hud();
             distance=4;
             timer=10;
-            fishingAI.fish_run_away=2;
+            fishingAI.fish_run_away= FishingAI.FishStatus.QUIT;
 
         }
-        else if(retract==1)
+        else if(retract==Movement.THROW)
         {
             if (powerLine!=null)
             {
@@ -152,9 +152,9 @@ public class FishingQuest  extends AbstractCustomQuest {
 
             current_fish=fishingAI.change_fish();
 
-            timer = current_fish.getKey()+10;
+            timer = current_fish+10;
             int i= random.nextInt(6);
-            distance= abs(current_fish.getKey()*2-i);
+            distance= abs(current_fish*2-i);
             current_fish=fishingAI.change_fish();
             this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
             this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
@@ -162,23 +162,23 @@ public class FishingQuest  extends AbstractCustomQuest {
             this.timerString = new HudString(-10, 45, "The fish will run away in:  "+ timer+" seconds", true, false);
             this.powerBar= new HudRectangle(-70,0, 140, 30, 0xe4344aff,true,false);
             this.powerLine = new HudRectangle(-70,0, 5, 30, 0xffffffff,true,false);
-            retract=3;
+            retract=Movement.FISHING;
         }
-        else if (retract==3){
+        else if (retract==Movement.FISHING){
             refresh_powerline();
             reduce_distance();
             refresh_timerString();
             if (distance == 0) {
-                retract=0;
+                retract=Movement.INIT;
 
                 unreg_hud();
-                fishingAI.fish_run_away=0;
+                fishingAI.fish_run_away= FishingAI.FishStatus.CAUGHT;
             }
             if(timer==0&&distance!=0)
             {
-                retract=0;
+                retract=Movement.INIT;
                 unreg_hud();
-                fishingAI.fish_run_away=1;
+                fishingAI.fish_run_away=FishingAI.FishStatus.CAUGHT;
             }
         }
 
@@ -235,7 +235,7 @@ public class FishingQuest  extends AbstractCustomQuest {
             if(distance==0)
             {
                 ClientUtils.sendData(EnumPacketClient.FishingDistance,distance);
-                ClientUtils.sendData(EnumPacketClient.Fish,current_fish);
+
             }
 
 //            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
@@ -248,4 +248,11 @@ public class FishingQuest  extends AbstractCustomQuest {
         this.powerString.unregister();
         this.timerString.unregister();
     }
+    public enum Movement {
+        INIT,
+        THROW,
+        RETRACT,
+        FISHING
+    }
+
 }

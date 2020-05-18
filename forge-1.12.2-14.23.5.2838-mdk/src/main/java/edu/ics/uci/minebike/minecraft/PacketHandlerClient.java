@@ -53,7 +53,7 @@ public class PacketHandlerClient {
             soccer.rightScoreUpdate();
         }else if (type == EnumPacketServer.FishRetract) {
             FishingQuest fishingQuest = (FishingQuest) CustomQuestManager.customQuests.get(223);
-            fishingQuest.retract=buffer.readInt();
+            fishingQuest.retract= FishingQuest.Movement.values()[buffer.readInt()];
         }
 
 

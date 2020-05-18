@@ -19,6 +19,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.teammetallurgy.aquaculture.items.AquacultureItems.fish;
+
 //import net.minecraft.client.renderer.entity.RenderItem;
 //import net.minecraft.util.AxisAlignedBB;
 //import net.minecraft.util.MathHelper;
@@ -108,7 +110,7 @@ public class CustomHook extends EntityFishHook
 
     //Remaining distance to catch the fish
     public static int distance = 4;
-    public static Pair<Integer, ItemStack> current_fish;
+    public static String current_fish;
     public static int spawn_fish;
 
     public int timer = 10;
@@ -229,8 +231,9 @@ public class CustomHook extends EntityFishHook
         //Todo: erase hud if fish rod is not in hand, retract hook, spawn fish
         if (distance==0)
         {
+
             this.setDead();
-            entityitem = new EntityItem(this.world, this.posX, this.posY, this.posZ,current_fish.getValue());
+            entityitem = new EntityItem(this.world, this.posX, this.posY, this.posZ,fish.getItemStackFish(current_fish));
             spawn_fish();
             fish_n+=1;
             distance=4;

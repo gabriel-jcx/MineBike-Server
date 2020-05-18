@@ -9,7 +9,10 @@ public class QuestHeartRate {
     private float target_time_left;
 
     public ArrayList<Integer> heart_rate= new ArrayList<Integer>();
-    public Integer avg=0;
+    protected Integer avg=0;
+    protected Integer target_min=0;
+    protected Integer target_high=0;
+    protected Integer time=0;
     BiGXPatientPrescription p= new BiGXPatientPrescription();
     public QuestHeartRate(){
 
@@ -17,7 +20,7 @@ public class QuestHeartRate {
     public void update_hr(int h){
         heart_rate.add(h);
     }
-    private float calc_avg(){
+    protected float calc_avg(){
         float s=0;
         for (int i = 0; i < heart_rate.size(); i++) {
             s+= heart_rate.get(i);
