@@ -40,59 +40,59 @@ public class GameFishingEvent extends FishingEventHandler {
             World world = player.world;
             System.out.println("remote"+ world.isRemote);
 
-            if (!world.isRemote && player.world.provider.getDimension()== WorldProviderFishing.DIM_ID) {
-
-//                    IFishingData fishingData = (IFishingData)player.getCapability(FishingCapabilityProvider.FISHING_DATA_CAP, (EnumFacing)null);
-//                    if (fishingData == null) {
-//                        e.setCanceled(true);
-//                    } else {
-//                        IChunkFishingData chunkFishingData = (IChunkFishingData)world.getChunkFromBlockCoords(e.getHookEntity().getPosition()).getCapability(ChunkCapabilityProvider.CHUNK_FISHING_DATA_CAP, (EnumFacing)null);
-//                        if (chunkFishingData == null) {
-//                            e.setCanceled(true);
-//                        } else if (!fishingData.isFishing()) {
-//                            e.setCanceled(true);
-//                        } else {
-//                            FishCaughtData fishCaughtData = fishingData.getFishCaughtData();
-//                            if (fishCaughtData == null) {
-//                                e.setCanceled(true);
-//                            } else {
-//                                e.setCanceled(true);
-//                                boolean canFish = true;
-//                                if (ConfigurationManager.requireCorrectLine) {
-//                                    int reelDiff = fishingData.getReelTarget() - fishingData.getReelAmount();
-//                                    reelDiff = Math.abs(reelDiff);
-//                                    canFish = reelDiff <= fishingData.getErrorVariance();
-//                                }
+//            if (!world.isRemote && player.world.provider.getDimension()== WorldProviderFishing.DIM_ID) {
 //
-//                                if (canFish && fishingData.getFishDistance() >= fishingData.getFishDeepLevel()) {
-                                    System.out.println("Spawn fish.........");
-                                    //TODO: test spawn_fish(), use one Item_stack, rather than the list
-                                    ItemStack itemStack = testing.change_fish().getValue();
-                                    System.out.println(itemStack.getDisplayName());
-                                    EntityFishHook hook = e.getHookEntity();
-                                    EntityItem entityitem = new EntityItem(player.world, hook.posX, hook.posY, hook.posZ, itemStack);
-//                                    if (ConfigurationManager.magneticFishing) {
-//                                        entityitem.setPosition(player.posX, player.posY+ 1.0D, player.posZ);
-//                                    } else {
-                                        double d0 = player.posX- hook.posX;
-                                        double d1 = player.posY - hook.posY;
-                                        double d2 = player.posZ - hook.posZ;
-                                        double d3 = (double) MathHelper.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
-                                        entityitem.posX = d0 * 0.1D;
-                                        entityitem.posY = d1 * 0.1D + (double)MathHelper.sqrt(d3) * 0.08D;
-                                        entityitem.posZ = d2 * 0.1D;
-                                    //}
-
-                                    //chunkFishingData.reducePopulation(fishCaughtData.fishId, 1, world.func_82737_E(), true);
-                                    player.world.spawnEntity(entityitem);
-                                    //player.field_70170_p.func_72838_d(entityitem);
-                                    player.world.spawnEntity(new EntityXPOrb(player.world,player.posX,  player.posY + 0.5D, player.posZ+ 0.5D, 10));
-//                                }
+////                    IFishingData fishingData = (IFishingData)player.getCapability(FishingCapabilityProvider.FISHING_DATA_CAP, (EnumFacing)null);
+////                    if (fishingData == null) {
+////                        e.setCanceled(true);
+////                    } else {
+////                        IChunkFishingData chunkFishingData = (IChunkFishingData)world.getChunkFromBlockCoords(e.getHookEntity().getPosition()).getCapability(ChunkCapabilityProvider.CHUNK_FISHING_DATA_CAP, (EnumFacing)null);
+////                        if (chunkFishingData == null) {
+////                            e.setCanceled(true);
+////                        } else if (!fishingData.isFishing()) {
+////                            e.setCanceled(true);
+////                        } else {
+////                            FishCaughtData fishCaughtData = fishingData.getFishCaughtData();
+////                            if (fishCaughtData == null) {
+////                                e.setCanceled(true);
+////                            } else {
+////                                e.setCanceled(true);
+////                                boolean canFish = true;
+////                                if (ConfigurationManager.requireCorrectLine) {
+////                                    int reelDiff = fishingData.getReelTarget() - fishingData.getReelAmount();
+////                                    reelDiff = Math.abs(reelDiff);
+////                                    canFish = reelDiff <= fishingData.getErrorVariance();
+////                                }
+////
+////                                if (canFish && fishingData.getFishDistance() >= fishingData.getFishDeepLevel()) {
+//                                    System.out.println("Spawn fish.........");
+//                                    //TODO: test spawn_fish(), use one Item_stack, rather than the list
+//                                    ItemStack itemStack = testing.change_fish().getValue();
+//                                    System.out.println(itemStack.getDisplayName());
+//                                    EntityFishHook hook = e.getHookEntity();
+//                                    EntityItem entityitem = new EntityItem(player.world, hook.posX, hook.posY, hook.posZ, itemStack);
+////                                    if (ConfigurationManager.magneticFishing) {
+////                                        entityitem.setPosition(player.posX, player.posY+ 1.0D, player.posZ);
+////                                    } else {
+//                                        double d0 = player.posX- hook.posX;
+//                                        double d1 = player.posY - hook.posY;
+//                                        double d2 = player.posZ - hook.posZ;
+//                                        double d3 = (double) MathHelper.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
+//                                        entityitem.posX = d0 * 0.1D;
+//                                        entityitem.posY = d1 * 0.1D + (double)MathHelper.sqrt(d3) * 0.08D;
+//                                        entityitem.posZ = d2 * 0.1D;
+//                                    //}
 //
-//                                fishingData.reset();
-//                            }
-//                        }
-                    }
+//                                    //chunkFishingData.reducePopulation(fishCaughtData.fishId, 1, world.func_82737_E(), true);
+//                                    player.world.spawnEntity(entityitem);
+//                                    //player.field_70170_p.func_72838_d(entityitem);
+//                                    player.world.spawnEntity(new EntityXPOrb(player.world,player.posX,  player.posY + 0.5D, player.posZ+ 0.5D, 10));
+////                                }
+////
+////                                fishingData.reset();
+////                            }
+////                        }
+//                    }
                 }
             }
        // }

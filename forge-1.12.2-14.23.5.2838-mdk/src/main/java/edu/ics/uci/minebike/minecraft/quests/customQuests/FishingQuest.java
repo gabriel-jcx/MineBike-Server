@@ -27,7 +27,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
-
+import edu.ics.uci.minebike.minecraft.client.hud.FishingQuestHud;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -47,14 +47,15 @@ public class FishingQuest  extends AbstractCustomQuest {
     public int requiredPower=1;
     public int game_t=240;
     public static ItemGameFishingRod rod;
-    public static HudString powerString;
-    public static HudString timerString;
-    public static HudRectangle powerBar;
-    public static HudRectangle powerLine;
-    public static HudString distanceString;
-    public static HudString gameTime;
+//    public static HudString powerString;
+//    public static HudString timerString;
+//    public static HudRectangle powerBar;
+//    public static HudRectangle powerLine;
+//    public static HudString distanceString;
+//    public static HudString gameTime;
     public static Integer fish_id;
     FishingAI fishingAI =new FishingAI();
+    FishingQuestHud fishingQuestHud= new FishingQuestHud();
     Random random= new Random();
     private Integer current_fish;
     //private Vec3d ball_location = new Vec3d(10,10,10);
@@ -96,7 +97,9 @@ public class FishingQuest  extends AbstractCustomQuest {
 //        this.player.sendMessage(give);
         System.out.println("Trying to teleport " + playerMP.getName() + " to DIM" + this.DIMID);
         ServerUtils.telport((EntityPlayerMP) playerMP, questStartLocation, DIMID);
-        this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
+
+//        this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
+        fishingQuestHud.Initial_game_time();
         fishingAI.select_pond(1);
 
     }
@@ -130,11 +133,11 @@ public class FishingQuest  extends AbstractCustomQuest {
 
     @Override
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        refresh_count_down();
+        fishingQuestHud.refresh_count_down();
         if (retract==Movement.RETRACT){
             retract=Movement.INIT;
             System.out.println("retract");
-            unreg_hud();
+            fishingQuestHud.unreg_hud();
             distance=4;
             timer=10;
             fishingAI.fish_run_away= FishingAI.FishStatus.QUIT;
@@ -142,9 +145,9 @@ public class FishingQuest  extends AbstractCustomQuest {
         }
         else if(retract==Movement.THROW)
         {
-            if (powerLine!=null)
+            if (fishingQuestHud.powerLine!=null)
             {
-                unreg_hud();
+                fishingQuestHud.unreg_hud();
 //                System.out.println("unreg_hud");
             }
 
@@ -156,28 +159,31 @@ public class FishingQuest  extends AbstractCustomQuest {
             int i= random.nextInt(6);
             distance= abs(current_fish*2-i);
             current_fish=fishingAI.change_fish();
-            this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
-            this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
-            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
-            this.timerString = new HudString(-10, 45, "The fish will run away in:  "+ timer+" seconds", true, false);
-            this.powerBar= new HudRectangle(-70,0, 140, 30, 0xe4344aff,true,false);
-            this.powerLine = new HudRectangle(-70,0, 5, 30, 0xffffffff,true,false);
+//            this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
+//            this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
+//            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
+//            this.timerString = new HudString(-10, 45, "The fish will run away in:  "+ timer+" seconds", true, false);
+//            this.powerBar= new HudRectangle(-70,0, 140, 30, 0xe4344aff,true,false);
+//            this.powerLine = new HudRectangle(-70,0, 5, 30, 0xffffffff,true,false);
+            fishingQuestHud.Initial_fishing_hud();
+
+
             retract=Movement.FISHING;
         }
         else if (retract==Movement.FISHING){
-            refresh_powerline();
-            reduce_distance();
-            refresh_timerString();
+            fishingQuestHud.refresh_powerline();
+            fishingQuestHud.reduce_distance();
+            fishingQuestHud.refresh_timerString();
             if (distance == 0) {
                 retract=Movement.INIT;
 
-                unreg_hud();
+                fishingQuestHud.unreg_hud();
                 fishingAI.fish_run_away= FishingAI.FishStatus.CAUGHT;
             }
             if(timer==0&&distance!=0)
             {
                 retract=Movement.INIT;
-                unreg_hud();
+                fishingQuestHud.unreg_hud();
                 fishingAI.fish_run_away=FishingAI.FishStatus.CAUGHT;
             }
         }
@@ -193,61 +199,61 @@ public class FishingQuest  extends AbstractCustomQuest {
     public void fishing_heart_rate(int hr){
 
     }
-    public void refresh_count_down() {
-        if (current_tt != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
-            current_tt = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-            game_t -= 1;
-            this.gameTime.text= "Time: "+game_t;
-        }
-    }
-    public void refresh_timerString(){
-        System.out.println("refreshing...................................");
-        if (current_t != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
-            current_t = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-            timer -= 1;
-
-            // You don't need to new here, you can just simply modify this.timerString.text
-//            this.timerString.unregister();
-            this.timerString.text= "The fish will run away in:  " + timer + " seconds";
-
-        }
-    }
-    public void refresh_powerline(){
-        System.out.println("powerline....................");
-        int tempx=powerLine.getX();
-        if (this.requiredPower==getPower()&&tempx+5<=bar_max) {
-//            this.powerLine.unregister();
-            this.powerLine.x=tempx + 5;
-//            this.powerLine = new HudRectangle(tempx + 5, 0, 5, 30, 0xffffffff, true, false);
-
-        }else if (this.requiredPower!=getPower()&&tempx-5>=bar_min)
-        {
-//            this.powerLine.unregister();
-            this.powerLine.x=tempx - 5;
-//            this.powerLine = new HudRectangle(tempx - 5, 0, 5, 30, 0xffffffff, true, false);
-        }
-    }
-    public void reduce_distance(){
-        if (this.powerLine.getX()==bar_max && distance-1>=0)
-        {
-            distance-=1;
-            this.distanceString.text= "Distance "+ distance;
-            if(distance==0)
-            {
-                ClientUtils.sendData(EnumPacketClient.FishingDistance,distance);
-
-            }
-
-//            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
-        }
-    }
-    public void unreg_hud(){
-        this.powerLine.unregister();
-        this.distanceString.unregister();
-        this.powerBar.unregister();
-        this.powerString.unregister();
-        this.timerString.unregister();
-    }
+//    public void refresh_count_down() {
+//        if (current_tt != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
+//            current_tt = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+//            game_t -= 1;
+//            this.gameTime.text= "Time: "+game_t;
+//        }
+//    }
+//    public void refresh_timerString(){
+//        System.out.println("refreshing...................................");
+//        if (current_t != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
+//            current_t = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+//            timer -= 1;
+//
+//            // You don't need to new here, you can just simply modify this.timerString.text
+////            this.timerString.unregister();
+//            this.timerString.text= "The fish will run away in:  " + timer + " seconds";
+//
+//        }
+//    }
+//    public void refresh_powerline(){
+//        System.out.println("powerline....................");
+//        int tempx=powerLine.getX();
+//        if (this.requiredPower==getPower()&&tempx+5<=bar_max) {
+////            this.powerLine.unregister();
+//            this.powerLine.x=tempx + 5;
+////            this.powerLine = new HudRectangle(tempx + 5, 0, 5, 30, 0xffffffff, true, false);
+//
+//        }else if (this.requiredPower!=getPower()&&tempx-5>=bar_min)
+//        {
+////            this.powerLine.unregister();
+//            this.powerLine.x=tempx - 5;
+////            this.powerLine = new HudRectangle(tempx - 5, 0, 5, 30, 0xffffffff, true, false);
+//        }
+//    }
+//    public void reduce_distance(){
+//        if (this.powerLine.getX()==bar_max && distance-1>=0)
+//        {
+//            distance-=1;
+//            this.distanceString.text= "Distance "+ distance;
+//            if(distance==0)
+//            {
+//                ClientUtils.sendData(EnumPacketClient.FishingDistance,distance);
+//
+//            }
+//
+////            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
+//        }
+//    }
+//    public void unreg_hud(){
+//        this.powerLine.unregister();
+//        this.distanceString.unregister();
+//        this.powerBar.unregister();
+//        this.powerString.unregister();
+//        this.timerString.unregister();
+//    }
     public enum Movement {
         INIT,
         THROW,
