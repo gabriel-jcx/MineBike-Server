@@ -37,6 +37,7 @@ import static java.lang.Math.abs;
 
 public class FishingQuest  extends AbstractCustomQuest {
     EntityPlayer player = null;
+    public static int tp=0;
     private int current_t=0;
     private int current_tt=0;
     public static int distance=4;
@@ -133,6 +134,10 @@ public class FishingQuest  extends AbstractCustomQuest {
 
     @Override
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if(tp==1){
+
+            ServerUtils.telport((EntityPlayerMP) player, questStartLocation, DIMID);
+        }
         fishingQuestHud.refresh_count_down();
         if (retract==Movement.RETRACT){
             retract=Movement.INIT;

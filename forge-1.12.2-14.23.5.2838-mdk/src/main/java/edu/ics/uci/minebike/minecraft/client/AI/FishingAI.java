@@ -50,7 +50,7 @@ public class FishingAI extends QuestHeartRate {
             Integer l=crunchifyKeys.length;
             return random_fish(l);
         }
-        if (avg <= p.getTargetMax() && avg >= p.getTargetMin()) {
+        if (this.avg <= p.getTargetMax() && avg >= p.getTargetMin()) {
             //smaller fish
             if (fish_run_away == FishStatus.ESCAPE) {
 //                int l=current_pond.get(last_fish);

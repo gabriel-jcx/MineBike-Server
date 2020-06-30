@@ -6,6 +6,7 @@ import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import edu.ics.uci.minebike.minecraft.item.CustomHook;
 import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -66,6 +67,12 @@ public class PacketHandlerServer {
         {
 
             CustomHook.current_fish= buffer.toString();
+        }
+        else if (num == EnumPacketClient.QuestEnd)
+        {
+
+
+            FishingQuest.tp= buffer.readInt();
         }
         //System.out.println(readString(buffer));
         // teleport and start the quest here!!!!

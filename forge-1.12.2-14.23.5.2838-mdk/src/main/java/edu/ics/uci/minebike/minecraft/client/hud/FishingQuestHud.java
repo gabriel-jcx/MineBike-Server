@@ -54,6 +54,24 @@ public class FishingQuestHud {
             current_tt = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
             game_t -= 1;
             this.gameTime.text= "Time: "+game_t;
+            if(game_t<=0){
+                this.gameTime.text= "Time's UP! ";
+                ending_scene();
+                ClientUtils.sendData(EnumPacketClient.QuestEnd,1);
+            }
+        }
+    }
+    private void ending_scene(){
+        int c=3;
+        HudString reward = new HudString(-165, 20, "Back to main world in: " + c + " s", true, false);
+        if (current_tt != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
+            current_tt = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+            c-=1;
+            reward.text="Back to main world in: " + c + " s";
+            if(c<=0){
+                reward.unregister();
+                ClientUtils.sendData(EnumPacketClient.QuestEnd,1);
+            }
         }
     }
     public void refresh_timerString(){
@@ -68,6 +86,9 @@ public class FishingQuestHud {
 
         }
     }
+
+
+
     public void refresh_powerline(){
         System.out.println("powerline....................");
         int tempx=powerLine.getX();
