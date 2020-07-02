@@ -2,8 +2,10 @@ package edu.ics.uci.minebike.minecraft.quests;
 
 import edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.TRONQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderTRONQuest;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -24,6 +26,8 @@ public class CustomQuestManager {
         //questDimsIDs.add(WorldProviderSoccerQuest.DIM_ID);
         customQuests.put(WorldProviderFishing.DIM_ID, new FishingQuest());
         //questDimsIDs.add(WorldProviderFishing.DIM_ID);
+        customQuests.put(WorldProviderTRONQuest.DIM_ID, new TRONQuest());
+        //questDimsIDs.add(WorldProviderTRONQuest.DIM_ID);
 
     }
 

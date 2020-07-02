@@ -5,6 +5,7 @@ import java.util.Map;
 
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Ada;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
+import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Renzler;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Sam;
 import noppes.npcs.entity.EntityCustomNpc;
 
@@ -16,11 +17,13 @@ public class NpcDatabase {
         npcs.put(Sam.NAME,new Sam());
         npcs.put(Jaya.NAME,new Jaya());
         npcs.put(Ada.NAME,new Ada());
+        npcs.put(Renzler.NAME, new Renzler());
     }
     public static void registerNpcs(){
         //System.out.printf("Name = "+ Name + "(" + Location.x + "," + Location.y + "," + Location.z + ")");
         npcs.put(Jaya.NAME, new Jaya());
         npcs.put(Sam.NAME, new Sam());
         npcs.put(Ada.NAME,new Ada());
+        npcs.put(Renzler.NAME, new Renzler());
     }
 }

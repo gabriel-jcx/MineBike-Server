@@ -22,4 +22,14 @@ public class QuestUtils {
         for(int i = 0; i < max_size; ++ i)
             playerSpawnList.add(new BlockPos(10,10,10));
     }
+
+    public static void populateTRONPlayerLocations(ArrayList<BlockPos> playerSpawnList, int max_size){
+        for(int i = 0; i < max_size; ++i)
+            playerSpawnList.add(new BlockPos(0,0,4));
+    }
+
+    public static void populateTRONNPCLocations(ArrayList<BlockPos> NPCSpawnList, int max_size){
+        for(int i = 0; i < max_size; ++i)
+            NPCSpawnList.add(new BlockPos(5,0,4));
+    }
 }
