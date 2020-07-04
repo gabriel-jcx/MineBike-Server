@@ -1,5 +1,8 @@
 package edu.ics.uci.minebike.minecraft;
 
+import edu.ics.uci.minebike.minecraft.client.AI.OuterAI;
+import edu.ics.uci.minebike.minecraft.client.hud.HudString;
+import edu.ics.uci.minebike.minecraft.client.hud.OuterAIHud;
 import edu.ics.uci.minebike.minecraft.item.ItemManager;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.npcs.NpcEventHandler;
@@ -24,6 +27,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import noppes.npcs.entity.EntityCustomNpc;
 
 import java.util.Iterator;
@@ -35,6 +39,8 @@ public class CommonEventHandler {
     public static boolean spawned = false;
     public static boolean loaded = false;
     public static boolean success = false;
+    public static OuterAIHud  outerAIHud=new OuterAIHud();
+    private boolean outerHudShowing=false;
     public CommonEventHandler(){
 
     }
@@ -142,7 +148,24 @@ public class CommonEventHandler {
             }
             spawned = true;
         }
+        if(event.side.isClient()&&spawned && event.player.world.provider.getDimension() == 0){
+            if (outerHudShowing){
+                //outerHud initialized, updating it for every sec
+                outerAIHud.refresh();
+            }
+
+            else{
+                outerHudShowing=true;
+                System.out.println("OuterHudShowing");
+                outerAIHud.show();
+                //initializing the outerHud.
+            }
+        }
+
         if(event.side.isClient() && event.player.world.provider.getDimension() != 0){
+            //TODO: not in dim0, the hud might need to be rearranged.
+            outerHudShowing=false;
+            outerAIHud.hide();
             CustomQuestManager.onPlayerTick(event);
         }
     }
@@ -174,6 +197,7 @@ public class CommonEventHandler {
         //System.out.println("A world is loaded, WorldEvent.Load triggerd");
         if(event.getWorld().provider.getDimension() == 0){
             System.out.println("Loading the overall world");
+
             //List<Entity> list = event.getWorld().getLoadedEntityList();
 //            for(Entity e:list){
 //                System.out.println(e.getName());
