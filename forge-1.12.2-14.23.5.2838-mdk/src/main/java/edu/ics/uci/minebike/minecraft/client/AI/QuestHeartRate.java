@@ -18,7 +18,7 @@ public class QuestHeartRate  {
     //if the target_time_left==0, the goal has been reached
     private float target_time_left;
     //Average heart rate
-//    protected Integer avg=0;
+    protected Integer avg=0;
     //Prescription heart rate min & max
     protected Integer target_min=0;
     protected Integer target_max=0;
