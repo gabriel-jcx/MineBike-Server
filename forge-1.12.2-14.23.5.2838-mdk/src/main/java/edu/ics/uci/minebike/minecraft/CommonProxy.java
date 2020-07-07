@@ -4,6 +4,7 @@ package edu.ics.uci.minebike.minecraft;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishingOcean;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderTRONQuest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
@@ -21,6 +22,8 @@ public class CommonProxy implements IGuiHandler {
         DimensionManager.registerDimension(fishingDtype.getId(),fishingDtype);
         DimensionType fishingOceanDtype = DimensionType.register("oceanDim", "customDim", WorldProviderFishingOcean.DIM_ID, WorldProviderFishingOcean.class, true);
         DimensionManager.registerDimension(fishingOceanDtype.getId(), fishingOceanDtype);
+        DimensionType TRONDtype = DimensionType.register("TRONDim", "TRONDim", WorldProviderTRONQuest.DIM_ID, WorldProviderTRONQuest.class, true);
+        DimensionManager.registerDimension(TRONDtype.getId(), TRONDtype);
     }
     public void load(){
         BiGXMain.Channel.register(new PacketHandlerClient());
