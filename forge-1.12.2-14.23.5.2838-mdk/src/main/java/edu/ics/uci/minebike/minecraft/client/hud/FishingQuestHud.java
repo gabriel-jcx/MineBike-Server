@@ -8,6 +8,8 @@ import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 
 import java.util.concurrent.TimeUnit;
 
+import static sun.misc.Version.print;
+
 public class FishingQuestHud {
     public HudString powerString;
     public HudString timerString;
@@ -50,6 +52,7 @@ public class FishingQuestHud {
         this.timerString.unregister();
     }
     public void refresh_count_down() {
+        System.out.println("refresh_count_down");
         if (current_tt != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
             current_tt = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
             game_t -= 1;

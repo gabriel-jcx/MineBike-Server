@@ -37,15 +37,15 @@ import static java.lang.Math.abs;
 
 public class FishingQuest  extends AbstractCustomQuest {
     EntityPlayer player = null;
-    private int current_t=0;
-    private int current_tt=0;
+//    private int current_t=0;
+//    private int current_tt=0;
     public static int distance=4;
     public static int timer=10;
     public static Movement retract=Movement.INIT;
-    public static int bar_min= -70;
-    public static int bar_max=65;
-    public int requiredPower=1;
-    public int game_t=240;
+//    public static int bar_min= -70;
+//    public static int bar_max=65;
+//    public int requiredPower=1;
+//    public int game_t=240;
     public static ItemGameFishingRod rod;
 //    public static HudString powerString;
 //    public static HudString timerString;

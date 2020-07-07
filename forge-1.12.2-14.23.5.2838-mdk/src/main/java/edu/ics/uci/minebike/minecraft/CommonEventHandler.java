@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -152,12 +153,16 @@ public class CommonEventHandler {
             if (outerHudShowing){
                 //outerHud initialized, updating it for every sec
                 outerAIHud.refresh();
+
             }
 
             else{
                 outerHudShowing=true;
                 System.out.println("OuterHudShowing");
                 outerAIHud.show();
+                System.out.println("OuterHudShowing");
+                outerAIHud.show_heart();
+
                 //initializing the outerHud.
             }
         }
@@ -220,6 +225,15 @@ public class CommonEventHandler {
     @SubscribeEvent
     public void onPlayerSave(PlayerEvent.SaveToFile event){
         System.out.println(event.getEntityPlayer().getName() + " is trying to SaveToFile");
+    }
+    @SubscribeEvent
+    public void onRenderGameOverlay(RenderGameOverlayEvent event){
+        if(!event.isCancelable()&&event.getType()==RenderGameOverlayEvent.ElementType.TEXT){
+            outerAIHud.show_heart();
+
+
+            //TODO:power bar
+        }
     }
 //
 //    @SubscribeEvent
