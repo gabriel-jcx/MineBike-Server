@@ -22,3 +22,7 @@ eclipse
 run
 
 logs/
+world/
+crash-reports/
+saves/
+config/
