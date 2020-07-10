@@ -1,30 +1,42 @@
 # MineBike-Server
 
+## General Overview of the file structure
+```MinebikeWorld``` Contains the previously saved world file from MC 1.7.10
+```forge-1.12.2-14.23.5.2838-mdk``` The code base for the current project
+```forge-server``` The actual server code for you to run through testing.
+```spongeplugin-proj``` A example base for the spongeplugin.
+
 ## Setting up the work space 
 ### Setting up the Forge Mod
 To setup the minecraft forge mod, 
-run: 
+First run: 
 ```
 ./gradlew setupDecompWorkspace --refresh-dependencies
 ```
 
 For IntelliJ:
-  Run ```./gradlew idea```
+  Run ```./gradlew genIntellijRuns```
   Goto File->New->Project from Existing Source
-  Choose the created intelliJ project file.
+  Choose the created intelliJ project file. (Should be a file with ipr extension)
   Click Ok
 
  
 After the import is done:
   Goto File->Project Structure
   Find "Modules" under Project Settings
-  Under "forge-1.12.2-14.23.5.2838-mdk_main" add the `spongeforge-1.12.2-2838-7.1.8.jar`
   
 Goto Run->Edit Configuration:
+  ```To run the MC server``` 
   Add New Configuration -> Application -> Put "GradleStartServer" under MainClass.
+  ```To run the MC client```
+  Add New Configuration -> Application -> Put "GradleStart" under MainClass.
+
   Click OK.
   
-You should be able to build the mod.
+You should be able to build the mod and run it in IntelliJ.
+
+
+
 
 ### Setting up the sponge plugin
 
