@@ -73,8 +73,8 @@ public class TRONQuest extends AbstractCustomQuest {
 
     private final long GAME_WAITING_TIME = 30000; // millisecond
     private final long GAME_SESSION_TIME = 300000; // millisecond => equivalent to 5 mins
-    private final int GOAL_TICK_TIME = 5; // If ball stays in the goal for 5 ticks
-    private final int MAX_PLAYER_COUNT = 22;
+    //private final int GOAL_TICK_TIME = 5; // If ball stays in the goal for 5 ticks
+    private final int MAX_PLAYER_COUNT = 5;
     private final int MAX_NPC_COUNT = 2;
 
 
@@ -83,8 +83,8 @@ public class TRONQuest extends AbstractCustomQuest {
     //private final Vec3d ball_location = new Vec3d(-221,4,1138);
 
     // A place holder for now for the goal locations
-    private final GoalRectangle blueGoal = new GoalRectangle(-161,1147,-155,1139);
-    private final GoalRectangle redGoal = new GoalRectangle(-277,1139,-283, 1147);
+    //private final GoalRectangle blueGoal = new GoalRectangle(-161,1147,-155,1139);
+    //private final GoalRectangle redGoal = new GoalRectangle(-277,1139,-283, 1147);
 
     // WorldServer
     public WorldServer soccerWS = null;
@@ -126,7 +126,7 @@ public class TRONQuest extends AbstractCustomQuest {
 
 
     // Client Hud Elements
-    private HudString clockStr;
+    //private HudString clockStr;
     private int scoreLeft = 0;
     private HudString scoreLeftStr;
     private int scoreRight = 0;
@@ -140,11 +140,11 @@ public class TRONQuest extends AbstractCustomQuest {
     public boolean testFlag = false;
     public int prev = 0;
 
-    public TRONQuest(){
+    public TRONQuest() {
         super();
         this.DIMID = 250;
         this.isStarted = false;
-        this.questStartLocation = new Vec3d (0, 0, 0);
+        this.questStartLocation = new Vec3d (0, 10, 0);
         QuestUtils.populateTRONPlayerLocations(playerSpawnLocations,this.MAX_PLAYER_COUNT);
         QuestUtils.populateTRONNPCLocations(NPCSpawnLocations, this.MAX_NPC_COUNT);
 
@@ -154,13 +154,13 @@ public class TRONQuest extends AbstractCustomQuest {
     // This onPlayerJoin is only called on the server side
     @SideOnly(Side.SERVER)
     @Override
-    public boolean onPlayerJoin(EntityPlayer player){
+    public boolean onPlayerJoin(EntityPlayer player) {
 //        if(!isStarted && isWaiting)
         System.out.println("On PlayerJoin triggerd on server side");
 
-        if(isStarted){
+        if(isStarted) {
 
-            System.out.println("There's an ongoing soccer session, please wait!");
+            //System.out.println("There's an ongoing soccer session, please wait!");
             //ServerUtils.telport((EntityPlayerMP)player,Jaya.LOCATION,0);
             ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
 
@@ -204,8 +204,7 @@ public class TRONQuest extends AbstractCustomQuest {
     public void setupQuestEnv(World world, EntityPlayer player) {
         //this.ball = new EntitySoccerBall(world);
         this.player = player;
-        ;
-        if(!world.isRemote ){ // only set the location of the ball on the server
+        if(!world.isRemote) { // only set the location of the ball on the server
             //ball.setPosition(ball_location.x,ball_location.y,ball_location.z);
             //world.spawnEntity(ball);
 
@@ -224,7 +223,7 @@ public class TRONQuest extends AbstractCustomQuest {
     }
 
     @Override
-    public void start(EntityPlayerSP player){
+    public void start(EntityPlayerSP player) {
 
     }
     @Override
@@ -285,7 +284,7 @@ public class TRONQuest extends AbstractCustomQuest {
 
 
     @Override
-    public void start(){ // This is the start for client
+    public void start() { // This is the start for client
 
         client_startTime = System.currentTimeMillis();
         client_endTime = client_startTime + GAME_SESSION_TIME;
@@ -294,13 +293,13 @@ public class TRONQuest extends AbstractCustomQuest {
 
 
         // Hud Elements
-        clockStr.y -= 20;
-        clockStr.scale = 1.0f; // make it smaller during the game
+        //clockStr.y -= 20;
+        //.scale = 1.0f; // make it smaller during the game
 
 //        scoreLeftRect = new HudRectangle();
-        scoreLeftStr = new HudString(-40,35, Integer.toString(scoreLeft), 1.5f, 0x00ff0000, true, false);
+        scoreLeftStr = new HudString(-40, 35, Integer.toString(scoreLeft), 1.5f, 0x00ff0000, true, false);
 ////        scoreRightRect = new HudString();
-        scoreRightStr = new HudString(40,35, Integer.toString(scoreRight),1.5f, 0x000000ff, true, false);
+        scoreRightStr = new HudString(40, 35, Integer.toString(scoreRight),1.5f, 0x000000ff, true, false);
         System.out.println("Left = " + scoreLeft + " , Right = " + scoreRight );
 
         // Here need to
@@ -350,17 +349,17 @@ public class TRONQuest extends AbstractCustomQuest {
         if(!event.world.isRemote){ // Server side
             if(isWaiting){
                 this.serverWaitingTick(event);
-            }else if(isStarted){
+            } else if(isStarted){
                 // Figure out what server need to do for each tick?
                 this.serverStartTick(event);
             }
-        }else{ // Client Side
+        } else { // Client Side
 //            event.world.getChunkFromBlockCoords().
 //
         }
     }
 
-    public void onPlayerTick(TickEvent.PlayerTickEvent event){
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if(isWaiting){
             this.clientWaitingTick(event);
         }else if(isStarted){
@@ -369,7 +368,7 @@ public class TRONQuest extends AbstractCustomQuest {
 //        DimensionManager.getWorld(222).spawnParticle(EnumParticleTypes.WATER_WAKE);
     }
 
-    private void serverStartTick(TickEvent.WorldTickEvent event){
+    private void serverStartTick(TickEvent.WorldTickEvent event) {
         long curr = System.currentTimeMillis();
 
         if(curr >= server_endTime){
@@ -385,19 +384,22 @@ public class TRONQuest extends AbstractCustomQuest {
     }
 
 
-    private void clientStartTick(TickEvent.PlayerTickEvent event){
+    private void clientStartTick(TickEvent.PlayerTickEvent event) {
         long curr = System.currentTimeMillis();
 
         // The logic works based on the fact that the GAME last more than 3 seconds!!!
-        if(curr - client_startTime < 5000) // 3000ms for displaying GAMESTART!
-            clockStr.text = "GAME START! KICK THE BALL TOWARDS THE GOAL!~";
+        if(curr - client_startTime < 5000)
+        {
+            // 3000ms for displaying GAMESTART!
+        }
+            //clockStr.text = "GAME START!";
         else if(curr >= client_endTime){
             System.out.println("Game END on client!");
             this.end();
         }
-        else{
+        else {
             long remaining_millisecs = client_endTime - curr;
-            clockStr.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(remaining_millisecs));
+            //clockStr.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(remaining_millisecs));
         }
     }
 
@@ -412,7 +414,7 @@ public class TRONQuest extends AbstractCustomQuest {
 
 //            server_waitingTime = server_waitingEndTime - curr;  It seems unnecessary to do this computation here
 
-        }else{
+        } else {
             // NOTE: this section re-initialize the waiting state and trigger start for User
 
             server_waitingTime = GAME_WAITING_TIME; // resetting the timer param
@@ -432,6 +434,7 @@ public class TRONQuest extends AbstractCustomQuest {
             isWaiting = false;
         }
     }
+
     public void clientStartWaiting(String waitingTime){ //never called
         client_waitingTime = Long.parseLong(waitingTime);
         client_waitingStartTime = System.currentTimeMillis();
@@ -442,10 +445,11 @@ public class TRONQuest extends AbstractCustomQuest {
 //        QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(client_waitingTime));
 
         //clockRect = new HudRectangle(-30, 30, 60, 30, 0x00000000, true, false);
-        clockStr = new HudString(0,35, QuestUtils.formatSeconds(client_waitingTime_seconds),2.0f,true, false);
+        //clockStr = new HudString(0, 35, QuestUtils.formatSeconds(client_waitingTime_seconds),2.0f,true, false);
 
         isWaiting = true;
     }
+
     public void clientWaitingTick(TickEvent.PlayerTickEvent event){
 
 //        int elpased_seconds = QuestUtils.getRemainingSeconds(System.currentTimeMillis(),client_waitingStartTime);
@@ -453,7 +457,7 @@ public class TRONQuest extends AbstractCustomQuest {
 
         int remaining_seconds = QuestUtils.getRemainingSeconds(client_waitingTime);
         if(remaining_seconds >= 0 ){
-            clockStr.text = QuestUtils.formatSeconds(remaining_seconds);
+            //clockStr.text = QuestUtils.formatSeconds(remaining_seconds);
         }
 
 //        System.out.println("Client have " + clockStr.text + "left");

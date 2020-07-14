@@ -20,17 +20,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.entity.EntityCustomNpc;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+
 
 public class Renzler extends AbstractCustomNpc {
     public static final String NAME = "Renzler";
-    public static final Vec3d LOCATION = new Vec3d(89,72,-108); // TODO: figure out the location
-    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanfemale/stephanie.png";
+    public static final Vec3d LOCATION = new Vec3d(0, 20, 0); // TODO: figure out the location
+    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/kingsteve.png";
     public Renzler(){
         name = NAME;
         location = LOCATION;
@@ -42,13 +45,20 @@ public class Renzler extends AbstractCustomNpc {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent e) {
-        if(!e.player.world.isRemote){
+        if(!e.player.world.isRemote) {
 
         }
     }
+
     @Override
     public void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event) {
-        System.out.println("Renzler was interacted");
+        if(!event.getWorld().isRemote) {
+          MinecraftServer s = FMLCommonHandler.instance().getMinecraftServerInstance();
+          s.getCommandManager().executeCommand(s, "/tpx " +
+                  event.getEntityPlayer().getName() + " 0 10 0 250");
+        }
+
+        System.out.println("Rinzler was interacted");
         for(EntityCustomNpc npc: NpcDatabase.npc_entities){
             //System.out.println(npc.getName());
             if(npc.getName().equals(this.name)){
@@ -61,7 +71,7 @@ public class Renzler extends AbstractCustomNpc {
 
         //boolean isJoinSuccess = fishing.onPlayerJoin(player);
         if(event.getWorld().isRemote){  // Client side send message
-            ClientUtils.sendData(EnumPacketClient.PlayerJoin,"223");
+            ClientUtils.sendData(EnumPacketClient.PlayerJoin,"250");
             System.out.println("is Client Side!!!!");
         }
         /*else {
