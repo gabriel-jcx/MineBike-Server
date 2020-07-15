@@ -9,7 +9,7 @@ public class CookBurger  extends Item {
     public CookBurger()
     {
         setUnlocalizedName("hamburger");
-        setRegistryName("Hamburger");
+        setRegistryName("hamburger");
 
     }
     public void registerItemModel(Item item) {

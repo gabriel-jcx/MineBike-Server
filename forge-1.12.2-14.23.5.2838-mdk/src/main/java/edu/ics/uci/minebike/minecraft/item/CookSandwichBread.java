@@ -7,7 +7,7 @@ import net.minecraftforge.client.model.ModelLoader;
 public class CookSandwichBread extends Item {
     public CookSandwichBread(){
         setUnlocalizedName("sandwichbread");
-        setRegistryName("Sandwich_Bread");
+        setRegistryName("sandwichbread");
     }
     public void registerItemModel(Item item) {
         ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(this.getRegistryName(), "inventory"));

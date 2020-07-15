@@ -8,7 +8,7 @@ public class CookBurgerBun extends Item {
     public CookBurgerBun()
     {
         setUnlocalizedName("hamburgerbun");
-        setRegistryName("Hamburger_Bun");
+        setRegistryName("hamburgerbun");
 //        ModelLoader.setCustomModelResourceLocation(this, 0, );
     }
     public void registerItemModel(Item item) {

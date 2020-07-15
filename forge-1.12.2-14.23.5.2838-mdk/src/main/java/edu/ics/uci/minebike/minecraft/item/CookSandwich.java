@@ -8,7 +8,7 @@ public class CookSandwich  extends Item {
     public CookSandwich()
     {
         setUnlocalizedName("sandwich");
-        setRegistryName("Sandwich");
+        setRegistryName("sandwich");
 //        setTextureName();
     }
     public void registerItemModel(Item item) {
