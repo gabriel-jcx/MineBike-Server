@@ -6,12 +6,16 @@ import java.util.ArrayList;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
+import edu.ics.uci.minebike.minecraft.item.CookBurgerBun;
+import edu.ics.uci.minebike.minecraft.item.CookLettuce;
+import edu.ics.uci.minebike.minecraft.item.CookSandwichBread;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderOverCooked;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraft.world.World;
@@ -35,9 +39,11 @@ public class OverCookedQuest extends AbstractCustomQuest {
     private int ticks = 0;
     private boolean countTicks;
     private ArrayList<Vec3d> ingredientCoord;
-    private ArrayList<Recipe> recipes;
-    private long gameTime;
-    private long waitTime;
+    private ArrayList<Recipe> recipes = new ArrayList<>();
+    private long gameTime = 480000; //ms 8min
+    private long waitTime = 10000;//ms 10sec
+    private long serverStartTime;
+    private long serverWaitTime;
 
     private HudRectangle rectangle;
 //             = new HudRectangle(580,280, 50,50, 0x4aa188, true, false);
@@ -65,6 +71,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 //            setupQuestEnv(player.world, player);
             ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,(EntityPlayerMP)player, Long.toString(this.waitTime));
             isWaiting = true;
+
             return false;
         }else{
             if (!isWaiting)
@@ -92,6 +99,31 @@ public class OverCookedQuest extends AbstractCustomQuest {
     public void setRecipes()
     {
 //        recipes.add();
+        Item sandwichbread = new CookSandwichBread();
+        Item hamburgerbun = new CookBurgerBun();
+        Item steak = Item.getByNameOrId("cooked_beef");
+        Item lettuce = new CookLettuce();
+        Item chicken = Item.getByNameOrId("cooked_chicken");
+        Item potato = Item.getByNameOrId("potato");
+
+        Item[] all = new Item[] {chicken, lettuce, potato};
+        Item[] veg = new Item[] {lettuce, potato};
+        Item[] meat = new Item[] {chicken, potato};
+        Item[] nopot = new Item[] {chicken, lettuce, steak};
+        Item[] plain = new Item[] {chicken, lettuce};
+        //Sandwiches
+        recipes.add(new Recipe(sandwichbread, all));
+        recipes.add(new Recipe(sandwichbread, veg));
+        recipes.add(new Recipe(sandwichbread, meat));
+        recipes.add(new Recipe(sandwichbread, nopot));
+        recipes.add(new Recipe(sandwichbread, plain));
+        //Hamburgers
+        recipes.add(new Recipe(hamburgerbun, all));
+        recipes.add(new Recipe(hamburgerbun, veg));
+        recipes.add(new Recipe(hamburgerbun, meat));
+        recipes.add(new Recipe(hamburgerbun, nopot));
+        recipes.add(new Recipe(hamburgerbun, plain));
+
     }
 
 
@@ -102,6 +134,10 @@ public class OverCookedQuest extends AbstractCustomQuest {
         if(isStarted)
         {
             System.out.println("Game Already Started Going to Waiting");
+
+        }
+        if(!isWaiting)
+        {
 
         }
     }
