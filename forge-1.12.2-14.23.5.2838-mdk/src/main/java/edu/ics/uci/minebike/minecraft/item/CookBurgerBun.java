@@ -2,11 +2,13 @@ package edu.ics.uci.minebike.minecraft.item;
 
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemFood;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-public class CookBurgerBun extends Item {
+public class CookBurgerBun extends ItemFood {
     public CookBurgerBun()
     {
+        super(2,1.2f,false);
         setUnlocalizedName("hamburgerbun");
         setRegistryName("hamburgerbun");
 //        ModelLoader.setCustomModelResourceLocation(this, 0, );

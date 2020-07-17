@@ -30,10 +30,10 @@ public class ItemManager {
         System.out.println("Registering the Game_Fishing ROD!!!");
         System.out.println("Registry location of Game_Fishing_ROD is " + GAME_FISHING_ROD.getRegistryName());
         GAME_FISHING_ROD.registerItemModel(GAME_FISHING_ROD);
-//        BURGER_BUN.registerItemModel(BURGER_BUN);
-//        BURGER.registerItemModel(BURGER);
-//        SANDWICH_BREAD.registerItemModel(SANDWICH_BREAD);
-//        SANDWICH.registerItemModel(SANDWICH);
+        BURGER_BUN.registerItemModel(BURGER_BUN);
+        BURGER.registerItemModel(BURGER);
+        SANDWICH_BREAD.registerItemModel(SANDWICH_BREAD);
+        SANDWICH.registerItemModel(SANDWICH);
         LETTUCE.registerItemModel(LETTUCE);
 
         //ModelLoader.setCustomModelResourceLocation(GAME_FISHING_ROD, 0, new ModelResourceLocation(GAME_FISHING_ROD.getRegistryName(), "inventory"));
