@@ -62,7 +62,7 @@ public class TRONQuest extends AbstractCustomQuest {
     private HudString warningString; // Displays when player stops moving
     private HudString warningNumber; // Counts down when player stops moving
 
-    public static final String NPC_NAME = "Rinzler"; // Name of npc
+    public static final String NPC_NAME = "Renzler"; // Name of npc
     private ForgeDirection npcRunDirection; // which direction npc is currently going
     static EntityCustomNpc npc;
     static NpcCommand command;

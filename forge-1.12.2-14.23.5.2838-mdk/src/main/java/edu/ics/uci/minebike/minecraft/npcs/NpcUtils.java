@@ -1,7 +1,7 @@
 package edu.ics.uci.minebike.minecraft.npcs;
 
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Carissa;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Sam;
+//import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Sam;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
