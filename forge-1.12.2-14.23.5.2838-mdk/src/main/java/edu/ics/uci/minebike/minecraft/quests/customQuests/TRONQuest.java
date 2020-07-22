@@ -6,6 +6,7 @@ import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
+import edu.ics.uci.minebike.minecraft.npcs.NpcUtils;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
@@ -159,7 +160,10 @@ public class TRONQuest extends AbstractCustomQuest {
         System.out.println("On PlayerJoin triggerd on server side");
 
         if(isStarted) {
-
+            Vec3d rinzlerCord = new Vec3d(0, 10, 0);
+            EntityCustomNpc asdf = NpcUtils.spawnNpc(rinzlerCord,
+                    DimensionManager.getWorld(this.DIMID), "Rinzler",
+                    "customnpcs:textures/entity/humanmale/kingsteve.png");
             //System.out.println("There's an ongoing soccer session, please wait!");
             //ServerUtils.telport((EntityPlayerMP)player,Jaya.LOCATION,0);
             ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
