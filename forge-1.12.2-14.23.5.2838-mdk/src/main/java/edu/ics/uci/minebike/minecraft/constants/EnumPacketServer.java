@@ -8,7 +8,8 @@ public enum EnumPacketServer {
     QuestEnd,
     QuestJoinFailed,
     FishRetract,
-    FishingDistance;
+    FishingDistance,
+    OverCookedWaitTime;
     private EnumPacketServer(){
 
     }

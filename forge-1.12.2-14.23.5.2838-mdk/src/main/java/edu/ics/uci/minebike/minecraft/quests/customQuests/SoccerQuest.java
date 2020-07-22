@@ -212,61 +212,7 @@ public class SoccerQuest extends AbstractCustomQuest {
     public void start(EntityPlayerSP player){
 
     }
-    @Override
-    public void start(EntityJoinWorldEvent event) {
-//        if(isStarted){
-//            System.err.println("Error: The Soccer Quest is already started!");
-//            return;
-//        }
-//        soccerWS = DimensionManager.getWorld(222);
-//
-//        ICustomNpc npc = NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
-//
-//        if(npc.getAi() instanceof  DataAI){
-//            System.out.println("INPCai is instance of DataAI");
-//        }
-//        int[] pos = new int[]{20,5,20};
-//        DataAI npcai = (DataAI)npc.getAi();
-//        npcPathList.add(0,pos);
-//
-//        npcPathList.add(1,pos);
-//        npcai.setMovingPath(npcPathList);
-//        npc.getAi().setMovingPathType(2,false);
-//        //npc.setMoveForward();
-//        DataAI npcai = (DataAI)npc.getAi();
-//        npcai.setStartPos(new BlockPos(10,5,10));
-//        int[] newPosition = new int[] {20,5,20};
-//        npcai.getMovingPath().add(newPosition);
-//        npcai.setMovingType(0);
-//        npcai.canSprint = true;
-//        npcai.movingPause = false;
-        //npcai.setMovingPath(new List<int>{20,20,20});
-//        BlockPos pos = new BlockPos(20, 20, 20);
-//
-//        npc.getAi().setMovingType(2); // 2 for
-//        npc.getAi().getMovingPathType()
-//        npc.setMoveForward(200);
-        //npc.getAi().setMovingPathType();
-//        EntityCustomNpc npc = new EntityCustomNpc(event.getWorld());
-//        npc.wrappedNPC.setName("a");
-//        npc.ais.setStartPos(npc.getPosition());
-//        boolean spawned = soccerWS.spawnEntity(npc);
-//        soccerWS.updateEntities();
-//        if(spawned){
-//            System.out.println("Spawn successful, but can you see it?");
-//        }
-//        if(npc instanceof  EntityCustomNpc){
-//            System.out.println("The created CustomNPC is actually a EntityCustomNPc");
-//        }
 
-        // Spwan a ball!
-//        ball = new EntitySoccerBall(event.getWorld());
-//        ball.setPosition(ball_location.x,ball_location.y,ball_location.z);
-//        soccerWS.spawnEntity(ball);
-//
-//        this.isStarted = true;
-        // spawn associated NPC and ball if not spawned
-    }
 
 
     @Override
@@ -496,4 +442,59 @@ public class SoccerQuest extends AbstractCustomQuest {
 //        System.out.println("Client have " + clockStr.text + "left");
     }
 
+    @Override
+    public void start(EntityJoinWorldEvent event) {
+//        if(isStarted){
+//            System.err.println("Error: The Soccer Quest is already started!");
+//            return;
+//        }
+//        soccerWS = DimensionManager.getWorld(222);
+//
+//        ICustomNpc npc = NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
+//
+//        if(npc.getAi() instanceof  DataAI){
+//            System.out.println("INPCai is instance of DataAI");
+//        }
+//        int[] pos = new int[]{20,5,20};
+//        DataAI npcai = (DataAI)npc.getAi();
+//        npcPathList.add(0,pos);
+//
+//        npcPathList.add(1,pos);
+//        npcai.setMovingPath(npcPathList);
+//        npc.getAi().setMovingPathType(2,false);
+//        //npc.setMoveForward();
+//        DataAI npcai = (DataAI)npc.getAi();
+//        npcai.setStartPos(new BlockPos(10,5,10));
+//        int[] newPosition = new int[] {20,5,20};
+//        npcai.getMovingPath().add(newPosition);
+//        npcai.setMovingType(0);
+//        npcai.canSprint = true;
+//        npcai.movingPause = false;
+        //npcai.setMovingPath(new List<int>{20,20,20});
+//        BlockPos pos = new BlockPos(20, 20, 20);
+//
+//        npc.getAi().setMovingType(2); // 2 for
+//        npc.getAi().getMovingPathType()
+//        npc.setMoveForward(200);
+        //npc.getAi().setMovingPathType();
+//        EntityCustomNpc npc = new EntityCustomNpc(event.getWorld());
+//        npc.wrappedNPC.setName("a");
+//        npc.ais.setStartPos(npc.getPosition());
+//        boolean spawned = soccerWS.spawnEntity(npc);
+//        soccerWS.updateEntities();
+//        if(spawned){
+//            System.out.println("Spawn successful, but can you see it?");
+//        }
+//        if(npc instanceof  EntityCustomNpc){
+//            System.out.println("The created CustomNPC is actually a EntityCustomNPc");
+//        }
+
+        // Spwan a ball!
+//        ball = new EntitySoccerBall(event.getWorld());
+//        ball.setPosition(ball_location.x,ball_location.y,ball_location.z);
+//        soccerWS.spawnEntity(ball);
+//
+//        this.isStarted = true;
+        // spawn associated NPC and ball if not spawned
+    }
 }

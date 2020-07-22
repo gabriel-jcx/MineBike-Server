@@ -26,11 +26,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.entity.EntityCustomNpc;
 
-public class ChefGusteau extends AbstractCustomNpc{
-    public static final String NAME = "ChefGusteau";
-    public static final Vec3d LOCATION = new Vec3d(7,78,-3);
-    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanfemale/Chef_Gusteau.png";
-    public ChefGusteau()
+public class Gordon extends AbstractCustomNpc {
+    public static final String NAME = "Gordon";
+    public static final Vec3d LOCATION = new Vec3d(10, 4, 10);
+    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanfemale/tuxedosteve.png";
+
+    public Gordon()
     {
         name = NAME;
         location = LOCATION;
@@ -39,29 +40,7 @@ public class ChefGusteau extends AbstractCustomNpc{
     }
 
     @Override
-    public void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event)
-    {
-        System.out.println("Chef G was interacted");
-        for(EntityCustomNpc npc: NpcDatabase.npc_entities)
-        {
-            if(npc.getName().equals(this.name)){
+    public void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event) {
 
-                npc.delete();
-                System.out.println(npc.getName() + " is deleted");
-            }
-        }
-        AbstractCustomQuest cooked = CustomQuestManager.customQuests.get(WorldProviderOverCooked.DIM_ID);
-
-        if(event.getWorld().isRemote)
-        {
-            ClientUtils.sendData(EnumPacketClient.PlayerJoin, "723");
-//            System.out.println("is Client Side!!!!");
-        }
-        else
-        {
-            System.out.println("Cooking start location: "+ cooked.questStartLocation+ "  " + cooked.DIMID);
-            ServerUtils.telport((EntityPlayerMP)player, cooked.questStartLocation,cooked.DIMID);
-        }
     }
-
 }
