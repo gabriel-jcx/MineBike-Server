@@ -1,10 +1,13 @@
 package edu.ics.uci.minebike.minecraft.client.AI;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
+import noppes.npcs.client.ClientEventHandler;
+import org.ngs.bigx.minecraft.BiGX;
+import org.ngs.bigx.minecraft.context.BigxClientContext;
 
 import java.util.*;
 
-public class FishingAI extends QuestHeartRate {
+public class FishingAI<heartrate> extends QuestHeartRate {
 
     public String last_fish;
     //    public List<Float> heart_rate_per_fish;
@@ -17,6 +20,7 @@ public class FishingAI extends QuestHeartRate {
     private HashMap<String ,Integer> current_pond;
     Random random = new Random();
     Object[] crunchifyKeys;
+
     public FishingAI() {
 
     }
@@ -56,6 +60,7 @@ public class FishingAI extends QuestHeartRate {
 //                int l=current_pond.get(last_fish);
 
                 Integer l = Arrays.asList(crunchifyKeys).indexOf(last_fish);
+
                 return random_fish(l);
 //                String key = (String)crunchifyKeys[random.nextInt(l)];
 //                last_fish= (String)key;
@@ -91,11 +96,14 @@ public class FishingAI extends QuestHeartRate {
     }
     //tell the CustomHook fish name, return the resistance to FishingQuest
     private Integer random_fish(int l) {
-
+        System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
+        ((BigxClientContext) BiGX.instance().clientContext).resistance=1;
         Object key = crunchifyKeys[random.nextInt(l)];
         last_fish= (String)key;
         ClientUtils.sendData(EnumPacketClient.Fish,last_fish);
         return current_pond.get(key);
+
+
     }
     public enum FishStatus {
         ESCAPE,

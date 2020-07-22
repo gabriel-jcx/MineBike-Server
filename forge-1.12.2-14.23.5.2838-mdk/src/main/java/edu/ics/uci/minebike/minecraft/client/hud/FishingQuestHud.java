@@ -34,6 +34,7 @@ public class FishingQuestHud {
         this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
     }
     public void Initial_fishing_hud(){
+        System.out.println("!!!!!!Initial_fishing_hud()");
         this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
         this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
         this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);

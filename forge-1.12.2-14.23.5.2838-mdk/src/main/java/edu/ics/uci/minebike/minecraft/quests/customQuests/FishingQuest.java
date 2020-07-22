@@ -28,6 +28,8 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 import edu.ics.uci.minebike.minecraft.client.hud.FishingQuestHud;
+import org.ngs.bigx.minecraft.BiGX;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -133,61 +135,63 @@ public class FishingQuest  extends AbstractCustomQuest {
 
     @Override
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        fishingQuestHud.refresh_count_down();
-        if (retract==Movement.RETRACT){
-            retract=Movement.INIT;
-            System.out.println("retract");
-            fishingQuestHud.unreg_hud();
-            distance=4;
-            timer=10;
-            fishingAI.fish_run_away= FishingAI.FishStatus.QUIT;
-
-        }
-        else if(retract==Movement.THROW)
-        {
-            if (fishingQuestHud.powerLine!=null)
-            {
+//        if(event.side.isClient()) {
+//            System.out.println("event.side.isClient()");
+            //fishingQuestHud.refresh_count_down();
+            if (retract == Movement.RETRACT) {
+                BiGX.instance().clientContext.lock(false);
+                retract = Movement.INIT;
+                System.out.println("retract");
                 fishingQuestHud.unreg_hud();
+                distance = 4;
+                timer = 10;
+                fishingAI.fish_run_away = FishingAI.FishStatus.QUIT;
+
+            } else if (retract == Movement.THROW) {
+                BiGX.instance().clientContext.lock(true);
+                System.out.println("FishingQuest ");
+                if (fishingQuestHud.powerLine != null) {
+                    fishingQuestHud.unreg_hud();
 //                System.out.println("unreg_hud");
-            }
+                }
 
-            System.out.println("throw");
+                System.out.println("throw");
 
-            current_fish=fishingAI.change_fish();
+                current_fish = fishingAI.change_fish();
 
-            timer = current_fish+10;
-            int i= random.nextInt(6);
-            distance= abs(current_fish*2-i);
-            current_fish=fishingAI.change_fish();
+                timer = current_fish + 10;
+                int i = random.nextInt(6);
+                distance = abs(current_fish * 2 - i);
+                current_fish = fishingAI.change_fish();
 //            this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
 //            this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
 //            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
 //            this.timerString = new HudString(-10, 45, "The fish will run away in:  "+ timer+" seconds", true, false);
 //            this.powerBar= new HudRectangle(-70,0, 140, 30, 0xe4344aff,true,false);
 //            this.powerLine = new HudRectangle(-70,0, 5, 30, 0xffffffff,true,false);
-            fishingQuestHud.Initial_fishing_hud();
+                fishingQuestHud.Initial_fishing_hud();
 
 
-            retract=Movement.FISHING;
-        }
-        else if (retract==Movement.FISHING){
-            fishingQuestHud.refresh_powerline();
-            fishingQuestHud.reduce_distance();
-            fishingQuestHud.refresh_timerString();
-            if (distance == 0) {
-                retract=Movement.INIT;
+                retract = Movement.FISHING;
+            } else if (retract == Movement.FISHING) {
+                //
 
-                fishingQuestHud.unreg_hud();
-                fishingAI.fish_run_away= FishingAI.FishStatus.CAUGHT;
+                fishingQuestHud.refresh_powerline();
+                fishingQuestHud.reduce_distance();
+                fishingQuestHud.refresh_timerString();
+                if (distance == 0) {
+                    retract = Movement.INIT;
+
+                    fishingQuestHud.unreg_hud();
+                    fishingAI.fish_run_away = FishingAI.FishStatus.CAUGHT;
+                }
+                if (timer == 0 && distance != 0) {
+                    retract = Movement.INIT;
+                    fishingQuestHud.unreg_hud();
+                    fishingAI.fish_run_away = FishingAI.FishStatus.CAUGHT;
+                }
             }
-            if(timer==0&&distance!=0)
-            {
-                retract=Movement.INIT;
-                fishingQuestHud.unreg_hud();
-                fishingAI.fish_run_away=FishingAI.FishStatus.CAUGHT;
-            }
-        }
-
+//        }
     }
     private int getPower()
     {

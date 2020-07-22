@@ -9,9 +9,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
 import org.ngs.bigx.minecraft.BiGX;
-import org.ngs.bigx.minecraft.bike.BiGXPacketHandler;
 import org.ngs.bigx.minecraft.context.BigxClientContext;
+//import org.ngs.bigx.minecraft.BiGX;
+//import org.ngs.bigx.minecraft.bike.BiGXPacketHandler;
+//import org.ngs.bigx.minecraft.context.BigxClientContext;
+import org.ngs.bigx.minecraft.client.ClientEventHandler;
 
 
 import java.util.concurrent.TimeUnit;
@@ -32,6 +36,7 @@ public class OuterAIHud {
     //TODO: need API
     private int level=0;
     private int current_t=0;
+    private int rr=15;
 
     public boolean heart_shown=false;
 
@@ -60,16 +65,27 @@ public class OuterAIHud {
     public void show(){
         this.heartString= new HudString(14,16, ""+hr,false,false);
         this.goalString= new HudString(50, 16, "Heart Rate Goal: "+minGoal+"-"+maxGoal, false, false);
+        this.goalReached= new HudString(10, 200, "Resistance Changed to"+rr,false,false);
 //        this.minString = new HudString(400, 10, "Time Played: "+minCount+"m", false, false);
 //        this.incline = new HudString(10, 400, "Current working level: "+ level, false, false);
     }
     public void refresh(){
+        System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
+        ClientEventHandler.getHandler().updateResistance(5);
+
+//        ((BigxClientContext) BiGX.instance().clientContext).resistance= BigxClientContext.Resistance.LOW;
+
         if(minCount<=0){
             this.goalReached= new HudString(10, 220, "Goal Reached!",false,false);
         }
         if (current_t != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
             current_t = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
             hr+=1;
+            System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
+
+            ((BigxClientContext) BiGX.instance().clientContext).resistance=(float)hr;
+
+
             heartString.text= ""+hr;
             System.out.println(minCount);
             if(minCount<=0){

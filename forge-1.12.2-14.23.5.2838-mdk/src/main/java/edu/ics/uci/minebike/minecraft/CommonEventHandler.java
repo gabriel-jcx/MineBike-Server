@@ -12,6 +12,8 @@ import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreenServerList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -29,6 +31,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.entity.EntityCustomNpc;
 
 import java.util.Iterator;
@@ -151,6 +155,7 @@ public class CommonEventHandler {
         }
         if(event.side.isClient()&&spawned && event.player.world.provider.getDimension() == 0){
             if (outerHudShowing){
+
                 //outerHud initialized, updating it for every sec
                 outerAIHud.refresh();
 
@@ -170,8 +175,8 @@ public class CommonEventHandler {
         if(event.side.isClient() && event.player.world.provider.getDimension() != 0){
             //TODO: not in dim0, the hud might need to be rearranged.
             outerHudShowing=false;
-            outerAIHud.hide();
-            CustomQuestManager.onPlayerTick(event);
+//            outerAIHud.hide();
+//            CustomQuestManager.onPlayerTick(event);
         }
     }
     @SubscribeEvent
@@ -226,9 +231,14 @@ public class CommonEventHandler {
     public void onPlayerSave(PlayerEvent.SaveToFile event){
         System.out.println(event.getEntityPlayer().getName() + " is trying to SaveToFile");
     }
+
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent event){
+
+
         if(!event.isCancelable()&&event.getType()==RenderGameOverlayEvent.ElementType.TEXT){
+
             outerAIHud.show_heart();
 
 
