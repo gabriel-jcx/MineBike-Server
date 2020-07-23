@@ -1,5 +1,7 @@
 package edu.ics.uci.minebike.minecraft.npcs.customNpcs;
 
+import edu.ics.uci.minebike.minecraft.ClientUtils;
+import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -28,6 +30,9 @@ public class Rinzler extends AbstractCustomNpc {
             MinecraftServer s = FMLCommonHandler.instance().getMinecraftServerInstance();
             s.getCommandManager().executeCommand(s,"/tpx " +
                     event.getEntityPlayer().getName() + " 10 10 10 222");
+        }else{
+            if(event.getWorld().isRemote) // client send packet
+                ClientUtils.sendData(EnumPacketClient.PlayerJoin,"250");
         }
          System.out.println("Rinzler was interacted");
     }

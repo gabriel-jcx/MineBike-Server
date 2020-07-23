@@ -54,18 +54,10 @@ public class Renzler extends AbstractCustomNpc {
     public void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event) {
         if(!event.getWorld().isRemote) {
           MinecraftServer s = FMLCommonHandler.instance().getMinecraftServerInstance();
-          s.getCommandManager().executeCommand(s, "/tpx " +
-                  event.getEntityPlayer().getName() + " 0 10 0 250");
+          s.getCommandManager().executeCommand(s, "/tpx 250 0 10 0" );
         }
 
         System.out.println("Rinzler was interacted");
-        for(EntityCustomNpc npc: NpcDatabase.npc_entities){
-            //System.out.println(npc.getName());
-            if(npc.getName().equals(this.name)){
-
-                System.out.println(npc.getName() + " is deleted");
-            }
-        }
         AbstractCustomQuest TRON = CustomQuestManager.customQuests.get(WorldProviderTRONQuest.DIM_ID);
        // ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
 

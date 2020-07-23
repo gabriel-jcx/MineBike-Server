@@ -79,14 +79,6 @@ public class TRONQuest extends AbstractCustomQuest {
     private final int MAX_NPC_COUNT = 2;
 
 
-
-    //    private final Vec3d ball_location = new Vec3d(-165, 4,1145);
-    //private final Vec3d ball_location = new Vec3d(-221,4,1138);
-
-    // A place holder for now for the goal locations
-    //private final GoalRectangle blueGoal = new GoalRectangle(-161,1147,-155,1139);
-    //private final GoalRectangle redGoal = new GoalRectangle(-277,1139,-283, 1147);
-
     // WorldServer
     public WorldServer soccerWS = null;
 
@@ -158,47 +150,29 @@ public class TRONQuest extends AbstractCustomQuest {
     public boolean onPlayerJoin(EntityPlayer player) {
 //        if(!isStarted && isWaiting)
         System.out.println("On PlayerJoin triggerd on server side");
+        ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
 
-        if(isStarted) {
-            Vec3d rinzlerCord = new Vec3d(0, 10, 0);
-            EntityCustomNpc asdf = NpcUtils.spawnNpc(rinzlerCord,
-                    DimensionManager.getWorld(this.DIMID), "Rinzler",
-                    "customnpcs:textures/entity/humanmale/kingsteve.png");
-            //System.out.println("There's an ongoing soccer session, please wait!");
-            //ServerUtils.telport((EntityPlayerMP)player,Jaya.LOCATION,0);
-            ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
+        Vec3d rinzlerCord = new Vec3d(0, 10, 0);
+        EntityCustomNpc asdf = NpcUtils.spawnNpc(rinzlerCord,
+                DimensionManager.getWorld(this.DIMID), player.getEntityWorld(), "Rinzler",
+                "customnpcs:textures/entity/humanmale/kingsteve.png");
 
-            return false;
-        }
+
+
 
         // teleporting here seems to be a problem!
-        if(!isWaiting) {
-            server_waitingStartTime = System.currentTimeMillis();
-            server_waitingEndTime = server_waitingStartTime + server_waitingTime;
-            WorldServer ws = DimensionManager.getWorld(this.DIMID);
-//                synchronized(ws.getLoadedEntityList()){
-//                    Iterator iter = ws.getLoadedEntityList().iterator();
-//                    while(iter.hasNext()){
-//                        Entity entity = (Entity)iter.next();
-//                        if(!(entity instanceof EntityPlayer))
-//                            entity.isDead = true;
-//                    }
-//                }
-            isWaiting = true;
-            //waitingEndTime = waitingStartTime + waitingTime;
-        }
-        ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
+
 
         //Potion slow_potion = Potion.getPotionById(2);
         //Potion jump_anti_boost = Potion.getPotionById(8);
-        //System.out.println(slow_potion.getName()+ " " + jump_anti_boost.getName());
-        int secs = QuestUtils.getRemainingSeconds(server_waitingEndTime -System.currentTimeMillis());
-        System.out.println(secs);
+//        //System.out.println(slow_potion.getName()+ " " + jump_anti_boost.getName());
+//        int secs = QuestUtils.getRemainingSeconds(server_waitingEndTime -System.currentTimeMillis());
+//        System.out.println(secs);
         // I think the duration is in Ticks
         //player.addPotionEffect(new PotionEffect(slow_potion,secs*20,1000000000));
         //player.addPotionEffect(new PotionEffect(jump_anti_boost, secs*20, 128));
         //player.setPosition()
-        ServerUtils.sendQuestData(EnumPacketServer.SoccerQueueingTime,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
+//        ServerUtils.sendQuestData(EnumPacketServer.SoccerQueueingTime,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
         playersInGame.add((EntityPlayerMP)player);
         return true;
 
