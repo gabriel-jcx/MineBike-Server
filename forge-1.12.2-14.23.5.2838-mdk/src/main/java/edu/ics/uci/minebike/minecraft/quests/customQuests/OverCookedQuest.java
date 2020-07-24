@@ -100,13 +100,12 @@ public class OverCookedQuest extends AbstractCustomQuest {
     @Override
     public boolean onPlayerJoin(EntityPlayer player){
         System.out.println("Player attempting to join");
-        player.sendStatusMessage(new TextComponentTranslation("Game In Progress : Please Wait" + timeLeft + "Seconds", new Object[0]).setStyle((new Style()).setColor(TextFormatting.DARK_RED)),false);
         if(isStarted)
         {
 //            setupQuestEnv(player.world, player);
             ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,(EntityPlayerMP)player, Long.toString(this.waitTime));
             timeLeft = (serverGameEndTime - System.currentTimeMillis())/1000;
-            player.sendStatusMessage(new TextComponentTranslation("Game In Progress : Please Wait" + timeLeft + "Seconds", new Object[0]).setStyle((new Style()).setColor(TextFormatting.DARK_RED)),false);
+            player.sendStatusMessage(new TextComponentTranslation("Game In Progress : Please Wait " + timeLeft + " Seconds", new Object[0]).setStyle((new Style()).setColor(TextFormatting.DARK_RED)),false);
 
             return false;
         }else{
@@ -243,11 +242,6 @@ public class OverCookedQuest extends AbstractCustomQuest {
         }
     }
 
-    public void addNextItem()
-    {
-        int recipeNum = (int)(Math.random() * recipes.size());
-    }
-
     public void serverWaitTick()
     {
         long curTime = System.currentTimeMillis();
@@ -301,8 +295,23 @@ public class OverCookedQuest extends AbstractCustomQuest {
 //        int clientWaitLeftSeconds = QuestUtils.getRemainingSeconds(clientEndWaitTime, clientStartWaitTime);
         hudTimer = new HudString(0,35, QuestUtils.formatSeconds(waitingSeconds),2.0f,true, false);
         isWaiting = true;
+        regScore();
+    }
+
+    public void generateOrder(){
+
+    }
+
+    public void regScore(){
+        scoreTitle = new HudString(-5,25, "Score", 2.0f, true, false);
+        scoreVal = new HudString(5, 25,Integer.toString(score), 2.0f, true, false);
     }
 
     public void increaseScore(){score += completeOrder;}
     public void decreaseScore(){score -= failedOrder;}
+    public int addNextItem()
+    {
+        return (int)(Math.random() * recipes.size());
+    }
+
 }
