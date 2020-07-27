@@ -13,11 +13,13 @@ public class Recipe
 {
     private Item orderType; //type of bread
     private Item[] insideBread; //array of ingredients
+    private String name;
 
-    public Recipe(Item type, Item[] items)
+    public Recipe(Item type, Item[] items, String foodName)
     {
         orderType = type;
         insideBread = items;
+        name = foodName;
     }
 
     //return type of bread
@@ -32,11 +34,13 @@ public class Recipe
         return insideBread;
     }
 
+    public String getName(){return  name;}
+
     //returns true if recipe can be made with player's inventory
     @SideOnly(Side.SERVER)
     public boolean canMake(TickEvent.PlayerTickEvent event, EntityPlayerMP player) //~~works i think
     {
-        int checks = insideBread.length;
+        int ingedrientCnt = insideBread.length;
         boolean type = false;
         InventoryPlayer inventory = player.inventory;
 
@@ -50,23 +54,23 @@ public class Recipe
                     if(stack.getItem().getUnlocalizedName().equals(orderType.getUnlocalizedName()))
                         type = true;
                     else if(stack.getItem().getUnlocalizedName().equals(insideBread[j].getUnlocalizedName()))
-                        checks--;
+                        ingedrientCnt--;
 
 //					System.out.println(stack.getItem().getUnlocalizedName() + " realbread " + orderType.getUnlocalizedName());
 //					System.out.println(stack.getItem().getUnlocalizedName() + " ingredient " + insideBread[j].getUnlocalizedName());
                 }
             }
         }
-        if(checks==0 && type)
+        if(ingedrientCnt==0 && type)
             return true;
-        System.out.println(checks);
+        System.out.println(ingedrientCnt);
         return false;
     }
 
     @SideOnly(Side.CLIENT)
     public boolean canMake(TickEvent.PlayerTickEvent event) //~~works i think
     {
-        int checks = insideBread.length;
+        int ingedrientCnt = insideBread.length;
         boolean type = false;
         InventoryPlayer inventory = event.player.inventory;
 
@@ -80,16 +84,16 @@ public class Recipe
                     if(stack.getItem().getUnlocalizedName().equals(orderType.getUnlocalizedName()))
                         type = true;
                     else if(stack.getItem().getUnlocalizedName().equals(insideBread[j].getUnlocalizedName()))
-                        checks--;
+                        ingedrientCnt--;
 
 //					System.out.println(stack.getItem().getUnlocalizedName() + " realbread " + orderType.getUnlocalizedName());
 //					System.out.println(stack.getItem().getUnlocalizedName() + " ingredient " + insideBread[j].getUnlocalizedName());
                 }
             }
         }
-        if(checks==0 && type)
+        if(ingedrientCnt==0 && type)
             return true;
-        System.out.println(checks);
+        System.out.println(ingedrientCnt);
         return false;
     }
 }

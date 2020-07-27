@@ -21,6 +21,8 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraft.util.text.Style;
@@ -39,7 +41,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
 
     public int DIMID;
-    public Vec3d questStartLocation;
+    public WorldServer overcookWs = null;
+//    public Vec3d questStartLocation;
 
     private boolean isStarted;
     private boolean isWaiting;
@@ -65,7 +68,12 @@ public class OverCookedQuest extends AbstractCustomQuest {
     private long serverWaitTime = waitTime;
     private long serverStartTime = gameTime;
     private int maxPlayerCount = 4;
+    private int maxOrderCount = 5;
     private long timeLeft = 0;
+
+    private long lastGenerated = 0;
+    private long nextGenerated = 0;
+    private OrderHolder orders;
 
     private long clientWaitTime = 0;
     private long clientStartWaitTime = 0;
@@ -74,7 +82,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     private long clientEndTime = 0;
 
 
-    public ArrayList<EntityPlayerMP> playersInGame = new ArrayList<>();
+    public ArrayList<EntityPlayer> playersInGame = new ArrayList<>();
     public ArrayList<EntityPlayer> playersInQueue = new ArrayList<>();
 
     private HudRectangle rectangle;
@@ -100,6 +108,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
     @Override
     public boolean onPlayerJoin(EntityPlayer player){
         System.out.println("Player attempting to join");
+        Potion night_vision = Potion.getPotionById(16);
+        Potion saturation = Potion.getPotionById(23);
         if(isStarted)
         {
 //            setupQuestEnv(player.world, player);
@@ -121,7 +131,9 @@ public class OverCookedQuest extends AbstractCustomQuest {
             if(playersInGame.size() <= maxPlayerCount) {
                 ServerUtils.sendQuestData(EnumPacketServer.OverCookedWaitTime,(EntityPlayerMP)player,Long.toString(this.serverWaitTime));
                 ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
-                playersInGame.add((EntityPlayerMP)player);
+                System.out.print("Teleported Player: " + player.getName() + " to Overcooked Quest Dim");
+                player.addPotionEffect(new PotionEffect(night_vision, (int)(gameTime + waitTime)/1000 * 20, 5, false, false));
+                playersInGame.add(player);
                 return true;
             } else {
                 playersInQueue.add(player);
@@ -154,24 +166,25 @@ public class OverCookedQuest extends AbstractCustomQuest {
         Item lettuce = new CookLettuce();
         Item chicken = Item.getByNameOrId("cooked_chicken");
         Item potato = Item.getByNameOrId("potato");
+        Item water = Item.getByNameOrId("water_bottle");
 
-        Item[] all = new Item[] {chicken, lettuce, potato};
-        Item[] veg = new Item[] {lettuce, potato};
-        Item[] meat = new Item[] {chicken, potato};
-        Item[] nopot = new Item[] {chicken, lettuce, steak};
-        Item[] plain = new Item[] {chicken, lettuce};
+        Item[] all = new Item[] {chicken, lettuce, potato, water};
+        Item[] veg = new Item[] {lettuce, potato, water};
+        Item[] meat = new Item[] {chicken, potato, water};
+        Item[] nopot = new Item[] {chicken, lettuce, steak, water};
+        Item[] plain = new Item[] {chicken, lettuce, water};
         //Sandwiches
-        recipes.add(new Recipe(sandwichbread, all));
-        recipes.add(new Recipe(sandwichbread, veg));
-        recipes.add(new Recipe(sandwichbread, meat));
-        recipes.add(new Recipe(sandwichbread, nopot));
-        recipes.add(new Recipe(sandwichbread, plain));
+        recipes.add(new Recipe(sandwichbread, all,"Loaded Sandwich"));
+        recipes.add(new Recipe(sandwichbread, veg, "Veggie Sandwich"));
+        recipes.add(new Recipe(sandwichbread, meat, "Meat Lover's Sandwich"));
+        recipes.add(new Recipe(sandwichbread, nopot,"Potato-Less Sandwich"));
+        recipes.add(new Recipe(sandwichbread, plain,"Plain Sandwich"));
         //Hamburgers
-        recipes.add(new Recipe(hamburgerbun, all));
-        recipes.add(new Recipe(hamburgerbun, veg));
-        recipes.add(new Recipe(hamburgerbun, meat));
-        recipes.add(new Recipe(hamburgerbun, nopot));
-        recipes.add(new Recipe(hamburgerbun, plain));
+        recipes.add(new Recipe(hamburgerbun, all,"Loaded Hamburger"));
+        recipes.add(new Recipe(hamburgerbun, veg, "Veggie Hamburger"));
+        recipes.add(new Recipe(hamburgerbun, meat, "Meat Lover's Hamburger"));
+        recipes.add(new Recipe(hamburgerbun, nopot,"Potato-Less Hamburger"));
+        recipes.add(new Recipe(hamburgerbun, plain,"Plain Hamburger"));
 
     }
 
@@ -211,12 +224,19 @@ public class OverCookedQuest extends AbstractCustomQuest {
     @Override
     public void end()
     {
-        hudTimer.unregister();
-        for(EntityPlayerMP Player: playersInGame)
-        {
-            ServerUtils.telport((EntityPlayerMP)player, ChefGusteau.LOCATION,0);
+        if(!overcookWs.isRemote) {
+            for (EntityPlayer Player : this.playersInGame) {
+                ServerUtils.telport((EntityPlayerMP) Player, ChefGusteau.LOCATION, 0);
+            }
+            playersInGame.removeAll(playersInGame);
         }
-        playersInGame.removeAll(playersInGame);
+        else{
+            hudTimer.unregister();
+            scoreTitle.unregister();
+            scoreVal.unregister();
+            orders.endGame();
+        }
+        isStarted = false;
     }
 
     @Override
@@ -246,17 +266,16 @@ public class OverCookedQuest extends AbstractCustomQuest {
     {
         long curTime = System.currentTimeMillis();
         int secsPassed = QuestUtils.getRemainingSeconds(curTime, serverStartWaitTime);
-
+        overcookWs = DimensionManager.getWorld(this.DIMID);
         if(secsPassed >= waitTime/1000){
-            for(EntityPlayerMP player: this.playersInGame){
-                this.start(player); // event game start triggered
+            for(EntityPlayer player: this.playersInGame){
+                this.start((EntityPlayerMP)player); // event game start triggered
             }
-
             isWaiting = false;
             isStarted = true;
             serverStartTime = System.currentTimeMillis();
             serverGameEndTime = serverStartTime + gameTime;
-            DimensionManager.getWorld(this.DIMID).setWorldTime(500);
+            overcookWs.setWorldTime(500);
         }
 
     }
@@ -264,6 +283,10 @@ public class OverCookedQuest extends AbstractCustomQuest {
     public void serverStartTick()
     {
         //Need to add NPC interaction here to submit orders
+        long curTime = System.currentTimeMillis();
+        if(curTime >= serverGameEndTime){
+            end();
+        }
     }
 
     public void clientWaitTick(){
@@ -279,10 +302,12 @@ public class OverCookedQuest extends AbstractCustomQuest {
         long curTime = System.currentTimeMillis();
         if(curTime - clientStartTime < 3000) {
             hudTimer.text = "Start Cooking!";
+            generateOrder();
         } else if(curTime >= clientEndTime){
             end();
         }else{
             hudTimer.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(clientEndTime,curTime));
+            generateOrder();
         }
 
     }
@@ -296,14 +321,29 @@ public class OverCookedQuest extends AbstractCustomQuest {
         hudTimer = new HudString(0,35, QuestUtils.formatSeconds(waitingSeconds),2.0f,true, false);
         isWaiting = true;
         regScore();
+        orders = new OrderHolder();
     }
 
     public void generateOrder(){
-
+        if(orders.size() < maxOrderCount) {
+            if (lastGenerated == 0) {
+                orders.add(recipes.get((int) (Math.random() * recipes.size())));
+                lastGenerated = System.currentTimeMillis();
+                nextGenerated = lastGenerated + (long)(Math.random() * 10000) + 20000;
+            } else{
+                if(System.currentTimeMillis() == nextGenerated){
+                    orders.add(recipes.get((int) (Math.random() * recipes.size())));
+                    lastGenerated = nextGenerated;
+                    nextGenerated = lastGenerated + (long)(Math.random() * 10000) + 20000;
+                }
+            }
+        }
     }
 
+
+
     public void regScore(){
-        scoreTitle = new HudString(-5,25, "Score", 2.0f, true, false);
+        scoreTitle = new HudString(-5,25, "Score:", 2.0f, true, false);
         scoreVal = new HudString(5, 25,Integer.toString(score), 2.0f, true, false);
     }
 

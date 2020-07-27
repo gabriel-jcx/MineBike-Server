@@ -29,7 +29,7 @@ import noppes.npcs.entity.EntityCustomNpc;
 public class ChefGusteau extends AbstractCustomNpc{
     public static final String NAME = "ChefGusteau";
     public static final Vec3d LOCATION = new Vec3d(7,78,-3);
-    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanfemale/Chef_Gusteau.png";
+    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanfemale/chefsteve.png";
     public ChefGusteau()
     {
         name = NAME;

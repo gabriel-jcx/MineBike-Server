@@ -3,10 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Ada;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.ChefGusteau;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Sam;
+import edu.ics.uci.minebike.minecraft.npcs.customNpcs.*;
 import noppes.npcs.entity.EntityCustomNpc;
 
 public class NpcDatabase {
@@ -18,6 +15,7 @@ public class NpcDatabase {
         npcs.put(Jaya.NAME,new Jaya());
         npcs.put(Ada.NAME,new Ada());
         npcs.put(ChefGusteau.NAME, new ChefGusteau());
+        npcs.put(Gordon.NAME, new Gordon());
     }
     public static void registerNpcs(){
         //System.out.printf("Name = "+ Name + "(" + Location.x + "," + Location.y + "," + Location.z + ")");
@@ -25,5 +23,6 @@ public class NpcDatabase {
         npcs.put(Sam.NAME, new Sam());
         npcs.put(Ada.NAME,new Ada());
         npcs.put(ChefGusteau.NAME,new ChefGusteau());
+        npcs.put(Gordon.NAME, new Gordon());
     }
 }

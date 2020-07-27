@@ -269,7 +269,6 @@ public class SoccerQuest extends AbstractCustomQuest {
             }
         }
         isStarted = false; // set both client and server to not
-        return;
     }
 
 
