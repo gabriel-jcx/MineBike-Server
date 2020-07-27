@@ -1,8 +1,38 @@
 package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
 import java.time.Clock;
-import java.util.Random;
+
+import java.util.ArrayList;
+
 import edu.ics.uci.minebike.minecraft.ClientUtils;
+import edu.ics.uci.minebike.minecraft.CommonUtils;
+import edu.ics.uci.minebike.minecraft.ServerUtils;
+import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
+import edu.ics.uci.minebike.minecraft.client.hud.HudString;
+
+import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Elon;
+import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
+import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderMiner;
+import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.util.math.Vec3d;
+
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import noppes.npcs.Server;
+
 import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
@@ -13,6 +43,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -43,68 +74,63 @@ public class Minequest extends AbstractCustomQuest {
 	public Vec3d questStartLocation;
 	private int score = 0;
 	private int ticks = 0;
-	private long gameTime;
-	private long waitTime;
 	public static final int MINERDIMENSIONID = 420;
-
+	private ItemStack[] playerInventory;
 	private int currentTick;
-	private boolean initialize;
 
-	private HudRectangle timerRectangle;
-	private HudString timerString;
-	private int seconds;
+
+	private HudRectangle backRectangle;
+	private HudString pointsString;
+	private int points;
+	private int highscore;
 	private static Clock clock;
-	private String secondsString;
+	private String thePointsString;
+
+	private long serverStartWaitTime = 0;
+	private int maxPlayerCount = 5;
+
+	private long clientWaitTime = 0;
+	private long clientStartWaitTime = 0;
+	private long clientEndWaitTime = 0;
+
+	private long waitTime = 10000;//ms 10sec
 
 
-	private long TIME;
-	private Clock fireClock;
-	private long fireTIME;
-	private int numMsForFireToSpawn;
+	public ArrayList<EntityPlayerMP> playersInGame = new ArrayList<>();
+	public ArrayList<EntityPlayer> playersInQueue = new ArrayList<>();
 
+	private HudRectangle rectangle;
+	private HudString hudTimer;
 
 	public Minequest() {
 		super();
 		//initializing all private variables
 
 		currentTick = 0; // Once game starts the lava should proceed every couple ticks
-		timerRectangle = new HudRectangle(-25, 5, 50, 30, 0xff0000ff, true, false);
 		clock = Clock.systemDefaultZone();
-		fireClock = Clock.systemDefaultZone();
-		seconds = 60;
-		secondsString += seconds;
-		timerString = new HudString(0, 10, secondsString, 2.0f, true, false);
-		numMsForFireToSpawn = 180;
+		points = 0;
+		highscore = 0;
+
 
 		ResourceLocation[] instructionTextureLocations = new ResourceLocation[]
-		    				{
-	     					new ResourceLocation("textures/GUI/instructions/MinerQuestInstruction1.png"),
-		     				new ResourceLocation("textures/GUI/instructions/MinerQuestInstruction2.png"),
-		     				new ResourceLocation("textures/GUI/instructions/MinerQuestInstruction3.png"),
-		     				};
+				{
+						new ResourceLocation("textures/GUI/instructions/MinerQuestInstruction1.png"),
+						new ResourceLocation("textures/GUI/instructions/MinerQuestInstruction2.png"),
+						new ResourceLocation("textures/GUI/instructions/MinerQuestInstruction3.png"),
+				};
 		String[] instructionStringContents = new String[]
-		         {
-		                 "Run from the fire",
-		                 "Collect Gold",
-		                 "Stay alive until time runs out",
-		         };
+				{
+						"Run from the Lava",
+						"Collect Gold",
+						"Stay alive until time runs out",
+				};
 
 
 		// double check if instructions work
 		this.DIMID = WorldProviderMiner.DIM_ID;
-		this.questStartLocation = new Vec3d(0, 4, 0); // Need to find new location
+		this.questStartLocation = new Vec3d(-1149, 65, 869); // Need to find new location
 		this.isStarted = false;
 		this.isWaiting = false;
-	}
-
-	 public void onItemPickUp()
-	 {
-	 }
-
-	enum direction     //<figure out what this does
-	{
-		//			NORTH,
-		//			WEST;
 	}
 
 	@Override
@@ -146,10 +172,6 @@ public class Minequest extends AbstractCustomQuest {
 		return questStartLocation;
 	}
 
-	@Override
-	public void start() {
-		TIME = clock.millis();
-	}
 
 	@Override
 	public void start(EntityPlayerSP player) {
@@ -164,64 +186,158 @@ public class Minequest extends AbstractCustomQuest {
 	}
 
 	@Override
-	public void end() {
-		System.out.println(" Start Miner quest ");
+	public void start() {
+		isWaiting = false;
+		isStarted = true;
+
 	}
 
-	private void generateLavaWall(double startx, double startz, World world) {
+	@Override
+	public void end() {
+		hudTimer.unregister();
+		for (EntityPlayerMP Player : playersInGame) {
+			ServerUtils.telport((EntityPlayerMP) player, Elon.LOCATION, 0);
+		}
+		playersInGame.removeAll(playersInGame);
+		finishGame();
+	}
+
+	public void finishGame() {
+		resetToAirCont(0, 0, player.world);
+		if (score > highscore)
+			highscore = 0;
+		score = 0;
+	}
+
+	private void generateLavaWall(double startx, double startz, World world) { //figure out y coord and level
 		for (int z = (int) startz + 1; z < startz + 10; z++) {
 			for (int y = 21; y < 24; y++) {
 				BlockPos gangnam = new BlockPos((int) startx, y, z);
-				world.setBlockState(gangnam, (IBlockState) Blocks.LAVA);
+				if (world.getBlockState(gangnam) == (IBlockState) Blocks.AIR)
+					world.setBlockState(gangnam, (IBlockState) Blocks.LAVA);
 			}
 		}
 	}
-	private void resetToAirStart(double startx, double startz, World world)
-	{
-		for(int x = (int) startx; x < 140+startx; x++)
-		{
-			for(int z = (int) startz+1; z < startz+10; z++)
-			{
-				for(int y = 21; y < 24; y++)
-				{
-					BlockPos gangnam = new BlockPos((int) startx, y, z);
-					world.setBlockToAir(gangnam);
-				}
-			}
-		}
-	}
-	private void resetToAirCont(double startx, double startz, World world)
-	{
 
-		for(int z = (int) startz+1; z < startz+10; z++)
-		{
-			for(int y = 21; y < 24; y++)
-			{
+
+	private void resetToAirCont(double startx, double startz, World world) {
+
+		for (int z = (int) startz + 1; z < startz + 10; z++) {
+			for (int y = 21; y < 24; y++) {
 				BlockPos seoul = new BlockPos((int) startx, y, z);
-				world.setBlockToAir(seoul);
-			}
-		}
-	}
-	private void generateEmeraldWall(double startx, double startz, World world)
-	{
-		for(int z = 0; z < 11; z++)
-		{
-			if(world.isAirBlock(new BlockPos((int) (startx), 21, (int) (startz+z))))
-			{
-				BlockPos dab = new BlockPos((int) (startx), 21,(int) (startz+z));
-				world.setBlockState(dab, (IBlockState) Blocks.EMERALD_ORE);
-			}
-		}
-	}
-	@Override
+				if (world.getBlockState(seoul) == (IBlockState) Blocks.LAVA)
+					world.setBlockState(seoul, (IBlockState) Blocks.AIR);
 
-	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+			}
+		}
 	}
+
+
+	public void updatePoints() {
+		for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+			ItemStack stack = player.inventory.getStackInSlot(i);
+			//if there's something in the stack...
+			if (stack != null) {
+				//checks if materials are in player's inventory
+				boolean areIron = stack.getItem().getUnlocalizedName().equals("item.iron_ingot");
+				boolean areGold = stack.getItem().getUnlocalizedName().equals("item.gold_ingot");
+				boolean areLapis = stack.getItem().getUnlocalizedName().equals("item.lapis_ore");
+				boolean areDiamond = stack.getItem().getUnlocalizedName().equals("item.diamond");
+				boolean areRedstone = stack.getItem().getUnlocalizedName().equals("item.redstone");
+				//if there is more than one ingredient in player inventory, reduce it to one
+				if (areRedstone)
+					points += 1;
+				if (areIron)
+					points += 2;
+				if (areLapis)
+					points += 3;
+				if (areGold)
+					points += 4;
+				if (areDiamond)
+					points += 5;
+			}
+		}
+
+	}
+
 
 	public void onWorldTick(TickEvent.WorldTickEvent event) {
+		//Server Side
+		if (!event.world.isRemote) {
+			if (isWaiting) {
+				serverWaitTick();
+			} else if (isStarted) {
+				serverStartTick();
+			}
+		}
 	}
 
+	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+		if (isWaiting) {
+			clientWaitTick();
+		} else if (isStarted) {
+			clientStartTick();
+		}
+	}
 
+	public void clientWaitTick() {
+		clientWaitTime = clientEndWaitTime - System.currentTimeMillis();
+		int remainingWait = QuestUtils.getRemainingSeconds(clientWaitTime);
+		if (remainingWait >= 0) {
+			hudTimer.text = QuestUtils.formatSeconds(remainingWait);
+		}
+	}
+
+	public void clientStartTick() {
+		if (player.isDead) {
+			resetToAirCont(0, 0, player.world);
+			points = 0;
+		}
+		updatePoints();
+
+		backRectangle = new HudRectangle(-25, 5, 50, 30, 0xffff9f38, true, false);
+
+		thePointsString += points;
+		pointsString = new HudString(0, 10, thePointsString, 2.0f, true, false);
+	}
+
+	public void serverStartTick() {
+		if (player.isDead) {
+			resetToAirCont(0, 0, player.world);
+			points = 0;
+		}
+		if(clock.millis() % 100 == 0 || isStarted)
+			generateLavaWall(0, 0, player.world); // Figure out start x and z coords
+		updatePoints();
+	}
+
+	public void serverWaitTick() {
+		long curTime = System.currentTimeMillis();
+		int secsPassed = QuestUtils.getRemainingSeconds(curTime, serverStartWaitTime);
+
+		if (secsPassed >= waitTime / 1000) {
+			for (EntityPlayerMP player : this.playersInGame) {
+				this.start(player); // event game start triggered
+			}
+
+			isWaiting = false;
+			isStarted = true;
+
+			DimensionManager.getWorld(this.DIMID).setWorldTime(500);
+		}
+
+
+//
+//	public void clientStartWaiting(String waitingTime) {
+//		clientWaitTime = Long.parseLong(waitingTime);
+//		int waitingSeconds = QuestUtils.getRemainingSeconds(clientWaitTime);
+//		clientStartWaitTime = System.currentTimeMillis();
+//		clientEndWaitTime = clientStartWaitTime + clientWaitTime;
+//		hudTimer = new HudString(0, 35, QuestUtils.formatSeconds(waitingSeconds), 2.0f, true, false);
+//		isWaiting = true;
+//	}
+	}
 }
+
 
 
