@@ -55,27 +55,16 @@ public class Renzler extends AbstractCustomNpc {
         if(!event.getWorld().isRemote) {
           MinecraftServer s = FMLCommonHandler.instance().getMinecraftServerInstance();
           s.getCommandManager().executeCommand(s, "/tpx 250 0 10 0" );
+            s.getCommandManager().executeCommand(s, "/noppes npc Renzler delete" );
         }
 
         System.out.println("Rinzler was interacted");
         AbstractCustomQuest TRON = CustomQuestManager.customQuests.get(WorldProviderTRONQuest.DIM_ID);
        // ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
 
-        //boolean isJoinSuccess = fishing.onPlayerJoin(player);
         if(event.getWorld().isRemote){  // Client side send message
             ClientUtils.sendData(EnumPacketClient.PlayerJoin,"250");
             System.out.println("is Client Side!!!!");
         }
-        /*else {
-            System.out.println("fish start location: "+fishing.questStartLocation+"   "+fishing.DIMID);
-            ServerUtils.telport((EntityPlayerMP)player, fishing.questStartLocation,fishing.DIMID);
-//            give_rod( player);
-            //ServerUtils.telport((EntityPlayerMP)player, fishing.questStartLocation,fishing.DIMID);
-        }
-//            if(!event.getWorld().isRemote){
-//
-//                //telport((EntityPlayerMP) player, FishingQuest.questStartLocation, WorldProviderFishing.DIM_ID);
-//            }*/
-
     }
 }

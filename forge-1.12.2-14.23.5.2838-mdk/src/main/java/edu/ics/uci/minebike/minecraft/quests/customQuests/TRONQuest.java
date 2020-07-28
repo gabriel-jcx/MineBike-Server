@@ -73,18 +73,16 @@ public class TRONQuest extends AbstractCustomQuest {
 
 
     private final long GAME_WAITING_TIME = 30000; // millisecond
-    private final long GAME_SESSION_TIME = 300000; // millisecond => equivalent to 5 mins
+    //private final long GAME_SESSION_TIME = 300000; // millisecond => equivalent to 5 mins
+    private final long GAME_SESSION_TIME = 10000; // millisecond => equivalent to 5 mins
     //private final int GOAL_TICK_TIME = 5; // If ball stays in the goal for 5 ticks
     private final int MAX_PLAYER_COUNT = 5;
     private final int MAX_NPC_COUNT = 2;
 
 
     // WorldServer
-    public WorldServer soccerWS = null;
 
-
-
-    // Player fields
+        // Player fields
     public ArrayList<EntityPlayerMP> playersInGame  = new ArrayList<>();
 
     // Player spwan locations
@@ -133,6 +131,10 @@ public class TRONQuest extends AbstractCustomQuest {
     public boolean testFlag = false;
     public int prev = 0;
 
+    //Where Rinzler will spawn on the start of the quest
+    public Vec3d rinzlerCord = new Vec3d(0, 7, 0);
+    EntityCustomNpc RinzlerNPC;
+
     public TRONQuest() {
         super();
         this.DIMID = 250;
@@ -149,19 +151,27 @@ public class TRONQuest extends AbstractCustomQuest {
     @Override
     public boolean onPlayerJoin(EntityPlayer player) {
 //        if(!isStarted && isWaiting)
+        //add command that deletes all NPCs from the arena
         System.out.println("On PlayerJoin triggerd on server side");
         ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
+        //-----
 
-        Vec3d rinzlerCord = new Vec3d(0, 10, 0);
-        EntityCustomNpc asdf = NpcUtils.spawnNpc(rinzlerCord,
+        WorldServer ws = DimensionManager.getWorld(250);
+
+        Iterator iter = ws.loadedEntityList.iterator();
+        while(iter.hasNext()){
+            Entity entity = (Entity)iter.next();
+            if(entity instanceof EntityCustomNpc){
+                if(entity.getName() == "Rinzler") ((EntityCustomNpc) entity).delete();
+            }
+        }
+        //-----
+
+        RinzlerNPC = NpcUtils.spawnNpc(rinzlerCord,
                 DimensionManager.getWorld(this.DIMID), player.getEntityWorld(), "Rinzler",
                 "customnpcs:textures/entity/humanmale/kingsteve.png");
 
-
-
-
         // teleporting here seems to be a problem!
-
 
         //Potion slow_potion = Potion.getPotionById(2);
         //Potion jump_anti_boost = Potion.getPotionById(8);
@@ -284,36 +294,7 @@ public class TRONQuest extends AbstractCustomQuest {
     }
     @Override
     public void end() {
-/*
-        if(soccerWS != null && !soccerWS.isRemote){
-            if(ball != null){
-                soccerWS.removeEntity(ball);
-                ball = null;
-            }
-
-
-            int numDiamonds = 10;   //can multiply by a scalar depending on difficulty
-            if(isFinished){
-                for(EntityPlayer player: this.playersInGame){
-                    giveItemToPlayer(player, new ItemStack(Items.DIAMOND, numDiamonds));
-                    // add teleporting back to Jaya
-                    ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
-                }
-                isFinished = false;
-            }
-
-            //ball.isDead = true;
-            isStarted = false;
-            isWaiting = false;
-            System.out.println("Quest ENDS");
-
-        }else{
-            clockStr.unregister();
-            if(isStarted){
-                scoreLeftStr.unregister();
-                scoreRightStr.unregister();
-            }
-        }*/
+        RinzlerNPC = null;
         isStarted = false; // set both client and server to not
         isWaiting = false;
         return;
@@ -398,9 +379,9 @@ public class TRONQuest extends AbstractCustomQuest {
             server_waitingTime = GAME_WAITING_TIME; // resetting the timer param
 
 
-            soccerWS = DimensionManager.getWorld(this.DIMID);
+            //soccerWS = DimensionManager.getWorld(this.DIMID);
 
-            soccerWS.setWorldTime(500); // set time to day
+            //soccerWS.setWorldTime(500); // set time to day
 
             for(EntityPlayerMP player: this.playersInGame){
                 this.start(player); // event game start triggered

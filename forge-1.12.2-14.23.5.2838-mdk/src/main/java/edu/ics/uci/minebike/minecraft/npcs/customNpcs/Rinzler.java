@@ -31,8 +31,8 @@ public class Rinzler extends AbstractCustomNpc {
             s.getCommandManager().executeCommand(s,"/tpx " +
                     event.getEntityPlayer().getName() + " 10 10 10 222");
         }else{
-            if(event.getWorld().isRemote) // client send packet
-                ClientUtils.sendData(EnumPacketClient.PlayerJoin,"250");
+            if(event.getWorld().isRemote){} // client send packet
+                //ClientUtils.sendData(EnumPacketClient.PlayerJoin,"250");
         }
          System.out.println("Rinzler was interacted");
     }
