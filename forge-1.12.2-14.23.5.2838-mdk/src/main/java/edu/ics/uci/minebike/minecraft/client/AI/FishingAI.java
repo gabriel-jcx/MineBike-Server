@@ -1,110 +1,106 @@
 package edu.ics.uci.minebike.minecraft.client.AI;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
-import noppes.npcs.client.ClientEventHandler;
 import org.ngs.bigx.minecraft.BiGX;
 import org.ngs.bigx.minecraft.context.BigxClientContext;
 
 import java.util.*;
 
-public class FishingAI<heartrate> extends QuestHeartRate {
+public class FishingAI extends QuestHeartRate {
 
-    public String last_fish;
-    //    public List<Float> heart_rate_per_fish;
-//    private float avg_hr_last_fish;
-    //2 retract(random), 0 false, 1 true
-    public FishStatus fish_run_away = FishStatus.QUIT;
-    public boolean hr_goal_reached = false;
+    public String lastFish;
+
+    public FishStatus fishRunAway = FishStatus.QUIT;
+
     public int level = 1;
+
     private Fishpond pond= new Fishpond();
-    private HashMap<String ,Integer> current_pond;
+
+    private HashMap<String ,Integer> currentPond;
+
     Random random = new Random();
-    Object[] crunchifyKeys;
+
+    Object[] allFishNamesInPond;
 
     public FishingAI() {
 
     }
 
-    public FishingAI(float h) {
-
-    }
-//    public void add_heart_rate(float h){
-//        heart_rate.add(h);
-//    }
-
-    public void select_pond(int level) {
+    public void selectPond(int level) {
         switch (level) {
             case 1:
                 System.out.println("easy");
-                current_pond = pond.getEasy();
+                currentPond = pond.getEasy();
 
             case 2:
                 System.out.println("medium");
-                current_pond = pond.getMedium();
+                currentPond = pond.getMedium();
             case 3:
                 System.out.println("hard");
-                current_pond = pond.getHard();
+                currentPond = pond.getHard();
         }
-        crunchifyKeys = current_pond.keySet().toArray();
+        allFishNamesInPond = currentPond.keySet().toArray();
     }
 
-    public Integer change_fish() {
+    public Integer changeFish() {
         //Heart Rate reached
-        if (fish_run_away == FishStatus.QUIT || last_fish==null) {
-            Integer l=crunchifyKeys.length;
-            return random_fish(l);
+        if (fishRunAway == FishStatus.QUIT || lastFish==null) {
+            Integer l= allFishNamesInPond.length;
+            return randomFish(l);
         }
         if (avg <= p.getTargetMax() && avg >= p.getTargetMin()) {
             //smaller fish
-            if (fish_run_away == FishStatus.ESCAPE) {
-//                int l=current_pond.get(last_fish);
+            if (fishRunAway == FishStatus.ESCAPE) {
+//                int l=current_pond.get(lastFish);
 
-                Integer l = Arrays.asList(crunchifyKeys).indexOf(last_fish);
+                Integer l = Arrays.asList(allFishNamesInPond).indexOf(lastFish);
 
-                return random_fish(l);
-//                String key = (String)crunchifyKeys[random.nextInt(l)];
-//                last_fish= (String)key;
-//                ClientUtils.sendData(EnumPacketClient.Fish,last_fish);
+                return randomFish(l);
+//                String key = (String)allFishNamesinPond[random.nextInt(l)];
+//                lastFish= (String)key;
+//                ClientUtils.sendData(EnumPacketClient.Fish,lastFish);
 //                return current_pond.get(key);
             }
             else{
-                Integer l=crunchifyKeys.length;
-                return random_fish(l);
+                Integer l= allFishNamesInPond.length;
+                return randomFish(l);
             }
         }
         //High,smaller fish
         else if (avg >= p.getTargetMax()) {
-//            int l=pond.indexOf(last_fish);
-            Integer l = Arrays.asList(crunchifyKeys).indexOf(last_fish);
-            return random_fish(l);
+//            int l=pond.indexOf(lastFish);
+            Integer l = Arrays.asList(allFishNamesInPond).indexOf(lastFish);
+            return randomFish(l);
 //            int i = random.nextInt(l);
 //            Pair<Integer, ItemStack> r = pond.get(i);
-//            last_fish=r.getValue();
+//            lastFish=r.getValue();
 //            return r;
         }
         //Low,bigger fish
         else {
-//            int l=pond.indexOf(last_fish);
+//            int l=pond.indexOf(lastFish);
 //            int i = random.nextInt(pond.size()-l);
 //            Pair<Integer, ItemStack> r = pond.get(l+i);
-//            last_fish=r.getValue();
+//            lastFish=r.getValue();
 //            return r;
-            Integer l = Arrays.asList(crunchifyKeys).indexOf(last_fish);
-            Integer i= random.nextInt(crunchifyKeys.length-l);
-            return random_fish(l+i);
+            Integer l = Arrays.asList(allFishNamesInPond).indexOf(lastFish);
+            Integer i= random.nextInt(allFishNamesInPond.length-l);
+            return randomFish(l+i);
         }
     }
     //tell the CustomHook fish name, return the resistance to FishingQuest
-    private Integer random_fish(int l) {
+    private Integer randomFish(int l) {
         System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
-        ((BigxClientContext) BiGX.instance().clientContext).resistance=1;
-        Object key = crunchifyKeys[random.nextInt(l)];
-        last_fish= (String)key;
-        ClientUtils.sendData(EnumPacketClient.Fish,last_fish);
-        return current_pond.get(key);
+        Integer fishIndex=random.nextInt(l);
+        Object key = allFishNamesInPond[random.nextInt(l)];
+        lastFish= (String)key;
+        ClientUtils.sendData(EnumPacketClient.Fish,lastFish);
+//        ((BigxClientContext) BiGX.instance().clientContext).resistance= currentPond.get(key);
+        return fishIndex;
 
 
     }
+
     public enum FishStatus {
         ESCAPE,
         CAUGHT,

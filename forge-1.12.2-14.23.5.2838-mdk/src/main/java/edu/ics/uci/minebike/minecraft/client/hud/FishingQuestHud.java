@@ -5,6 +5,9 @@ import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import  edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.ngs.bigx.minecraft.bike.BiGXPacketHandler;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,9 +33,12 @@ public class FishingQuestHud {
     public FishingQuestHud(){
 
     }
+    @SideOnly(Side.CLIENT)
     public void Initial_game_time(){
         this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
     }
+
+    @SideOnly(Side.CLIENT)
     public void Initial_fishing_hud(){
         System.out.println("!!!!!!Initial_fishing_hud()");
         this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
@@ -42,9 +48,8 @@ public class FishingQuestHud {
         this.powerBar= new HudRectangle(-70,0, 140, 30, 0xe4344aff,true,false);
         this.powerLine = new HudRectangle(-70,0, 5, 30, 0xffffffff,true,false);
     }
-    public void update_hud(){
 
-    }
+    @SideOnly(Side.CLIENT)
     public void unreg_hud(){
         this.powerLine.unregister();
         this.distanceString.unregister();
@@ -52,6 +57,7 @@ public class FishingQuestHud {
         this.powerString.unregister();
         this.timerString.unregister();
     }
+
     public void refresh_count_down() {
         System.out.println("refresh_count_down");
         if (current_tt != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
@@ -60,6 +66,8 @@ public class FishingQuestHud {
             this.gameTime.text= "Time: "+game_t;
         }
     }
+
+    @SideOnly(Side.CLIENT)
     public void refresh_timerString(){
         System.out.println("refreshing...................................");
         if (current_t != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
@@ -72,6 +80,7 @@ public class FishingQuestHud {
 
         }
     }
+    @SideOnly(Side.CLIENT)
     public void refresh_powerline(){
         System.out.println("powerline....................");
         int tempx=powerLine.getX();
@@ -87,6 +96,8 @@ public class FishingQuestHud {
 //            this.powerLine = new HudRectangle(tempx - 5, 0, 5, 30, 0xffffffff, true, false);
         }
     }
+
+    @SideOnly(Side.CLIENT)
     public void reduce_distance(){
         if (this.powerLine.getX()==bar_max && distance-1>=0)
         {
@@ -103,8 +114,7 @@ public class FishingQuestHud {
     }
     private int getPower()
     {
-        //Todo:for bigx
-        //return (BiGXPacketHandler.change * 4);
-        return 1;
+        return BiGXPacketHandler.change * 4;
+//        return 1;
     }
 }

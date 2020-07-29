@@ -10,6 +10,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.ngs.bigx.minecraft.BiGX;
 import org.ngs.bigx.minecraft.context.BigxClientContext;
 //import org.ngs.bigx.minecraft.BiGX;
@@ -46,6 +48,7 @@ public class OuterAIHud {
     public OuterAIHud(){
 
     }
+    @SideOnly(Side.CLIENT)
     public void show_heart(){
         System.out.println(((BigxClientContext) BiGX.instance().clientContext).heartrate);
 //        System.out.println(heartLocation+".........................................");
@@ -62,6 +65,7 @@ public class OuterAIHud {
     public void show_progress(){
 
     }
+    @SideOnly(Side.CLIENT)
     public void show(){
         this.heartString= new HudString(14,16, ""+hr,false,false);
         this.goalString= new HudString(50, 16, "Heart Rate Goal: "+minGoal+"-"+maxGoal, false, false);
@@ -69,6 +73,7 @@ public class OuterAIHud {
 //        this.minString = new HudString(400, 10, "Time Played: "+minCount+"m", false, false);
 //        this.incline = new HudString(10, 400, "Current working level: "+ level, false, false);
     }
+    @SideOnly(Side.CLIENT)
     public void refresh(){
         System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
         ClientEventHandler.getHandler().updateResistance(5);

@@ -52,7 +52,7 @@ public class Fishpond {
         hard.put("Halibut", 5);
         hard.put("Swordfish", 5);
         hard.put("Shark", 5);
-        hard.put("Whale", 6);
+        hard.put("Whale", 5);
     }
 
     public  HashMap<String,Integer> getEasy(){
