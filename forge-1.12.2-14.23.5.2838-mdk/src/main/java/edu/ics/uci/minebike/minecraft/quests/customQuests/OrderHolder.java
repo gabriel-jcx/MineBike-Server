@@ -14,9 +14,11 @@ public class OrderHolder {
     private ArrayList<HudString> timer = new ArrayList<>();
     private HudString orderHolderTitle;
     private long timeLimit;
+    private int complete = 30;
+    private int expired = -10;
     OrderHolder(){
         timeLimit = 30000;
-        orderHolderTitle = new HudString(-100,25,"Order List:", true, false);
+        orderHolderTitle = new HudString(-250,20,"Order List:",2.0f, true, false);
     }
 
     public void add(Recipe newFood){
@@ -25,7 +27,7 @@ public class OrderHolder {
         long endTime = curTime + timeLimit;
         startTimes.add(curTime);
         expiration.add(endTime);
-        timer.add(new HudString(-100,30 + timer.size() * 5,newFood.getName() + "\nTime Left: " + QuestUtils.getRemainingSeconds(endTime,curTime),true, false));
+        timer.add(new HudString(-200,35 + timer.size() * 10,newFood.getName() + "  Time Left: " + QuestUtils.getRemainingSeconds(endTime,curTime),true, false));
     }
 
     public Recipe remove(int ind){
@@ -41,20 +43,32 @@ public class OrderHolder {
 
     public int size(){return foods.size();}
 
-    public void update(){
+    public int update(){
+        long curTime = System.currentTimeMillis();
+        int output = 0;
         int cur = 0;
         for(HudString time : timer){
-            time.text = foods.get(cur).getName() + "\nTime Left: " + QuestUtils.getRemainingSeconds(expiration.get(0),startTimes.get(0));
+            if(curTime < expiration.get(cur)) {
+                time.text = foods.get(cur).getName() + "  Time Left: " + QuestUtils.getRemainingSeconds(expiration.get(cur), curTime);
+            }
+            else{
+                output += expired;
+            }
             cur++;
         }
+        return output;
     }
 
     public void endGame() {
+        orderHolderTitle.unregister();
         for (HudString time : timer) {
             time.unregister();
         }
-        while(foods.size() != 0){
-            foods.remove(0);
-        }
+        foods.clear();
+        timer.clear();
+        expiration.clear();
+        startTimes.clear();
     }
+
+    public ArrayList<Long> getExpiration(){return expiration;}
 }

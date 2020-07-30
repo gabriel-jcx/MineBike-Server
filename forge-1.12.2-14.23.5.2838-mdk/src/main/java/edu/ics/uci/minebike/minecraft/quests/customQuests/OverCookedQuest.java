@@ -23,6 +23,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraft.util.text.Style;
@@ -32,6 +33,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -70,6 +72,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     private int maxPlayerCount = 4;
     private int maxOrderCount = 5;
     private long timeLeft = 0;
+    private long curWorldTime = 0;
 
     private long lastGenerated = 0;
     private long nextGenerated = 0;
@@ -133,6 +136,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
                 System.out.print("Teleported Player: " + player.getName() + " to Overcooked Quest Dim");
                 player.addPotionEffect(new PotionEffect(night_vision, (int)(gameTime + waitTime)/1000 * 20, 5, false, false));
+                player.addPotionEffect(new PotionEffect(saturation, (int)(gameTime + waitTime)/1000 * 20, 5, false, false));
                 playersInGame.add(player);
                 return true;
             } else {
@@ -228,9 +232,9 @@ public class OverCookedQuest extends AbstractCustomQuest {
             for (EntityPlayer Player : this.playersInGame) {
                 ServerUtils.telport((EntityPlayerMP) Player, ChefGusteau.LOCATION, 0);
             }
-            playersInGame.removeAll(playersInGame);
-        }
-        else{
+            playersInGame.clear();
+            resetWorldTime();
+        } else {
             hudTimer.unregister();
             scoreTitle.unregister();
             scoreVal.unregister();
@@ -264,7 +268,11 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     public void serverWaitTick()
     {
+
         long curTime = System.currentTimeMillis();
+        if(serverStartWaitTime == 0){
+            serverStartWaitTime = curTime;
+        }
         int secsPassed = QuestUtils.getRemainingSeconds(curTime, serverStartWaitTime);
         overcookWs = DimensionManager.getWorld(this.DIMID);
         if(secsPassed >= waitTime/1000){
@@ -275,9 +283,10 @@ public class OverCookedQuest extends AbstractCustomQuest {
             isStarted = true;
             serverStartTime = System.currentTimeMillis();
             serverGameEndTime = serverStartTime + gameTime;
-            overcookWs.setWorldTime(500);
         }
-
+        else if(curTime == serverStartWaitTime){
+            updateWorldTime();
+        }
     }
 
     public void serverStartTick()
@@ -303,11 +312,14 @@ public class OverCookedQuest extends AbstractCustomQuest {
         if(curTime - clientStartTime < 3000) {
             hudTimer.text = "Start Cooking!";
             generateOrder();
+            orders.update();
         } else if(curTime >= clientEndTime){
             end();
         }else{
             hudTimer.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(clientEndTime,curTime));
             generateOrder();
+            score += orders.update();
+            scoreVal.text = Integer.toString(score);
         }
 
     }
@@ -318,7 +330,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         clientStartWaitTime = System.currentTimeMillis();
         clientEndWaitTime = clientStartWaitTime + clientWaitTime;
 //        int clientWaitLeftSeconds = QuestUtils.getRemainingSeconds(clientEndWaitTime, clientStartWaitTime);
-        hudTimer = new HudString(0,35, QuestUtils.formatSeconds(waitingSeconds),2.0f,true, false);
+        hudTimer = new HudString(15,35, QuestUtils.formatSeconds(waitingSeconds),2.0f,true, false);
         isWaiting = true;
         regScore();
         orders = new OrderHolder();
@@ -330,12 +342,13 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 orders.add(recipes.get((int) (Math.random() * recipes.size())));
                 lastGenerated = System.currentTimeMillis();
                 nextGenerated = lastGenerated + (long)(Math.random() * 10000) + 20000;
-            } else{
-                if(System.currentTimeMillis() == nextGenerated){
+                System.out.println("Next generation at : " + nextGenerated);
+            } else if(System.currentTimeMillis() >= nextGenerated){
                     orders.add(recipes.get((int) (Math.random() * recipes.size())));
                     lastGenerated = nextGenerated;
-                    nextGenerated = lastGenerated + (long)(Math.random() * 10000) + 20000;
-                }
+                    nextGenerated = lastGenerated + randTime();
+                    System.out.println("Generated a new food : " + orders.get(orders.size()-1).getName());
+
             }
         }
     }
@@ -347,11 +360,28 @@ public class OverCookedQuest extends AbstractCustomQuest {
         scoreVal = new HudString(5, 25,Integer.toString(score), 2.0f, true, false);
     }
 
-    public void increaseScore(){score += completeOrder;}
-    public void decreaseScore(){score -= failedOrder;}
-    public int addNextItem()
-    {
-        return (int)(Math.random() * recipes.size());
+    public long randTime(){return (long)(Math.random() * 10000) + 20000;}
+
+    public void updateWorldTime(){
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if(server.worlds != null && server.worlds.length > 0){
+            curWorldTime = server.worlds[0].getWorldTime();
+            for(World worl : server.worlds){
+                worl.getGameRules().setOrCreateGameRule("doFireTick","false");
+                worl.getGameRules().setOrCreateGameRule("doDaylightCycle","false");
+                worl.setWorldTime(300);
+            }
+        }
     }
 
+    public void resetWorldTime(){
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if(server.worlds != null && server.worlds.length > 0){
+            for(World worl : server.worlds){
+                worl.getGameRules().setOrCreateGameRule("doFireTick","true");
+                worl.getGameRules().setOrCreateGameRule("doDaylightCycle","true");
+                worl.setWorldTime(curWorldTime);
+            }
+        }
+    }
 }

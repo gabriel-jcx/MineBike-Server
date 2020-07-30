@@ -57,11 +57,11 @@ public class ChefGusteau extends AbstractCustomNpc{
             ClientUtils.sendData(EnumPacketClient.PlayerJoin, "723");
 //            System.out.println("is Client Side!!!!");
         }
-        else
-        {
-            System.out.println("Cooking start location: "+ cooked.questStartLocation+ "  " + cooked.DIMID);
-            ServerUtils.telport((EntityPlayerMP)player, cooked.questStartLocation,cooked.DIMID);
-        }
+//        else
+//        {
+//            System.out.println("Cooking start location: "+ cooked.questStartLocation+ "  " + cooked.DIMID);
+//            ServerUtils.telport((EntityPlayerMP)player, cooked.questStartLocation,cooked.DIMID);
+//        }
     }
 
 }
