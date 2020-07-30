@@ -66,11 +66,12 @@ import net.minecraft.util.ResourceLocation;
 
 
 //
-public class Minequest extends AbstractCustomQuest {
+public class Minequest extends AbstractCustomQuest
+{
 	EntityPlayer player = null;
 	public int DIMID;
 	private boolean isStarted;
-	private boolean isWaiting;
+
 	public Vec3d questStartLocation;
 	private int score = 0;
 	private int ticks = 0;
@@ -95,12 +96,13 @@ public class Minequest extends AbstractCustomQuest {
 
 	private long waitTime = 10000;//ms 10sec
 
+	public ArrayList<EntityPlayer> playersInGame = new ArrayList<>();
 
-	public ArrayList<EntityPlayerMP> playersInGame = new ArrayList<>();
-	public ArrayList<EntityPlayer> playersInQueue = new ArrayList<>();
-
+	private long lastGenerated;
+	private long nextGenerated;
 	private HudRectangle rectangle;
 	private HudString hudTimer;
+
 
 	public Minequest() {
 		super();
@@ -110,7 +112,8 @@ public class Minequest extends AbstractCustomQuest {
 		clock = Clock.systemDefaultZone();
 		points = 0;
 		highscore = 0;
-
+		lastGenerated = 0;
+		nextGenerated = 0;
 
 		ResourceLocation[] instructionTextureLocations = new ResourceLocation[]
 				{
@@ -128,9 +131,9 @@ public class Minequest extends AbstractCustomQuest {
 
 		// double check if instructions work
 		this.DIMID = WorldProviderMiner.DIM_ID;
-		this.questStartLocation = new Vec3d(-1149, 65, 869); // Need to find new location
+		this.questStartLocation = new Vec3d(-1149, 65, 869);
 		this.isStarted = false;
-		this.isWaiting = false;
+
 	}
 
 	@Override
@@ -140,21 +143,17 @@ public class Minequest extends AbstractCustomQuest {
 
 	@Override
 	public boolean onPlayerJoin(EntityPlayer player) {
+		this.player = player;
+		player.setSpawnPoint(new BlockPos(-1149, 65, 869),true);
+		isStarted = true;
 		System.out.println("Player attempting to join");
-		if (isStarted) {
 			setupQuestEnv(player.world, player);
-			ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed, (EntityPlayerMP) player, Long.toString(this.waitTime));
-			isWaiting = true;
-			return false;
-		} else {
-			if (!isWaiting) {
-				WorldServer ws = DimensionManager.getWorld(this.DIMID);
-				isWaiting = true;
-			}
 			ServerUtils.telport((EntityPlayerMP) player, this.questStartLocation, this.DIMID);
+			System.out.println("Attempting to generate Lava Wall");
+			generateLavaWall(-1181, 887, player.world);
 			return true;
 		}
-	}
+
 
 	@Override
 	public void start(EntityPlayerMP playerMP) {
@@ -187,7 +186,6 @@ public class Minequest extends AbstractCustomQuest {
 
 	@Override
 	public void start() {
-		isWaiting = false;
 		isStarted = true;
 
 	}
@@ -195,11 +193,12 @@ public class Minequest extends AbstractCustomQuest {
 	@Override
 	public void end() {
 		hudTimer.unregister();
-		for (EntityPlayerMP Player : playersInGame) {
-			ServerUtils.telport((EntityPlayerMP) player, Elon.LOCATION, 0);
+		for (EntityPlayer bob : playersInGame) {
+			ServerUtils.telport((EntityPlayerMP) bob, Elon.LOCATION, 0);
 		}
 		playersInGame.removeAll(playersInGame);
 		finishGame();
+		isStarted = false;
 	}
 
 	public void finishGame() {
@@ -210,11 +209,16 @@ public class Minequest extends AbstractCustomQuest {
 	}
 
 	private void generateLavaWall(double startx, double startz, World world) { //figure out y coord and level
-		for (int z = (int) startz + 1; z < startz + 10; z++) {
-			for (int y = 21; y < 24; y++) {
+		System.out.println("Starting Wall");
+		for (int z = (int) startz; z < startz + 20; z++) {
+			System.out.println("First For Loop Activated");
+			for (int y = 63; y < 68; y++) {
+				System.out.println("Second For Loop Activated");
 				BlockPos gangnam = new BlockPos((int) startx, y, z);
-				if (world.getBlockState(gangnam) == (IBlockState) Blocks.AIR)
-					world.setBlockState(gangnam, (IBlockState) Blocks.LAVA);
+				if (world.getBlockState(gangnam).getBlock() ==  Blocks.AIR) {
+					world.setBlockState(gangnam, Blocks.LAVA.getDefaultState());
+					System.out.println("Lava was made");
+				}
 			}
 		}
 	}
@@ -225,7 +229,7 @@ public class Minequest extends AbstractCustomQuest {
 		for (int z = (int) startz + 1; z < startz + 10; z++) {
 			for (int y = 21; y < 24; y++) {
 				BlockPos seoul = new BlockPos((int) startx, y, z);
-				if (world.getBlockState(seoul) == (IBlockState) Blocks.LAVA)
+				if (world.getBlockState(seoul) == Blocks.LAVA)
 					world.setBlockState(seoul, (IBlockState) Blocks.AIR);
 
 			}
@@ -259,39 +263,40 @@ public class Minequest extends AbstractCustomQuest {
 		}
 
 	}
+//public void checkIfDead() {
+//	for (EntityPlayer obama:playersInGame
+//
+//		 ) {
+//
+//	}
+//	{
 
+//	}
+//}
+
+	public void serverStartTick() {
+		if (player.isDead) {
+			resetToAirCont(0, 0, player.world);
+			points = 0;
+		}
+	//	if(clock.millis() % 100 == 0 || isStarted)
+	//		generateLavaWall(0, 0, player.world); // Figure out start x and z coords
+		updatePoints();
+	}
 
 	public void onWorldTick(TickEvent.WorldTickEvent event) {
 		//Server Side
-		if (!event.world.isRemote) {
-			if (isWaiting) {
-				serverWaitTick();
-			} else if (isStarted) {
+		if (!event.world.isRemote && isStarted) {
 				serverStartTick();
 			}
 		}
-	}
 
-	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if (isWaiting) {
-			clientWaitTick();
-		} else if (isStarted) {
-			clientStartTick();
-		}
-	}
-
-	public void clientWaitTick() {
-		clientWaitTime = clientEndWaitTime - System.currentTimeMillis();
-		int remainingWait = QuestUtils.getRemainingSeconds(clientWaitTime);
-		if (remainingWait >= 0) {
-			hudTimer.text = QuestUtils.formatSeconds(remainingWait);
-		}
-	}
 
 	public void clientStartTick() {
 		if (player.isDead) {
 			resetToAirCont(0, 0, player.world);
 			points = 0;
+			System.out.println("Player Died");
 		}
 		updatePoints();
 
@@ -301,30 +306,12 @@ public class Minequest extends AbstractCustomQuest {
 		pointsString = new HudString(0, 10, thePointsString, 2.0f, true, false);
 	}
 
-	public void serverStartTick() {
-		if (player.isDead) {
-			resetToAirCont(0, 0, player.world);
-			points = 0;
-		}
-		if(clock.millis() % 100 == 0 || isStarted)
-			generateLavaWall(0, 0, player.world); // Figure out start x and z coords
-		updatePoints();
+	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+		if( isStarted)
+			clientStartTick();
 	}
 
-	public void serverWaitTick() {
-		long curTime = System.currentTimeMillis();
-		int secsPassed = QuestUtils.getRemainingSeconds(curTime, serverStartWaitTime);
-
-		if (secsPassed >= waitTime / 1000) {
-			for (EntityPlayerMP player : this.playersInGame) {
-				this.start(player); // event game start triggered
-			}
-
-			isWaiting = false;
-			isStarted = true;
-
-			DimensionManager.getWorld(this.DIMID).setWorldTime(500);
-		}
+}
 
 
 //
@@ -336,8 +323,9 @@ public class Minequest extends AbstractCustomQuest {
 //		hudTimer = new HudString(0, 35, QuestUtils.formatSeconds(waitingSeconds), 2.0f, true, false);
 //		isWaiting = true;
 //	}
-	}
-}
+
+
+
 
 
 

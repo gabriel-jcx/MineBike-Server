@@ -35,7 +35,8 @@ public class Elon extends AbstractCustomNpc {
         System.out.println("Elon was interacted");
         if(event.getWorld().isRemote) // client send packet
             ClientUtils.sendData(EnumPacketClient.PlayerJoin,"420");
-        else    // server teleport the user
-            ServerUtils.telport((EntityPlayerMP)player, mining.questStartLocation,mining.DIMID);
+     //   else    // server teleport the user
+     //       System.out.println("Cooking start location: "+ mining.questStartLocation+ "  " + mining.DIMID);
+     //       ServerUtils.telport((EntityPlayerMP)player, mining.questStartLocation,mining.DIMID);
     }
 }
