@@ -1,18 +1,10 @@
 package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
-import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.client.AI.FishingAI;
-import edu.ics.uci.minebike.minecraft.client.AI.QuestHeartRate;
-import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
-import edu.ics.uci.minebike.minecraft.client.hud.HudString;
-import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
-import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
-import javafx.util.Pair;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
@@ -22,7 +14,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -30,24 +21,21 @@ import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 import edu.ics.uci.minebike.minecraft.client.hud.FishingQuestHud;
 //import org.ngs.bigx.minecraft.BiGX;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.abs;
 
 public class FishingQuest  extends AbstractCustomQuest {
     EntityPlayer player = null;
-//    private int current_t=0;
-//    private int current_tt=0;
+//    private int fishCountDown=0;
+//    private int fishCountDown=0;
     public static int distance=4;
     public static int timer=10;
     public static Movement retract=Movement.INIT;
-//    public static int bar_min= -70;
-//    public static int bar_max=65;
+//    public static int BAR_MIN= -70;
+//    public static int BAR_MAX=65;
 //    public int requiredPower=1;
-//    public int game_t=240;
+//    public int gameTimeDisplay=240;
     public static ItemGameFishingRod rod;
 //    public static HudString powerString;
 //    public static HudString timerString;
@@ -100,8 +88,8 @@ public class FishingQuest  extends AbstractCustomQuest {
         System.out.println("Trying to teleport " + playerMP.getName() + " to DIM" + this.DIMID);
         ServerUtils.telport((EntityPlayerMP) playerMP, questStartLocation, DIMID);
 
-//        this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
-        fishingQuestHud.Initial_game_time();
+//        this.gameTime= new HudString(-165, 20, "Time: "+gameTimeDisplay, true, false);
+        fishingQuestHud.initializeGameTime();
         fishingAI.selectPond(1);
 
     }
@@ -137,22 +125,22 @@ public class FishingQuest  extends AbstractCustomQuest {
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 //        if(event.side.isClient()) {
 //            System.out.println("event.side.isClient()");
-            fishingQuestHud.refresh_count_down();
+            fishingQuestHud.refreshCountDown();
             if (retract == Movement.RETRACT) {
 //                BiGX.instance().clientContext.lock(false);
                 retract = Movement.INIT;
                 System.out.println("retract");
-                fishingQuestHud.unreg_hud();
+                fishingQuestHud.unregisterHud();
                 distance = 4;
                 timer = 10;
-                fishingAI.fishRunAway = FishingAI.FishStatus.QUIT;
+                fishingAI.fishStatus = FishingAI.FishStatus.QUIT;
 
             } else if (retract == Movement.THROW) {
 //                BiGX.instance().clientContext.lock(true);
                 System.out.println("FishingQuest ");
                 if (fishingQuestHud.powerLine != null) {
-                    fishingQuestHud.unreg_hud();
-//                System.out.println("unreg_hud");
+                    fishingQuestHud.unregisterHud();
+//                System.out.println("unregisterHud");
                 }
 
                 System.out.println("throw");
@@ -163,32 +151,32 @@ public class FishingQuest  extends AbstractCustomQuest {
                 int i = random.nextInt(6);
                 distance = abs(currentFishResistance * 2 - i);
                 currentFishResistance = fishingAI.changeFish();
-//            this.gameTime= new HudString(-165, 20, "Time: "+game_t, true, false);
+//            this.gameTime= new HudString(-165, 20, "Time: "+gameTimeDisplay, true, false);
 //            this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
 //            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
 //            this.timerString = new HudString(-10, 45, "The fish will run away in:  "+ timer+" seconds", true, false);
 //            this.powerBar= new HudRectangle(-70,0, 140, 30, 0xe4344aff,true,false);
 //            this.powerLine = new HudRectangle(-70,0, 5, 30, 0xffffffff,true,false);
-                fishingQuestHud.Initial_fishing_hud();
+                fishingQuestHud.initializeFishingHud();
 
 
                 retract = Movement.FISHING;
             } else if (retract == Movement.FISHING) {
                 //
 
-                fishingQuestHud.refresh_powerline();
-                fishingQuestHud.reduce_distance();
-                fishingQuestHud.refresh_timerString();
+                fishingQuestHud.refreshPowerBar();
+                fishingQuestHud.reduceFishDistance();
+                fishingQuestHud.refreshTimerString();
                 if (distance == 0) {
                     retract = Movement.INIT;
 
-                    fishingQuestHud.unreg_hud();
-                    fishingAI.fishRunAway = FishingAI.FishStatus.CAUGHT;
+                    fishingQuestHud.unregisterHud();
+                    fishingAI.fishStatus = FishingAI.FishStatus.CAUGHT;
                 }
                 if (timer == 0 && distance != 0) {
                     retract = Movement.INIT;
-                    fishingQuestHud.unreg_hud();
-                    fishingAI.fishRunAway = FishingAI.FishStatus.CAUGHT;
+                    fishingQuestHud.unregisterHud();
+                    fishingAI.fishStatus = FishingAI.FishStatus.CAUGHT;
                 }
             }
 //        }
@@ -203,17 +191,17 @@ public class FishingQuest  extends AbstractCustomQuest {
     public void fishing_heart_rate(int hr){
 
     }
-//    public void refresh_count_down() {
-//        if (current_tt != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
-//            current_tt = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-//            game_t -= 1;
-//            this.gameTime.text= "Time: "+game_t;
+//    public void refreshCountDown() {
+//        if (gameCountDown != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
+//            gameCountDown = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+//            gameTimeDisplay -= 1;
+//            this.gameTime.text= "Time: "+gameTimeDisplay;
 //        }
 //    }
-//    public void refresh_timerString(){
+//    public void refreshTimerString(){
 //        System.out.println("refreshing...................................");
-//        if (current_t != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
-//            current_t = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+//        if (fishCountDown != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
+//            fishCountDown = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
 //            timer -= 1;
 //
 //            // You don't need to new here, you can just simply modify this.timerString.text
@@ -222,23 +210,23 @@ public class FishingQuest  extends AbstractCustomQuest {
 //
 //        }
 //    }
-//    public void refresh_powerline(){
+//    public void refreshPowerline(){
 //        System.out.println("powerline....................");
 //        int tempx=powerLine.getX();
-//        if (this.requiredPower==getPower()&&tempx+5<=bar_max) {
+//        if (this.requiredPower==getPower()&&tempx+5<=BAR_MAX) {
 ////            this.powerLine.unregister();
 //            this.powerLine.x=tempx + 5;
 ////            this.powerLine = new HudRectangle(tempx + 5, 0, 5, 30, 0xffffffff, true, false);
 //
-//        }else if (this.requiredPower!=getPower()&&tempx-5>=bar_min)
+//        }else if (this.requiredPower!=getPower()&&tempx-5>=BAR_MIN)
 //        {
 ////            this.powerLine.unregister();
 //            this.powerLine.x=tempx - 5;
 ////            this.powerLine = new HudRectangle(tempx - 5, 0, 5, 30, 0xffffffff, true, false);
 //        }
 //    }
-//    public void reduce_distance(){
-//        if (this.powerLine.getX()==bar_max && distance-1>=0)
+//    public void reduceFishDistance(){
+//        if (this.powerLine.getX()==BAR_MAX && distance-1>=0)
 //        {
 //            distance-=1;
 //            this.distanceString.text= "Distance "+ distance;
@@ -251,7 +239,7 @@ public class FishingQuest  extends AbstractCustomQuest {
 ////            this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
 //        }
 //    }
-//    public void unreg_hud(){
+//    public void unregisterHud(){
 //        this.powerLine.unregister();
 //        this.distanceString.unregister();
 //        this.powerBar.unregister();
