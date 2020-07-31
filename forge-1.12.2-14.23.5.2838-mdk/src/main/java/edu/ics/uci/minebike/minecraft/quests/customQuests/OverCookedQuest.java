@@ -43,7 +43,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
 
     public int DIMID;
-    public WorldServer overcookWs = null;
+    public WorldServer overcookWs = DimensionManager.getWorld(this.DIMID);
 //    public Vec3d questStartLocation;
 
     private boolean isStarted;
@@ -222,6 +222,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         clientEndTime = clientStartTime + gameTime;
         isWaiting = false;
         isStarted = true;
+        regScore();
 
     }// This is the start interface for client
 
@@ -234,7 +235,9 @@ public class OverCookedQuest extends AbstractCustomQuest {
             }
             playersInGame.clear();
             resetWorldTime();
+            System.out.println("Server ending, teleported all players back to overworld");
         } else {
+            System.out.println("Client ending, unregistering HUD elements");
             hudTimer.unregister();
             scoreTitle.unregister();
             scoreVal.unregister();
@@ -274,7 +277,6 @@ public class OverCookedQuest extends AbstractCustomQuest {
             serverStartWaitTime = curTime;
         }
         int secsPassed = QuestUtils.getRemainingSeconds(curTime, serverStartWaitTime);
-        overcookWs = DimensionManager.getWorld(this.DIMID);
         if(secsPassed >= waitTime/1000){
             for(EntityPlayer player: this.playersInGame){
                 this.start((EntityPlayerMP)player); // event game start triggered
@@ -309,18 +311,21 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     public void clientStartTick(){
         long curTime = System.currentTimeMillis();
-        if(curTime - clientStartTime < 3000) {
-            hudTimer.text = "Start Cooking!";
-            generateOrder();
-            orders.update();
-        } else if(curTime >= clientEndTime){
+        if(curTime >= clientEndTime) {
             end();
         }else{
-            hudTimer.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(clientEndTime,curTime));
+            if(curTime - clientStartTime < 3000) {
+                hudTimer.text = "Start Cooking!";
+            }else{
+                hudTimer.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(clientEndTime,curTime));
+            }
+            orders.update();
+            checkExpiration();
             generateOrder();
             score += orders.update();
             scoreVal.text = Integer.toString(score);
         }
+
 
     }
 
@@ -330,25 +335,24 @@ public class OverCookedQuest extends AbstractCustomQuest {
         clientStartWaitTime = System.currentTimeMillis();
         clientEndWaitTime = clientStartWaitTime + clientWaitTime;
 //        int clientWaitLeftSeconds = QuestUtils.getRemainingSeconds(clientEndWaitTime, clientStartWaitTime);
-        hudTimer = new HudString(15,35, QuestUtils.formatSeconds(waitingSeconds),2.0f,true, false);
+        hudTimer = new HudString(15,10, QuestUtils.formatSeconds(waitingSeconds),2.5f,true, false);
         isWaiting = true;
-        regScore();
         orders = new OrderHolder();
     }
 
     public void generateOrder(){
-        if(orders.size() < maxOrderCount) {
+        if(orders.size() <= maxOrderCount) {
             if (lastGenerated == 0) {
                 orders.add(recipes.get((int) (Math.random() * recipes.size())));
                 lastGenerated = System.currentTimeMillis();
-                nextGenerated = lastGenerated + (long)(Math.random() * 10000) + 20000;
+                nextGenerated = lastGenerated + randTime();
                 System.out.println("Next generation at : " + nextGenerated);
             } else if(System.currentTimeMillis() >= nextGenerated){
                     orders.add(recipes.get((int) (Math.random() * recipes.size())));
-                    lastGenerated = nextGenerated;
+                    lastGenerated = System.currentTimeMillis();
                     nextGenerated = lastGenerated + randTime();
                     System.out.println("Generated a new food : " + orders.get(orders.size()-1).getName());
-
+                    System.out.println("Next generation at : " + nextGenerated);
             }
         }
     }
@@ -357,7 +361,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     public void regScore(){
         scoreTitle = new HudString(-5,25, "Score:", 2.0f, true, false);
-        scoreVal = new HudString(5, 25,Integer.toString(score), 2.0f, true, false);
+        scoreVal = new HudString(20, 25,Integer.toString(score), 2.0f, true, false);
     }
 
     public long randTime(){return (long)(Math.random() * 10000) + 20000;}
@@ -381,6 +385,23 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 worl.getGameRules().setOrCreateGameRule("doFireTick","true");
                 worl.getGameRules().setOrCreateGameRule("doDaylightCycle","true");
                 worl.setWorldTime(curWorldTime);
+            }
+        }
+    }
+
+    public void checkExpiration(){
+        ArrayList<Long> times = orders.getExpiration();
+        int len = times.size();
+        if(len == 0)
+        {
+            return;
+        }
+        long curTime = System.currentTimeMillis();
+        for(int i = 0 ; i < len ; i++){
+            if(curTime >= times.get(i)){
+                orders.expire(i);
+                score += failedOrder;
+                return;
             }
         }
     }

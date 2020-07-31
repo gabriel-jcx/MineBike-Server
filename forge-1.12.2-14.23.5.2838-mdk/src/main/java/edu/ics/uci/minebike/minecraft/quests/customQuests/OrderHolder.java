@@ -18,7 +18,7 @@ public class OrderHolder {
     private int expired = -10;
     OrderHolder(){
         timeLimit = 30000;
-        orderHolderTitle = new HudString(-250,20,"Order List:",2.0f, true, false);
+        orderHolderTitle = new HudString(-200,20,"Order List:",2.5f, true, false);
     }
 
     public void add(Recipe newFood){
@@ -48,11 +48,10 @@ public class OrderHolder {
         int output = 0;
         int cur = 0;
         for(HudString time : timer){
-            if(curTime < expiration.get(cur)) {
-                time.text = foods.get(cur).getName() + "  Time Left: " + QuestUtils.getRemainingSeconds(expiration.get(cur), curTime);
-            }
-            else{
-                output += expired;
+            time.text = foods.get(cur).getName() + "  Time Left: " + QuestUtils.getRemainingSeconds(expiration.get(cur), curTime);
+            if(expiration.get(cur) - curTime < 5000)
+            {
+                time.setColor(0x00ff0000);
             }
             cur++;
         }
@@ -71,4 +70,17 @@ public class OrderHolder {
     }
 
     public ArrayList<Long> getExpiration(){return expiration;}
+
+    public void expire(int ind){
+        for(int i = 0 ; i < expiration.size(); i++){
+            if(i > ind){
+                timer.get(i).y = timer.get(i-1).y;
+            }
+        }
+        timer.get(ind).unregister();
+        timer.remove(ind);
+        expiration.remove(ind);
+        startTimes.remove(ind);
+        System.out.println(foods.remove(ind).getName() + " Has Expired");
+    }
 }
