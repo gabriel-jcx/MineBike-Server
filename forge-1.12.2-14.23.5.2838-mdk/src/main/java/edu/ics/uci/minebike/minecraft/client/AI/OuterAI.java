@@ -24,7 +24,7 @@ public class OuterAI extends QuestHeartRate{
     // If the kids does not play any mini game with in time_threshold numbers of heart rate transfer,
     private Integer time_threshold= 300;
     // Count down the inactive time
-    private Integer game_timer=0;
+    private Integer gameTimeDisplayimer=0;
     //    private BiGXPatientInfo patientInfo= new BiGXPatientInfo();
 //    TODO: List?
 //    private List<BiGXPatientPrescription> prescriptions =patientInfo.getPrescriptions();
@@ -54,13 +54,13 @@ public class OuterAI extends QuestHeartRate{
         if (questStatus==QuestStatus.NONE) {
             if (time != curr) {
                 time = curr;
-                game_timer+=1;
+                gameTimeDisplayimer+=1;
                 //kids just started the game, don't modify
                 if (num_heart_rate< init_threshold){
                     ;
                 }
                 //if kids are doing nothing in outer world, pop up a quest
-                else if( game_timer>time_threshold && !reach_target())
+                else if( gameTimeDisplayimer>time_threshold && !reach_target())
                 {
                     pop_up_quest();
                 }
@@ -69,7 +69,7 @@ public class OuterAI extends QuestHeartRate{
             }
         }
         else if (questStatus==QuestStatus.RUNNING){
-            game_timer=0;
+            gameTimeDisplayimer=0;
 
         }
         else{

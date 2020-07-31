@@ -164,9 +164,9 @@ public class CommonEventHandler {
             else{
                 outerHudShowing=true;
                 System.out.println("OuterHudShowing");
-                outerAIHud.show();
+                outerAIHud.showHud();
                 System.out.println("OuterHudShowing");
-                outerAIHud.show_heart();
+                outerAIHud.showHeartIcon();
 
                 //initializing the outerHud.
             }
@@ -239,7 +239,7 @@ public class CommonEventHandler {
 
         if(!event.isCancelable()&&event.getType()==RenderGameOverlayEvent.ElementType.TEXT){
 
-            outerAIHud.show_heart();
+            outerAIHud.showHeartIcon();
 
 
             //TODO:power bar
