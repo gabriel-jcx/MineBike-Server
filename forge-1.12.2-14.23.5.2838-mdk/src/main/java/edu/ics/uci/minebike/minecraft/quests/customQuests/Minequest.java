@@ -96,13 +96,19 @@ public class Minequest extends AbstractCustomQuest
 
 	private long waitTime = 10000;//ms 10sec
 
-	public ArrayList<EntityPlayer> playersInGame = new ArrayList<>();
+	public ArrayList<EntityPlayer> playersInGame;
 
-	private long lastGenerated;
-	private long nextGenerated;
+	private int currentZ;
 	private HudRectangle rectangle;
 	private HudString hudTimer;
 
+	public ArrayList<Vec3d> checkPointLocations;
+	public boolean[] checkPointStatus;
+	private boolean testSpot;
+
+	private int playerx;
+	private int playery;
+	private int playerz;
 
 	public Minequest() {
 		super();
@@ -112,8 +118,7 @@ public class Minequest extends AbstractCustomQuest
 		clock = Clock.systemDefaultZone();
 		points = 0;
 		highscore = 0;
-		lastGenerated = 0;
-		nextGenerated = 0;
+		currentZ = 887;
 
 		ResourceLocation[] instructionTextureLocations = new ResourceLocation[]
 				{
@@ -128,12 +133,15 @@ public class Minequest extends AbstractCustomQuest
 						"Stay alive until time runs out",
 				};
 
-
 		// double check if instructions work
 		this.DIMID = WorldProviderMiner.DIM_ID;
 		this.questStartLocation = new Vec3d(-1149, 65, 869);
 		this.isStarted = false;
+		playersInGame = new ArrayList<>();
+		checkPointLocations = new ArrayList<>();
+		checkPointStatus = new boolean[7];
 
+		testSpot = false;
 	}
 
 	@Override
@@ -149,11 +157,19 @@ public class Minequest extends AbstractCustomQuest
 		System.out.println("Player attempting to join");
 			setupQuestEnv(player.world, player);
 			ServerUtils.telport((EntityPlayerMP) player, this.questStartLocation, this.DIMID);
-			System.out.println("Attempting to generate Lava Wall");
-			generateLavaWall(-1181, 887, player.world);
+		player.attemptTeleport(-1167.5 ,63 ,896.5);
 			return true;
 		}
 
+public void testWall() {
+	System.out.println("Starting Test Wall");
+	while (currentZ <= 907) {
+		if (System.currentTimeMillis() % 1000 == 0) {
+			generateLavaWall(-1181, currentZ, player.world);
+			currentZ++;
+		}
+	}
+}
 
 	@Override
 	public void start(EntityPlayerMP playerMP) {
@@ -206,15 +222,16 @@ public class Minequest extends AbstractCustomQuest
 		if (score > highscore)
 			highscore = 0;
 		score = 0;
+
 	}
 
-	private void generateLavaWall(double startx, double startz, World world) { //figure out y coord and level
+	private void generateLavaWall(double startx, double z, World world) { //x should be the same down the lane
 		System.out.println("Starting Wall");
-		for (int z = (int) startz; z < startz + 20; z++) {
+		for (int x = (int) startx; x < startx + 10; x++) {
 			System.out.println("First For Loop Activated");
 			for (int y = 63; y < 68; y++) {
 				System.out.println("Second For Loop Activated");
-				BlockPos gangnam = new BlockPos((int) startx, y, z);
+				BlockPos gangnam = new BlockPos(x, y, z);
 				if (world.getBlockState(gangnam).getBlock() ==  Blocks.AIR) {
 					world.setBlockState(gangnam, Blocks.LAVA.getDefaultState());
 					System.out.println("Lava was made");
@@ -249,16 +266,26 @@ public class Minequest extends AbstractCustomQuest
 				boolean areDiamond = stack.getItem().getUnlocalizedName().equals("item.diamond");
 				boolean areRedstone = stack.getItem().getUnlocalizedName().equals("item.redstone");
 				//if there is more than one ingredient in player inventory, reduce it to one
-				if (areRedstone)
+				if (areRedstone) {
+					System.out.println("Player got Redstone");
 					points += 1;
-				if (areIron)
+				}
+				if (areIron) {
+					System.out.println("Player got Iron");
 					points += 2;
-				if (areLapis)
+				}
+				if (areLapis) {
+					System.out.println("Player got Lapis");
 					points += 3;
-				if (areGold)
+				}
+				if (areGold) {
+					System.out.println("Player got Gold");
 					points += 4;
-				if (areDiamond)
+				}
+				if (areDiamond) {
+					System.out.println("Player got Diamond");
 					points += 5;
+				}
 			}
 		}
 
@@ -276,11 +303,26 @@ public class Minequest extends AbstractCustomQuest
 
 	public void serverStartTick() {
 		if (player.isDead) {
-			resetToAirCont(0, 0, player.world);
-			points = 0;
+			if(checkPointStatus[7] == true)
+				player.setSpawnPoint(new BlockPos(checkPointLocations.get(7).x,checkPointLocations.get(7).y,checkPointLocations.get(7).z),true);
+			else if(checkPointStatus[6] == true)
+				player.setSpawnPoint(new BlockPos(checkPointLocations.get(6).x,checkPointLocations.get(6).y,checkPointLocations.get(6).z),true);
+			else if(checkPointStatus[5] == true)
+				player.setSpawnPoint(new BlockPos(checkPointLocations.get(5).x,checkPointLocations.get(5).y,checkPointLocations.get(5).z),true);
+			else if(checkPointStatus[4] == true)
+				player.setSpawnPoint(new BlockPos(checkPointLocations.get(4).x,checkPointLocations.get(4).y,checkPointLocations.get(4).z),true);
+			else if(checkPointStatus[3] == true)
+				player.setSpawnPoint(new BlockPos(checkPointLocations.get(3).x,checkPointLocations.get(3).y,checkPointLocations.get(3).z),true);
+			else if(checkPointStatus[2] == true)
+				player.setSpawnPoint(new BlockPos(checkPointLocations.get(2).x,checkPointLocations.get(2).y,checkPointLocations.get(2).z),true);
+			else if(checkPointStatus[1] == true)
+				player.setSpawnPoint(new BlockPos(checkPointLocations.get(1).x,checkPointLocations.get(1).y,checkPointLocations.get(1).z),true);
+
+			//if(currentZ ) // Figure out how to check if currentZ of wall is ahead of player death location and if so end the game
+			//resetToAirCont(0, 0, player.world);
+			//points = 0;
+			System.out.println("Player Died");
 		}
-	//	if(clock.millis() % 100 == 0 || isStarted)
-	//		generateLavaWall(0, 0, player.world); // Figure out start x and z coords
 		updatePoints();
 	}
 
@@ -294,11 +336,21 @@ public class Minequest extends AbstractCustomQuest
 
 	public void clientStartTick() {
 		if (player.isDead) {
-			resetToAirCont(0, 0, player.world);
+			//resetToAirCont(0, 0, player.world);
 			points = 0;
 			System.out.println("Player Died");
 		}
 		updatePoints();
+		playerx = player.getPosition().getX();
+		playery = player.getPosition().getY();
+		playerz = player.getPosition().getZ();
+	BlockPos thePos = new BlockPos(playerx,playery,playerz);
+		if(thePos.getX() == -1168 && thePos.getY() == 63 && thePos.getZ() ==896 )//&& testSpot == false)
+		{
+			System.out.println("Player at test location");
+			testSpot = true;
+			testWall();
+		}
 
 		backRectangle = new HudRectangle(-25, 5, 50, 30, 0xffff9f38, true, false);
 
