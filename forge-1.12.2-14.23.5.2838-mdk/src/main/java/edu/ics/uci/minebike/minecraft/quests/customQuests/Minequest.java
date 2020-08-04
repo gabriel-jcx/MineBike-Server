@@ -152,12 +152,12 @@ public class Minequest extends AbstractCustomQuest
 	@Override
 	public boolean onPlayerJoin(EntityPlayer player) {
 		this.player = player;
-		player.setSpawnPoint(new BlockPos(-1149, 65, 869),true);
+		player.setSpawnPoint(new BlockPos(-1149, 65, 869),true); //Doesn't seem to work
 		isStarted = true;
 		System.out.println("Player attempting to join");
 			setupQuestEnv(player.world, player);
 			ServerUtils.telport((EntityPlayerMP) player, this.questStartLocation, this.DIMID);
-		player.attemptTeleport(-1167.5 ,63 ,896.5);
+
 			return true;
 		}
 
@@ -199,22 +199,22 @@ public void testWall() {
 	public void start(EntityJoinWorldEvent event) {
 
 	}
-
 	@Override
 	public void start() {
-		isStarted = true;
+	//	isStarted = true;
 
 	}
 
 	@Override
 	public void end() {
+		System.out.println("triggered end");
 		hudTimer.unregister();
 		for (EntityPlayer bob : playersInGame) {
 			ServerUtils.telport((EntityPlayerMP) bob, Elon.LOCATION, 0);
 		}
 		playersInGame.removeAll(playersInGame);
 		finishGame();
-		isStarted = false;
+		//isStarted = false;
 	}
 
 	public void finishGame() {
@@ -260,35 +260,34 @@ public void testWall() {
 			//if there's something in the stack...
 			if (stack != null) {
 				//checks if materials are in player's inventory
-				boolean areIron = stack.getItem().getUnlocalizedName().equals("item.iron_ingot");
-				boolean areGold = stack.getItem().getUnlocalizedName().equals("item.gold_ingot");
-				boolean areLapis = stack.getItem().getUnlocalizedName().equals("item.lapis_ore");
-				boolean areDiamond = stack.getItem().getUnlocalizedName().equals("item.diamond");
-				boolean areRedstone = stack.getItem().getUnlocalizedName().equals("item.redstone");
-				//if there is more than one ingredient in player inventory, reduce it to one
-				if (areRedstone) {
-					System.out.println("Player got Redstone");
-					points += 1;
-				}
-				if (areIron) {
-					System.out.println("Player got Iron");
-					points += 2;
-				}
-				if (areLapis) {
-					System.out.println("Player got Lapis");
-					points += 3;
-				}
-				if (areGold) {
-					System.out.println("Player got Gold");
-					points += 4;
-				}
-				if (areDiamond) {
-					System.out.println("Player got Diamond");
-					points += 5;
+				String theItem = stack.getItem().getUnlocalizedName();
+				switch(theItem)
+				{
+					case "item.redstone":
+						System.out.println("Player got Redstone");
+						points+=1;
+						break;
+					case "item.iron_ingot":
+						System.out.println("Player got Iron");
+						points+=2;
+						break;
+					case "item.lapis_ore":
+						System.out.println("Player got Lapis");
+						points += 3;
+						break;
+					case "item.gold_ingot":
+						System.out.println("Player got Gold");
+						points += 4;
+						break;
+					case "item.diamond":
+						System.out.println("Player got Diamond");
+						points+=5;
+						break;
+					default:
+						System.out.println("Nothing in inventory");
 				}
 			}
 		}
-
 	}
 //public void checkIfDead() {
 //	for (EntityPlayer obama:playersInGame
@@ -335,16 +334,16 @@ public void testWall() {
 
 
 	public void clientStartTick() {
+		if (player == null)
+			return;
 		if (player.isDead) {
 			//resetToAirCont(0, 0, player.world);
 			points = 0;
 			System.out.println("Player Died");
 		}
 		updatePoints();
-		playerx = player.getPosition().getX();
-		playery = player.getPosition().getY();
-		playerz = player.getPosition().getZ();
-	BlockPos thePos = new BlockPos(playerx,playery,playerz);
+
+		BlockPos thePos = player.getPosition();
 		if(thePos.getX() == -1168 && thePos.getY() == 63 && thePos.getZ() ==896 )//&& testSpot == false)
 		{
 			System.out.println("Player at test location");
@@ -359,8 +358,12 @@ public void testWall() {
 	}
 
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if( isStarted)
-			clientStartTick();
+		//System.out.println("reading isStarted");
+		//if(isStarted) {
+		this.player = event.player;
+		clientStartTick();
+
+		//}
 	}
 
 }
