@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.init.Items;
@@ -29,6 +30,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -144,6 +146,7 @@ public class TRONQuest extends AbstractCustomQuest {
         QuestUtils.populateTRONNPCLocations(NPCSpawnLocations, this.MAX_NPC_COUNT);
 
 
+
     }
 
     // This onPlayerJoin is only called on the server side
@@ -154,15 +157,23 @@ public class TRONQuest extends AbstractCustomQuest {
         //add command that deletes all NPCs from the arena
         System.out.println("On PlayerJoin triggerd on server side");
         ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
-        //-----
 
+        //MinecraftServer s = FMLCommonHandler.instance().getMinecraftServerInstance();
+        //s.getCommandManager().executeCommand(s, "/noppes npc Rinzler delete" );
+        //System.out.println("Checking to see if onPlayerJoin runs"); //this should work now
+        //-----
         WorldServer ws = DimensionManager.getWorld(250);
 
         Iterator iter = ws.loadedEntityList.iterator();
         while(iter.hasNext()){
             Entity entity = (Entity)iter.next();
+            System.out.println(entity.getName() + "is an entity");
             if(entity instanceof EntityCustomNpc){
-                if(entity.getName() == "Rinzler") ((EntityCustomNpc) entity).delete();
+                if(entity.getName().equals("Rinzler"))
+                {
+                    ((EntityCustomNpc) entity).delete();
+                    System.out.println("Rinzler was deleted!");
+                }
             }
         }
         //-----
@@ -285,16 +296,16 @@ public class TRONQuest extends AbstractCustomQuest {
         //.scale = 1.0f; // make it smaller during the game
 
 //        scoreLeftRect = new HudRectangle();
-        scoreLeftStr = new HudString(-40, 35, Integer.toString(scoreLeft), 1.5f, 0x00ff0000, true, false);
+        //scoreLeftStr = new HudString(-40, 35, Integer.toString(scoreLeft), 1.5f, 0x00ff0000, true, false);
 ////        scoreRightRect = new HudString();
-        scoreRightStr = new HudString(40, 35, Integer.toString(scoreRight),1.5f, 0x000000ff, true, false);
-        System.out.println("Left = " + scoreLeft + " , Right = " + scoreRight );
+        //scoreRightStr = new HudString(40, 35, Integer.toString(scoreRight),1.5f, 0x000000ff, true, false);
+        //System.out.println("Left = " + scoreLeft + " , Right = " + scoreRight );
 
         // Here need to
     }
     @Override
     public void end() {
-        RinzlerNPC = null;
+        //RinzlerNPC = null;
         isStarted = false; // set both client and server to not
         isWaiting = false;
         return;
