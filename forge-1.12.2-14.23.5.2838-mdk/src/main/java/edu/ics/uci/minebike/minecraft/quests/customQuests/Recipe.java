@@ -38,7 +38,7 @@ public class Recipe
 
     //returns true if recipe can be made with player's inventory
     @SideOnly(Side.SERVER)
-    public boolean canMake(TickEvent.PlayerTickEvent event, EntityPlayerMP player) //~~works i think
+    public boolean canMake(EntityPlayer player) //~~works i think
     {
         int ingedrientCnt = insideBread.length;
         boolean type = false;
@@ -67,33 +67,4 @@ public class Recipe
         return false;
     }
 
-    @SideOnly(Side.CLIENT)
-    public boolean canMake(TickEvent.PlayerTickEvent event) //~~works i think
-    {
-        int ingedrientCnt = insideBread.length;
-        boolean type = false;
-        InventoryPlayer inventory = event.player.inventory;
-
-        for(int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            ItemStack stack = inventory.getStackInSlot(i);
-            if(stack != null)
-            {
-                for(int j = 0; j < insideBread.length; j++)
-                {
-                    if(stack.getItem().getUnlocalizedName().equals(orderType.getUnlocalizedName()))
-                        type = true;
-                    else if(stack.getItem().getUnlocalizedName().equals(insideBread[j].getUnlocalizedName()))
-                        ingedrientCnt--;
-
-//					System.out.println(stack.getItem().getUnlocalizedName() + " realbread " + orderType.getUnlocalizedName());
-//					System.out.println(stack.getItem().getUnlocalizedName() + " ingredient " + insideBread[j].getUnlocalizedName());
-                }
-            }
-        }
-        if(ingedrientCnt==0 && type)
-            return true;
-        System.out.println(ingedrientCnt);
-        return false;
-    }
 }

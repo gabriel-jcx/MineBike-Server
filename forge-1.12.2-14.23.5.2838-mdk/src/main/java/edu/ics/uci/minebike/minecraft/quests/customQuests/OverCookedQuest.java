@@ -2,15 +2,16 @@ package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
 import java.time.Clock;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.CommonUtils;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
-import edu.ics.uci.minebike.minecraft.item.CookBurgerBun;
-import edu.ics.uci.minebike.minecraft.item.CookLettuce;
-import edu.ics.uci.minebike.minecraft.item.CookSandwichBread;
+import edu.ics.uci.minebike.minecraft.item.*;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.ChefGusteau;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Gordon;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
@@ -20,11 +21,16 @@ import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.block.state.IBlockState;
 
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -56,12 +62,14 @@ public class OverCookedQuest extends AbstractCustomQuest {
     private int score = 0;
     private int ticks = 0;
 
-    private ArrayList<Vec3d> ingredientCoord;
+    private Map<String, BlockPos> stations = new HashMap<>();
     private ArrayList<Recipe> recipes = new ArrayList<>();
+
 
 
     private long gameTime = 480000; //ms 8min
     private long waitTime = 10000;//ms 10sec
+    private long expirationTime = 30000;
 
 
     private long serverStartWaitTime = 0 ;
@@ -87,6 +95,9 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     public ArrayList<EntityPlayer> playersInGame = new ArrayList<>();
     public ArrayList<EntityPlayer> playersInQueue = new ArrayList<>();
+    public ArrayList<Recipe> curOrders = new ArrayList<>();
+    public ArrayList<Long> orderAddTime = new ArrayList<>();
+
 
     private HudRectangle rectangle;
     private HudString hudTimer;
@@ -125,6 +136,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
             if (!isWaiting)
             {
 //                WorldServer ws = DimensionManager.getWorld(this.DIMID);
+                overcookWs = DimensionManager.getWorld(this.DIMID);
                 isWaiting = true;
                 //Records current time and when waiting period ends. Starts Waiting. Sets End Time
                 serverStartWaitTime = System.currentTimeMillis();
@@ -161,6 +173,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         return questStartLocation;
     }
 
+    //Adding all recipes to the recipes arraylist
     public void setRecipes()
     {
 //        recipes.add();
@@ -170,7 +183,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         Item lettuce = new CookLettuce();
         Item chicken = Item.getByNameOrId("cooked_chicken");
         Item potato = Item.getByNameOrId("potato");
-        Item water = Item.getByNameOrId("water_bottle");
+        Item water = Item.getByNameOrId("potion");
 
         Item[] all = new Item[] {chicken, lettuce, potato, water};
         Item[] veg = new Item[] {lettuce, potato, water};
@@ -199,6 +212,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
     {
         System.out.print("Started For Player" + player.getName());
         ServerUtils.sendQuestData(EnumPacketServer.QuestStart, player, Long.toString(this.DIMID));
+        updateWorldTime();
+        setTPLocations();
     }
 
 
@@ -214,7 +229,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     {
 
     }
-    //Client Side Start Initializes Hud and whatnot
+    //Client Side Start Initializes Hud and start/end time
     @Override
     public void start()
     {
@@ -226,24 +241,29 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     }// This is the start interface for client
 
+    //Server Side - TPs player to overworld and clears all arraylists
+    //Client Side - Unregisters all HUDs
     @Override
     public void end()
     {
-        if(!overcookWs.isRemote) {
+        if(overcookWs != null && !overcookWs.isRemote) {
             for (EntityPlayer Player : this.playersInGame) {
                 ServerUtils.telport((EntityPlayerMP) Player, ChefGusteau.LOCATION, 0);
             }
             playersInGame.clear();
             resetWorldTime();
             System.out.println("Server ending, teleported all players back to overworld");
-        } else {
+            curOrders.clear();
+            orderAddTime.clear();
+            isStarted = false;
+        } else{
             System.out.println("Client ending, unregistering HUD elements");
             hudTimer.unregister();
             scoreTitle.unregister();
             scoreVal.unregister();
             orders.endGame();
+            isStarted = false;
         }
-        isStarted = false;
     }
 
     @Override
@@ -269,6 +289,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         }
     }
 
+    //Server side tick during waiting period starts time recordings
     public void serverWaitTick()
     {
 
@@ -278,6 +299,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         }
         int secsPassed = QuestUtils.getRemainingSeconds(curTime, serverStartWaitTime);
         if(secsPassed >= waitTime/1000){
+            System.out.println("Trigger start for players");
             for(EntityPlayer player: this.playersInGame){
                 this.start((EntityPlayerMP)player); // event game start triggered
             }
@@ -286,20 +308,39 @@ public class OverCookedQuest extends AbstractCustomQuest {
             serverStartTime = System.currentTimeMillis();
             serverGameEndTime = serverStartTime + gameTime;
         }
-        else if(curTime == serverStartWaitTime){
-            updateWorldTime();
-        }
+//        else if(curTime == serverStartWaitTime){
+//            updateWorldTime();
+//        }
     }
 
+    //Server side tick during game - Generates, expires orders, checks if player is on redstone block to give or update item
     public void serverStartTick()
     {
         //Need to add NPC interaction here to submit orders
         long curTime = System.currentTimeMillis();
         if(curTime >= serverGameEndTime){
             end();
+        }else{
+            checkExpiration();
+            generateOrder();
+            for(EntityPlayer player: playersInGame){
+                EntityPlayerMP playMP = (EntityPlayerMP) player;
+                BlockPos cur = (playMP.getPosition());
+                BlockPos actual = new BlockPos(cur.getX(), cur.getY()-1, cur.getZ());
+                BlockPos
+                Boolean lastTickPos = cur.getX() == (int)playMP.lastTickPosX && cur.getY() == (int)playMP.lastTickPosY && cur.getZ() == (int)playMP.lastTickPosZ;
+                    if(overcookWs.getBlockState(actual).getBlock() != null && overcookWs.getBlockState(actual).getBlock() == Blocks.REDSTONE_BLOCK){
+                        if(!lastTickPos) {
+                            System.out.println("Location: " + cur);
+                            System.out.println("Last location was: +" + actual);
+                            checkPosition((EntityPlayerMP) player);
+                        }
+                }
+            }
         }
     }
 
+    //Client side tick during waiting period
     public void clientWaitTick(){
         clientWaitTime = clientEndWaitTime - System.currentTimeMillis();
         int remainingWait = QuestUtils.getRemainingSeconds(clientWaitTime);
@@ -309,9 +350,11 @@ public class OverCookedQuest extends AbstractCustomQuest {
         }
     }
 
+    //Starts the game for timer side and updates the times on the orders
     public void clientStartTick(){
         long curTime = System.currentTimeMillis();
         if(curTime >= clientEndTime) {
+            System.out.println("Client is ending");
             end();
         }else{
             if(curTime - clientStartTime < 3000) {
@@ -320,8 +363,6 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 hudTimer.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(clientEndTime,curTime));
             }
             orders.update();
-            checkExpiration();
-            generateOrder();
             score += orders.update();
             scoreVal.text = Integer.toString(score);
         }
@@ -329,7 +370,9 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     }
 
+    //Initializes time for the client side as well as timer HUD
     public void clientStartWaiting(String waitingTime){
+        overcookWs = DimensionManager.getWorld(this.DIMID);
         clientWaitTime = Long.parseLong(waitingTime);
         int waitingSeconds = QuestUtils.getRemainingSeconds(clientWaitTime);
         clientStartWaitTime = System.currentTimeMillis();
@@ -340,32 +383,43 @@ public class OverCookedQuest extends AbstractCustomQuest {
         orders = new OrderHolder();
     }
 
+    //Server side generation of order and calculates when next order should be generated
     public void generateOrder(){
-        if(orders.size() <= maxOrderCount) {
+        if(curOrders.size() <= maxOrderCount) {
+            int next = (int) (Math.random() * recipes.size());
             if (lastGenerated == 0) {
-                orders.add(recipes.get((int) (Math.random() * recipes.size())));
+                for(EntityPlayer player : playersInGame) {
+                    ServerUtils.sendQuestData(EnumPacketServer.OverCookedNewOrder, (EntityPlayerMP) player, Integer.toString(next));
+                }
+                curOrders.add(recipes.get(next));
+                orderAddTime.add(System.currentTimeMillis());
                 lastGenerated = System.currentTimeMillis();
                 nextGenerated = lastGenerated + randTime();
                 System.out.println("Next generation at : " + nextGenerated);
             } else if(System.currentTimeMillis() >= nextGenerated){
-                    orders.add(recipes.get((int) (Math.random() * recipes.size())));
-                    lastGenerated = System.currentTimeMillis();
-                    nextGenerated = lastGenerated + randTime();
-                    System.out.println("Generated a new food : " + orders.get(orders.size()-1).getName());
-                    System.out.println("Next generation at : " + nextGenerated);
+                for(EntityPlayer player : playersInGame) {
+                    ServerUtils.sendQuestData(EnumPacketServer.OverCookedNewOrder, (EntityPlayerMP) player, Integer.toString(next));
+                }
+                curOrders.add(recipes.get(next));
+                orderAddTime.add(System.currentTimeMillis());
+                lastGenerated = System.currentTimeMillis();
+                nextGenerated = lastGenerated + randTime();
+                System.out.println("Next generation at : " + nextGenerated);
             }
         }
     }
 
 
-
+    //Client side registering the HUD for score and scoreval
     public void regScore(){
         scoreTitle = new HudString(-5,25, "Score:", 2.0f, true, false);
         scoreVal = new HudString(20, 25,Integer.toString(score), 2.0f, true, false);
     }
 
+    //generates random time for next order
     public long randTime(){return (long)(Math.random() * 10000) + 20000;}
 
+    //Updates the world time to stop daynight and fire spread and time set
     public void updateWorldTime(){
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
         if(server.worlds != null && server.worlds.length > 0){
@@ -378,6 +432,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         }
     }
 
+    //resets the time to when the game is started and resets the gamerules
     public void resetWorldTime(){
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
         if(server.worlds != null && server.worlds.length > 0){
@@ -389,20 +444,100 @@ public class OverCookedQuest extends AbstractCustomQuest {
         }
     }
 
+    //Checks if the orders are expired on the server side
     public void checkExpiration(){
-        ArrayList<Long> times = orders.getExpiration();
-        int len = times.size();
-        if(len == 0)
-        {
+
+        int len = orderAddTime.size();
+        if(len == 0){
             return;
         }
         long curTime = System.currentTimeMillis();
-        for(int i = 0 ; i < len ; i++){
-            if(curTime >= times.get(i)){
-                orders.expire(i);
-                score += failedOrder;
-                return;
+        for(int i = 0; i < len; i++){
+            if(orderAddTime.get(i) + expirationTime < curTime){
+                for(EntityPlayer player : playersInGame) {
+                    ServerUtils.sendQuestData(EnumPacketServer.OverCookedOrderExpire, (EntityPlayerMP) player, Integer.toString(i));
+                    orderAddTime.remove(i);
+                    curOrders.remove(i);
+                    return;
+                }
             }
         }
+    }
+
+    //Expires order on the client side   server -> client packet
+    public void clientSideExpire(int expired)
+    {
+        orders.expire(expired);
+        score += failedOrder;
+    }
+
+    //Adds new order generated from server to client side server -> client packet
+    public void newOrder(int added){
+        orders.add(recipes.get(added));
+    }
+
+    //Checks where the player is to determine which station they are at
+    public void checkPosition(EntityPlayerMP playerMP){
+        BlockPos pos = playerMP.getPosition();
+        BlockPos actual = new BlockPos(pos.getX(), pos.getY(), pos.getZ());
+        int x = actual.getX();
+        int y = actual.getY();
+        int z = actual.getZ();
+        for(String key : stations.keySet()){
+            BlockPos curVal = stations.get(key);
+            //method .get[x,y,z]() is used to key the comparisons relevant with int to int comparison
+            ItemStack curHand = playerMP.getHeldItemMainhand();
+            InventoryPlayer inv = playerMP.inventory;
+            if(curVal.getX() == x && curVal.getY() == y && curVal.getZ() == z){
+                if (key.contains("Cooking")){
+                    for(Recipe rec : curOrders){
+                        if(rec.canMake(playerMP)){
+                            playerMP.inventory.clear();
+                            if(rec.getName().contains("Sandwich"))
+                            {
+                                playerMP.inventory.addItemStackToInventory(new ItemStack(new CookSandwich()).setStackDisplayName(rec.getName()));
+                            }else{
+                                playerMP.inventory.addItemStackToInventory(new ItemStack(new CookBurger()).setStackDisplayName(rec.getName()));
+                            }
+                        }
+                    }
+                }else if(key.contains("Water")){
+                    if(playerMP.getHeldItemMainhand().getItem() == null){
+                        System.out.println("Player is holding nothing");
+                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.getByNameOrId("potion")));
+                    }
+                }else if(key.contains("Oven")){
+                    if(playerMP.getHeldItemMainhand().getItem() == Item.getByNameOrId("chicken")){
+                        System.out.println("Player is holding chicken");
+                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.getByNameOrId("cooked_chicken")));
+                    }
+                    else if (playerMP.getHeldItemMainhand().getItem() == Item.getByNameOrId("beef")){
+                        System.out.println("Player is holding beef");
+                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.getByNameOrId("cooked_beef")));
+                    }
+                }else if(key.contains("Cutting")){
+
+                }
+            //Exception of the previous IF-statement due to oven containing a row of redstone blocks and me not wanting to put each and everyone of them in
+            }else if(x >= stations.get("Oven1").getX() && x <= stations.get("Oven2").getX() && y == stations.get("Oven1").getY() && z == stations.get("Oven1").getZ()){
+
+            }
+        }
+    }
+
+    //Puts all the keys and values into the Hashmap of locations
+    public void setTPLocations(){
+        stations.put("Beacon", new BlockPos(0,5,0));
+        stations.put("Cooking1", new BlockPos(-45,4,1));
+        stations.put("Cooking2", new BlockPos(-45,4,0));
+        stations.put("Water", new BlockPos(0,5,42));
+        //NOTE: Oven1 and Oven2 are only the first and last redstone block in the oven station
+        stations.put("Oven1", new BlockPos(-1,6,-51));
+        stations.put("Oven2",new BlockPos(2,6,-51));
+        stations.put("Cutting1", new BlockPos(45,4,-1));
+        stations.put("Cutting2", new BlockPos(47,4,-1));
+        stations.put("Cutting3", new BlockPos(49,4,0));
+        stations.put("Cutting4", new BlockPos(47,4,2));
+        stations.put("Cutting5", new BlockPos(45,4,2));
     }
 }

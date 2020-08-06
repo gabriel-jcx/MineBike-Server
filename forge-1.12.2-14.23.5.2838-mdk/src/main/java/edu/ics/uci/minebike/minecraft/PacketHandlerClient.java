@@ -6,6 +6,7 @@ import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.OverCookedQuest;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.Recipe;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -59,6 +60,14 @@ public class PacketHandlerClient {
             OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
             String waitTime = CommonUtils.readString(buffer);
             cook.clientStartWaiting(waitTime);
+        }else if(type == EnumPacketServer.OverCookedNewOrder){
+            OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
+            int newOrder = Integer.parseInt(CommonUtils.readString(buffer));
+            cook.newOrder(newOrder);
+        }else if(type == EnumPacketServer.OverCookedOrderExpire){
+            OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
+            int expired = Integer.parseInt(CommonUtils.readString(buffer));
+            cook.clientSideExpire(expired);
         }
 
 
