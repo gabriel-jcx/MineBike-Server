@@ -106,9 +106,7 @@ public class Minequest extends AbstractCustomQuest
 	public boolean[] checkPointStatus;
 	private boolean testSpot;
 
-	private int playerx;
-	private int playery;
-	private int playerz;
+	private boolean runStarted;
 
 	public Minequest() {
 		super();
@@ -142,6 +140,7 @@ public class Minequest extends AbstractCustomQuest
 		checkPointStatus = new boolean[7];
 
 		testSpot = false;
+		runStarted = false;
 	}
 
 	@Override
@@ -163,14 +162,24 @@ public class Minequest extends AbstractCustomQuest
 
 public void testWall() {
 	System.out.println("Starting Test Wall");
-	while (currentZ <= 907) {
+	while(currentZ<=890) {
 		if (System.currentTimeMillis() % 1000 == 0) {
+			System.out.println("currentZ is now" + currentZ);
 			generateLavaWall(-1181, currentZ, player.world);
 			currentZ++;
 		}
 	}
 }
-
+public void testHoles(){
+		System.out.println("Starting Test Hole");
+		while(currentZ <= 890){
+			if(System.currentTimeMillis() % 1000 == 0){
+				System.out.println("currentZ is now" + currentZ);
+				makeHoles(-1181, currentZ, player.world);
+				currentZ++;
+			}
+		}
+}
 	@Override
 	public void start(EntityPlayerMP playerMP) {
 		//this.player = player;
@@ -229,16 +238,28 @@ public void testWall() {
 		System.out.println("Starting Wall");
 		for (int x = (int) startx; x < startx + 10; x++) {
 			System.out.println("First For Loop Activated");
-			for (int y = 63; y < 68; y++) {
-				System.out.println("Second For Loop Activated");
-				BlockPos gangnam = new BlockPos(x, y, z);
-				if (world.getBlockState(gangnam).getBlock() ==  Blocks.AIR) {
-					world.setBlockState(gangnam, Blocks.LAVA.getDefaultState());
-					System.out.println("Lava was made");
-				}
+			BlockPos gangnam = new BlockPos(x, 68, z);
+			if (world.getBlockState(gangnam).getBlock() ==  Blocks.AIR) {
+				world.setBlockState(gangnam, Blocks.FLOWING_LAVA.getDefaultState());
+				System.out.println("Lava was made");
 			}
 		}
 	}
+
+	private void makeHoles(double startx, double z, World world) { //x should be the same down the lane
+		System.out.println("Starting Holes");
+		for (int x = (int) startx; x < startx + 10; x++) {
+			System.out.println("First For Loop Activated");
+			for(int y = 69; y < 71;y++)
+			{
+			BlockPos obama = new BlockPos(x, y, z);
+	//		world.setBlockState(obama, Blocks.AIR.getDefaultState());
+			world.destroyBlock(obama, false);
+			System.out.println("Holes were made");
+			}
+			}
+		}
+
 
 
 	private void resetToAirCont(double startx, double startz, World world) {
@@ -255,74 +276,77 @@ public void testWall() {
 
 
 	public void updatePoints() {
-		for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-			ItemStack stack = player.inventory.getStackInSlot(i);
-			//if there's something in the stack...
-			if (stack != null) {
-				//checks if materials are in player's inventory
-				String theItem = stack.getItem().getUnlocalizedName();
-				switch(theItem)
-				{
-					case "item.redstone":
-						System.out.println("Player got Redstone");
-						points+=1;
-						break;
-					case "item.iron_ingot":
-						System.out.println("Player got Iron");
-						points+=2;
-						break;
-					case "item.lapis_ore":
-						System.out.println("Player got Lapis");
-						points += 3;
-						break;
-					case "item.gold_ingot":
-						System.out.println("Player got Gold");
-						points += 4;
-						break;
-					case "item.diamond":
-						System.out.println("Player got Diamond");
-						points+=5;
-						break;
-					default:
-						System.out.println("Nothing in inventory");
+		if(runStarted) {
+			for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+				ItemStack stack = player.inventory.getStackInSlot(i);
+				//if there's something in the stack...
+				if (stack != null) {
+					//checks if materials are in player's inventory
+					String theItem = stack.getItem().getUnlocalizedName();
+					switch (theItem) {
+						case "item.redstone":
+							System.out.println("Player got Redstone");
+							points += 1;
+							break;
+						case "item.iron_ingot":
+							System.out.println("Player got Iron");
+							points += 2;
+							break;
+						case "item.lapis_ore":
+							System.out.println("Player got Lapis");
+							points += 3;
+							break;
+						case "item.gold_ingot":
+							System.out.println("Player got Gold");
+							points += 4;
+							break;
+						case "item.diamond":
+							System.out.println("Player got Diamond");
+							points += 5;
+							break;
+						default:
+							System.out.println("Nothing in inventory");
+					}
 				}
 			}
 		}
 	}
-//public void checkIfDead() {
-//	for (EntityPlayer obama:playersInGame
-//
-//		 ) {
-//
-//	}
-//	{
-
-//	}
-//}
 
 	public void serverStartTick() {
-		if (player.isDead) {
-			if(checkPointStatus[7] == true)
-				player.setSpawnPoint(new BlockPos(checkPointLocations.get(7).x,checkPointLocations.get(7).y,checkPointLocations.get(7).z),true);
-			else if(checkPointStatus[6] == true)
-				player.setSpawnPoint(new BlockPos(checkPointLocations.get(6).x,checkPointLocations.get(6).y,checkPointLocations.get(6).z),true);
-			else if(checkPointStatus[5] == true)
-				player.setSpawnPoint(new BlockPos(checkPointLocations.get(5).x,checkPointLocations.get(5).y,checkPointLocations.get(5).z),true);
-			else if(checkPointStatus[4] == true)
-				player.setSpawnPoint(new BlockPos(checkPointLocations.get(4).x,checkPointLocations.get(4).y,checkPointLocations.get(4).z),true);
-			else if(checkPointStatus[3] == true)
-				player.setSpawnPoint(new BlockPos(checkPointLocations.get(3).x,checkPointLocations.get(3).y,checkPointLocations.get(3).z),true);
-			else if(checkPointStatus[2] == true)
-				player.setSpawnPoint(new BlockPos(checkPointLocations.get(2).x,checkPointLocations.get(2).y,checkPointLocations.get(2).z),true);
-			else if(checkPointStatus[1] == true)
-				player.setSpawnPoint(new BlockPos(checkPointLocations.get(1).x,checkPointLocations.get(1).y,checkPointLocations.get(1).z),true);
-
-			//if(currentZ ) // Figure out how to check if currentZ of wall is ahead of player death location and if so end the game
-			//resetToAirCont(0, 0, player.world);
-			//points = 0;
-			System.out.println("Player Died");
+		if (player == null)
+			return;
+		if(player.getPosition().getX() == -1168 && player.getPosition().getY() == 63 && player.getPosition().getZ() ==896 && testSpot == false)
+		{
+			System.out.println("Player at test location");
+			testSpot = true;
+			testHoles();
+			//testWall();
 		}
-		updatePoints();
+
+		if (runStarted) {
+			if (player.isDead) {
+				if (checkPointStatus[7] == true)
+					player.setSpawnPoint(new BlockPos(checkPointLocations.get(7).x, checkPointLocations.get(7).y, checkPointLocations.get(7).z), true);
+				else if (checkPointStatus[6] == true)
+					player.setSpawnPoint(new BlockPos(checkPointLocations.get(6).x, checkPointLocations.get(6).y, checkPointLocations.get(6).z), true);
+				else if (checkPointStatus[5] == true)
+					player.setSpawnPoint(new BlockPos(checkPointLocations.get(5).x, checkPointLocations.get(5).y, checkPointLocations.get(5).z), true);
+				else if (checkPointStatus[4] == true)
+					player.setSpawnPoint(new BlockPos(checkPointLocations.get(4).x, checkPointLocations.get(4).y, checkPointLocations.get(4).z), true);
+				else if (checkPointStatus[3] == true)
+					player.setSpawnPoint(new BlockPos(checkPointLocations.get(3).x, checkPointLocations.get(3).y, checkPointLocations.get(3).z), true);
+				else if (checkPointStatus[2] == true)
+					player.setSpawnPoint(new BlockPos(checkPointLocations.get(2).x, checkPointLocations.get(2).y, checkPointLocations.get(2).z), true);
+				else if (checkPointStatus[1] == true)
+					player.setSpawnPoint(new BlockPos(checkPointLocations.get(1).x, checkPointLocations.get(1).y, checkPointLocations.get(1).z), true);
+
+				//if(currentZ ) // Figure out how to check if currentZ of wall is ahead of player death location and if so end the game
+				//resetToAirCont(0, 0, player.world);
+				//points = 0;
+				System.out.println("Player Died");
+			}
+			updatePoints();
+		}
 	}
 
 	public void onWorldTick(TickEvent.WorldTickEvent event) {
@@ -341,29 +365,25 @@ public void testWall() {
 			points = 0;
 			System.out.println("Player Died");
 		}
-		updatePoints();
+		//updatePoints();
 
-		BlockPos thePos = player.getPosition();
-		if(thePos.getX() == -1168 && thePos.getY() == 63 && thePos.getZ() ==896 )//&& testSpot == false)
-		{
-			System.out.println("Player at test location");
-			testSpot = true;
-			testWall();
-		}
+//		if(player.getPosition().getX() == -1168 && player.getPosition().getY() == 63 && player.getPosition().getZ() ==896 && testSpot == false)
+//		{
+//			System.out.println("Player at test location");
+//			testSpot = true;
+//			testHoles();
+//			//testWall();
+//		}
 
-		backRectangle = new HudRectangle(-25, 5, 50, 30, 0xffff9f38, true, false);
+		//backRectangle = new HudRectangle(-25, 5, 50, 30, 0xffff9f38, true, false);
 
-		thePointsString += points;
-		pointsString = new HudString(0, 10, thePointsString, 2.0f, true, false);
+	//	thePointsString += points;
+	//	pointsString = new HudString(0, 10, thePointsString, 2.0f, true, false);
 	}
 
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		//System.out.println("reading isStarted");
-		//if(isStarted) {
 		this.player = event.player;
 		clientStartTick();
-
-		//}
 	}
 
 }
