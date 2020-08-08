@@ -15,11 +15,13 @@ public class OrderHolder {
     private ArrayList<HudString> timer = new ArrayList<>();
     private HudString orderHolderTitle;
     private long timeLimit;
+    private long lastUpdate;
     private int complete = 30;
     private int expired = -10;
     OrderHolder(){
         timeLimit = 30000;
         orderHolderTitle = new HudString(-200,20,"Order List:",2.5f, true, false);
+        lastUpdate = System.currentTimeMillis();
     }
 
     public void add(Recipe newFood){
@@ -44,19 +46,22 @@ public class OrderHolder {
 
     public int size(){return foods.size();}
 
-    public int update(){
-        long curTime = System.currentTimeMillis();
-        int output = 0;
+    public void update(long curTime){
+        if(curTime - lastUpdate < 1000) {
+            return;
+        }else{
+            lastUpdate = curTime;
+        }
         int cur = 0;
         for(HudString time : timer){
             time.text = foods.get(cur).getName() + "  Time Left: " + QuestUtils.getRemainingSeconds(expiration.get(cur), curTime);
-            if(expiration.get(cur) - curTime < 5000)
+            if(expiration.get(cur) - curTime < 10000)
             {
-                time.setColor(Color.RED.hashCode());
+                System.out.println("Less than 10s left");
+                time.color = 0x00ffffff;
             }
             cur++;
         }
-        return output;
     }
 
     public void endGame() {

@@ -48,6 +48,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.Server;
+import sun.plugin2.util.ColorUtil;
 
 public class OverCookedQuest extends AbstractCustomQuest {
 
@@ -72,7 +73,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
 
 
-    private long gameTime = 480000; //ms 8min
+//    private long gameTime = 480000; //ms 8min
+    private long gameTime = 60000;
     private long waitTime = 10000;//ms 10sec
     private long expirationTime = 30000;
 
@@ -330,7 +332,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
         //Need to add NPC interaction here to submit orders
         long curTime = System.currentTimeMillis();
         if(curTime >= serverGameEndTime){
-            if(overcookWs.getBlockState(stations.get("Beacon")).getBlock() == Blocks.GLASS_PANE) {
+            if(overcookWs.getBlockState(stations.get("Beacon")).getBlock() == Blocks.STAINED_GLASS_PANE) {
+                System.out.println("Reset Beacon Color");
                 overcookWs.setBlockState(stations.get("Beacon"), Blocks.AIR.getDefaultState());
             }
             end();
@@ -341,7 +344,6 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 EntityPlayerMP playMP = (EntityPlayerMP) player;
                 BlockPos cur = (playMP.getPosition());
                 BlockPos actual = new BlockPos(cur.getX(), cur.getY()-1, cur.getZ());
-                BlockPos last = new BlockPos(playMP.lastTickPosX,playMP.lastTickPosY,playMP.lastTickPosZ);
                 if(overcookWs.getBlockState(actual).getBlock() != null && overcookWs.getBlockState(actual).getBlock() == Blocks.REDSTONE_BLOCK){
 //                    System.out.println("On redstone!");
 //                    System.out.println("Location: " + cur);
@@ -383,8 +385,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
             }else{
                 hudTimer.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(clientEndTime,curTime));
             }
-            orders.update();
-            score += orders.update();
+            orders.update(curTime);
             scoreVal.text = Integer.toString(score);
         }
     }
