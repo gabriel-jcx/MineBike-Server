@@ -40,7 +40,8 @@ public class Recipe
     @SideOnly(Side.SERVER)
     public boolean canMake(EntityPlayer player) //~~works i think
     {
-        int ingedrientCnt = insideBread.length;
+        System.out.println("Checking inventory");
+        int ingredientCnt = insideBread.length;
         boolean type = false;
         InventoryPlayer inventory = player.inventory;
 
@@ -49,22 +50,29 @@ public class Recipe
             ItemStack stack = inventory.getStackInSlot(i);
             if(stack != null)
             {
-                for(int j = 0; j < insideBread.length; j++)
-                {
-                    if(stack.getItem().getUnlocalizedName().equals(orderType.getUnlocalizedName()))
-                        type = true;
-                    else if(stack.getItem().getUnlocalizedName().equals(insideBread[j].getUnlocalizedName()))
-                        ingedrientCnt--;
-
-//					System.out.println(stack.getItem().getUnlocalizedName() + " realbread " + orderType.getUnlocalizedName());
-//					System.out.println(stack.getItem().getUnlocalizedName() + " ingredient " + insideBread[j].getUnlocalizedName());
+                if(stack.getItem() == orderType) {
+                    type = true;
+                }
+                else {
+                    for (int j = 0; j < insideBread.length; j++) {
+                        if (stack.getItem() == insideBread[j])
+                            ingredientCnt--;
+                    }
                 }
             }
         }
-        if(ingedrientCnt==0 && type)
+        if(ingredientCnt==0 && type)
             return true;
-        System.out.println(ingedrientCnt);
+        System.out.println(ingredientCnt);
         return false;
     }
 
 }
+
+//                    if(stack.getItem().getUnlocalizedName().equals(orderType.getUnlocalizedName()))
+//                        type = true;
+//                    else if(stack.getItem().getUnlocalizedName().equals(insideBread[j].getUnlocalizedName()))
+//                        ingedrientCnt--;
+
+//					System.out.println(stack.getItem().getUnlocalizedName() + " realbread " + orderType.getUnlocalizedName());
+//					System.out.println(stack.getItem().getUnlocalizedName() + " ingredient " + insideBread[j].getUnlocalizedName());

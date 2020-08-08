@@ -4,6 +4,7 @@ package edu.ics.uci.minebike.minecraft.quests.customQuests;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class OrderHolder {
@@ -51,7 +52,7 @@ public class OrderHolder {
             time.text = foods.get(cur).getName() + "  Time Left: " + QuestUtils.getRemainingSeconds(expiration.get(cur), curTime);
             if(expiration.get(cur) - curTime < 5000)
             {
-                time.setColor(0x00ff0000);
+                time.setColor(Color.RED.hashCode());
             }
             cur++;
         }

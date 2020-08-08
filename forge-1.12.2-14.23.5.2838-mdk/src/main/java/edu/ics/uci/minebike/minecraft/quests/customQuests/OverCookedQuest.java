@@ -18,16 +18,20 @@ import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderOverCooked;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
+import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.block.state.IBlockState;
@@ -61,6 +65,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     private final int failedOrder = -10;
     private int score = 0;
     private int ticks = 0;
+    private boolean sameBlock;
 
     private Map<String, BlockPos> stations = new HashMap<>();
     private ArrayList<Recipe> recipes = new ArrayList<>();
@@ -177,13 +182,17 @@ public class OverCookedQuest extends AbstractCustomQuest {
     public void setRecipes()
     {
 //        recipes.add();
-        Item sandwichbread = new CookSandwichBread();
-        Item hamburgerbun = new CookBurgerBun();
-        Item steak = Item.getByNameOrId("cooked_beef");
-        Item lettuce = new CookLettuce();
-        Item chicken = Item.getByNameOrId("cooked_chicken");
-        Item potato = Item.getByNameOrId("potato");
-        Item water = Item.getByNameOrId("potion");
+        ResourceLocation bread = new ResourceLocation("minebikemod:sandwichbread");
+        ResourceLocation bun = new ResourceLocation("minebikemod:hamburgerbun");
+        ResourceLocation lett = new ResourceLocation("minebikemod:lettuce");
+
+        Item sandwichbread = Item.REGISTRY.getObject(bread);
+        Item hamburgerbun = Item.REGISTRY.getObject(bun);
+        Item steak = Items.COOKED_BEEF;
+        Item lettuce = Item.REGISTRY.getObject(lett);
+        Item chicken = Items.COOKED_CHICKEN;
+        Item potato = Items.POTATO;
+        Item water = Items.POTIONITEM;
 
         Item[] all = new Item[] {chicken, lettuce, potato, water};
         Item[] veg = new Item[] {lettuce, potato, water};
@@ -214,6 +223,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         ServerUtils.sendQuestData(EnumPacketServer.QuestStart, player, Long.toString(this.DIMID));
         updateWorldTime();
         setTPLocations();
+        sameBlock = false;
     }
 
 
@@ -263,6 +273,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
             scoreVal.unregister();
             orders.endGame();
             isStarted = false;
+            score = 0;
         }
     }
 
@@ -319,6 +330,9 @@ public class OverCookedQuest extends AbstractCustomQuest {
         //Need to add NPC interaction here to submit orders
         long curTime = System.currentTimeMillis();
         if(curTime >= serverGameEndTime){
+            if(overcookWs.getBlockState(stations.get("Beacon")).getBlock() == Blocks.GLASS_PANE) {
+                overcookWs.setBlockState(stations.get("Beacon"), Blocks.AIR.getDefaultState());
+            }
             end();
         }else{
             checkExpiration();
@@ -327,15 +341,22 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 EntityPlayerMP playMP = (EntityPlayerMP) player;
                 BlockPos cur = (playMP.getPosition());
                 BlockPos actual = new BlockPos(cur.getX(), cur.getY()-1, cur.getZ());
-                BlockPos
-                Boolean lastTickPos = cur.getX() == (int)playMP.lastTickPosX && cur.getY() == (int)playMP.lastTickPosY && cur.getZ() == (int)playMP.lastTickPosZ;
-                    if(overcookWs.getBlockState(actual).getBlock() != null && overcookWs.getBlockState(actual).getBlock() == Blocks.REDSTONE_BLOCK){
-                        if(!lastTickPos) {
-                            System.out.println("Location: " + cur);
-                            System.out.println("Last location was: +" + actual);
-                            checkPosition((EntityPlayerMP) player);
-                        }
+                BlockPos last = new BlockPos(playMP.lastTickPosX,playMP.lastTickPosY,playMP.lastTickPosZ);
+                if(overcookWs.getBlockState(actual).getBlock() != null && overcookWs.getBlockState(actual).getBlock() == Blocks.REDSTONE_BLOCK){
+//                    System.out.println("On redstone!");
+//                    System.out.println("Location: " + cur);
+//                    System.out.println("Last location was: " + last);
+                    if(!sameBlock) {
+                        checkPosition((EntityPlayerMP) player);
+                    }
                 }
+                else {
+                    sameBlock = false;
+                }
+            }
+            if(serverGameEndTime - curTime <= 60000){
+                if(overcookWs.getBlockState(stations.get("Beacon")).getBlock() == Blocks.AIR)
+                    overcookWs.setBlockState(stations.get("Beacon"), Blocks.STAINED_GLASS_PANE.getDefaultState().withProperty(BlockStainedGlassPane.COLOR, EnumDyeColor.RED));
             }
         }
     }
@@ -366,8 +387,6 @@ public class OverCookedQuest extends AbstractCustomQuest {
             score += orders.update();
             scoreVal.text = Integer.toString(score);
         }
-
-
     }
 
     //Initializes time for the client side as well as timer HUD
@@ -479,7 +498,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     //Checks where the player is to determine which station they are at
     public void checkPosition(EntityPlayerMP playerMP){
         BlockPos pos = playerMP.getPosition();
-        BlockPos actual = new BlockPos(pos.getX(), pos.getY(), pos.getZ());
+        BlockPos actual = new BlockPos(pos.getX(), pos.getY()-1, pos.getZ());
         int x = actual.getX();
         int y = actual.getY();
         int z = actual.getZ();
@@ -488,56 +507,86 @@ public class OverCookedQuest extends AbstractCustomQuest {
             //method .get[x,y,z]() is used to key the comparisons relevant with int to int comparison
             ItemStack curHand = playerMP.getHeldItemMainhand();
             InventoryPlayer inv = playerMP.inventory;
-            if(curVal.getX() == x && curVal.getY() == y && curVal.getZ() == z){
+            System.out.println("Current map value is" + curVal);
+            if(pos.equals(curVal)){
+                System.out.println("On a station");
+                System.out.println("Player is holding " + curHand.getDisplayName());
                 if (key.contains("Cooking")){
+                    System.out.println("Checking Assembly");
                     for(Recipe rec : curOrders){
                         if(rec.canMake(playerMP)){
-                            playerMP.inventory.clear();
+                            System.out.println("Player can make: " + rec.getName());
+                            removeIngredients(playerMP, rec);
                             if(rec.getName().contains("Sandwich"))
                             {
-                                playerMP.inventory.addItemStackToInventory(new ItemStack(new CookSandwich()).setStackDisplayName(rec.getName()));
-                            }else{
-                                playerMP.inventory.addItemStackToInventory(new ItemStack(new CookBurger()).setStackDisplayName(rec.getName()));
+                                playerMP.inventory.addItemStackToInventory(new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwich"))).setStackDisplayName(rec.getName()));
+                            }else if(rec.getName().contains("Hamburger")){
+                                playerMP.inventory.addItemStackToInventory(new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:hamburger"))).setStackDisplayName(rec.getName()));
                             }
+                            break;
                         }
                     }
                 }else if(key.contains("Water")){
-                    if(playerMP.getHeldItemMainhand().getItem() == null){
+                    if(playerMP.getHeldItemMainhand().getItem() == Items.AIR){
                         System.out.println("Player is holding nothing");
-                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.getByNameOrId("potion")));
-                    }
-                }else if(key.contains("Oven")){
-                    if(playerMP.getHeldItemMainhand().getItem() == Item.getByNameOrId("chicken")){
-                        System.out.println("Player is holding chicken");
-                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.getByNameOrId("cooked_chicken")));
-                    }
-                    else if (playerMP.getHeldItemMainhand().getItem() == Item.getByNameOrId("beef")){
-                        System.out.println("Player is holding beef");
-                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.getByNameOrId("cooked_beef")));
+                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.GLASS_BOTTLE));
                     }
                 }else if(key.contains("Cutting")){
 
                 }
-            //Exception of the previous IF-statement due to oven containing a row of redstone blocks and me not wanting to put each and everyone of them in
+            //Exception of the previous IF-statement due to oven containing a row of redstone blocks and me not wanting to put each and everyone of them in map
             }else if(x >= stations.get("Oven1").getX() && x <= stations.get("Oven2").getX() && y == stations.get("Oven1").getY() && z == stations.get("Oven1").getZ()){
-
+                if(playerMP.getHeldItemMainhand().getItem() == Items.CHICKEN){
+                    System.out.println("Player is holding chicken");
+                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.COOKED_CHICKEN));
+                }
+                else if (playerMP.getHeldItemMainhand().getItem() == Items.BEEF){
+                    System.out.println("Player is holding beef");
+                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.COOKED_BEEF));
+                }
             }
         }
+        sameBlock = true;
     }
 
     //Puts all the keys and values into the Hashmap of locations
     public void setTPLocations(){
-        stations.put("Beacon", new BlockPos(0,5,0));
-        stations.put("Cooking1", new BlockPos(-45,4,1));
-        stations.put("Cooking2", new BlockPos(-45,4,0));
+        stations.put("Beacon", new BlockPos(0,4,0));
+        stations.put("Cooking1", new BlockPos(-46,4,1));
+        stations.put("Cooking2", new BlockPos(-46,4,-1));
         stations.put("Water", new BlockPos(0,5,42));
         //NOTE: Oven1 and Oven2 are only the first and last redstone block in the oven station
-        stations.put("Oven1", new BlockPos(-1,6,-51));
-        stations.put("Oven2",new BlockPos(2,6,-51));
-        stations.put("Cutting1", new BlockPos(45,4,-1));
-        stations.put("Cutting2", new BlockPos(47,4,-1));
+        stations.put("Oven1", new BlockPos(-2,6,-52));
+        stations.put("Oven2",new BlockPos(2,6,-52));
+        stations.put("Cutting1", new BlockPos(45,4,-2));
+        stations.put("Cutting2", new BlockPos(47,4,-2));
         stations.put("Cutting3", new BlockPos(49,4,0));
         stations.put("Cutting4", new BlockPos(47,4,2));
         stations.put("Cutting5", new BlockPos(45,4,2));
+    }
+
+    public void removeIngredients(EntityPlayerMP playerMP, Recipe rec){
+        InventoryPlayer inv = playerMP.inventory;
+        Item bread = rec.getType();
+        Item[] ings = rec.getInsides();
+        int invLen = inv.getSizeInventory();
+
+        for(int i = 0 ; i < invLen; i ++){
+            ItemStack cur = inv.getStackInSlot(i);
+            if (cur.getItem() == bread) {
+                inv.setInventorySlotContents(i, new ItemStack(Items.AIR));
+            }
+            else
+            {
+                for(Item ingr : ings){
+                    if (cur.getItem() == ingr)
+                    {
+                        inv.setInventorySlotContents(i, new ItemStack(Items.AIR));
+                        break;
+                    }
+                }
+            }
+        }
+
     }
 }
