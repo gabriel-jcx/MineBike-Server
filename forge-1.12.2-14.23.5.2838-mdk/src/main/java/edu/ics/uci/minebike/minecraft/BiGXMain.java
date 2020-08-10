@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft;
 
+import edu.ics.uci.minebike.minecraft.client.AI.OuterAI;
 import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.item.GameFishingEvent;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
@@ -27,6 +28,7 @@ public class BiGXMain {
     public static ServerSaveManager saveManager = new ServerSaveManager();
     public static CustomQuestManager questMangager;
     public static GameFishingEvent gameFishingEvent= new GameFishingEvent();
+    public static OuterAI outerAI= new OuterAI();
 //    FMLne
     public HudManager hudManager;
     public static FMLEventChannel Channel;
@@ -54,6 +56,7 @@ public class BiGXMain {
         MinecraftForge.EVENT_BUS.register(handler);
         MinecraftForge.EVENT_BUS.register(proxy);
         MinecraftForge.EVENT_BUS.register(gameFishingEvent);
+        MinecraftForge.EVENT_BUS.register(outerAI);
 
         proxy.load();
         logger.info("MineBike: PreInit finished");

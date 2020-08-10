@@ -24,6 +24,8 @@ public class OuterAIHud {
     public HudString resistance;
     public HudString goalString;
     public HudString goalReached;
+    public HudString popUpQuest;
+    public HudString popUpInstruction;
     private int minGoal=0;
     private int maxGoal=150;
     private int hr=0;
@@ -36,10 +38,13 @@ public class OuterAIHud {
 
     private int level=0;
     private int currentTime=0;
-    private int currentResistance=15;
+    private float currentResistance=0;
 
 
     ResourceLocation heartLocation= new ResourceLocation(BiGXMain.MOD_ID +":textures/heart.png");
+    ResourceLocation popUpBackGround= new ResourceLocation(BiGXMain.MOD_ID +":textures/heart.png");
+
+
 
 
     public OuterAIHud(){
@@ -53,6 +58,14 @@ public class OuterAIHud {
 
         mc.ingameGUI.drawTexturedModalRect(0,0,0,0,40,40);
         mc.ingameGUI.drawTexturedModalRect(5,40,40,5,25,80);
+        mc.ingameGUI.drawTexturedModalRect(5,40+progressCounter,70,5+progressCounter,25,80);
+
+    }
+    @SideOnly(Side.CLIENT)
+    public void showPopUpBG(){
+
+        Minecraft mc = Minecraft.getMinecraft();
+        mc.getTextureManager().bindTexture(popUpBackGround);
         mc.ingameGUI.drawTexturedModalRect(5,40+progressCounter,70,5+progressCounter,25,80);
 
     }
@@ -92,9 +105,24 @@ public class OuterAIHud {
 //            else{
 //                progressCounter-=10;
 //            }
-//            showHeartIcon();
+//     p       showHeartIcon();
 
         }
+    }
+    public void showPopUpHUD(int dim){
+
+        if (dim ==222){
+            this.popUpQuest =new HudString(0, 0, "Soccer Quest",true,true);
+        }
+        else if (dim ==223){
+            this.popUpQuest =new HudString(0, 0, "Fishing Quest",true,true);
+        }
+        this.popUpInstruction= new HudString(0,10,"Press X to accept the quest with extra reward. Press C to cancel",true,true);
+
+    }
+    public void hidePopUp(){
+        this.popUpQuest.unregister();
+        this.popUpInstruction.unregister();
     }
     public void hide(){
         heartString.unregister();
