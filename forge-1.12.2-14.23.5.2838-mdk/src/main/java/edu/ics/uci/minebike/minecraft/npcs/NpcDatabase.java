@@ -16,6 +16,9 @@ public class NpcDatabase {
         npcs.put(Ada.NAME,new Ada());
         npcs.put(ChefGusteau.NAME, new ChefGusteau());
         npcs.put(Gordon.NAME, new Gordon());
+        npcs.put(Shuttle.NAME, new Shuttle());
+        npcs.put(Manager.NAME, new Manager());
+        npcs.put(Waiter.NAME, new Waiter());
     }
     public static void registerNpcs(){
         //System.out.printf("Name = "+ Name + "(" + Location.x + "," + Location.y + "," + Location.z + ")");
@@ -24,5 +27,8 @@ public class NpcDatabase {
         npcs.put(Ada.NAME,new Ada());
         npcs.put(ChefGusteau.NAME,new ChefGusteau());
         npcs.put(Gordon.NAME, new Gordon());
+        npcs.put(Shuttle.NAME, new Shuttle());
+        npcs.put(Manager.NAME, new Manager());
+        npcs.put(Waiter.NAME, new Waiter());
     }
 }

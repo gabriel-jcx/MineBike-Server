@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
@@ -12,13 +13,19 @@ import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import edu.ics.uci.minebike.minecraft.item.*;
+import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
+import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
+import edu.ics.uci.minebike.minecraft.npcs.NpcUtils;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.ChefGusteau;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Gordon;
+import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Manager;
+import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Shuttle;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderOverCooked;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import net.minecraft.block.BlockStainedGlassPane;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -42,12 +49,15 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.Server;
+import noppes.npcs.entity.EntityCustomNpc;
+import org.lwjgl.Sys;
 import sun.plugin2.util.ColorUtil;
 
 public class OverCookedQuest extends AbstractCustomQuest {
@@ -63,7 +73,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
 
     private final int completeOrder = 30;
-    private final int failedOrder = -10;
+    private final int failedOrder = -5;
     private int score = 0;
     private int ticks = 0;
     private boolean sameBlock;
@@ -73,10 +83,9 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
 
 
-//    private long gameTime = 480000; //ms 8min
-    private long gameTime = 60000;
+    private long gameTime = 480000; //ms 8min
     private long waitTime = 10000;//ms 10sec
-    private long expirationTime = 30000;
+    private long expirationTime = 90000;//1.5mins
 
 
     private long serverStartWaitTime = 0 ;
@@ -91,7 +100,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     private long lastGenerated = 0;
     private long nextGenerated = 0;
-    private OrderHolder orders;
+    public static OrderHolder orders;
 
     private long clientWaitTime = 0;
     private long clientStartWaitTime = 0;
@@ -102,8 +111,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     public ArrayList<EntityPlayer> playersInGame = new ArrayList<>();
     public ArrayList<EntityPlayer> playersInQueue = new ArrayList<>();
-    public ArrayList<Recipe> curOrders = new ArrayList<>();
-    public ArrayList<Long> orderAddTime = new ArrayList<>();
+    public static ArrayList<Recipe> curOrders = new ArrayList<>();
+    public static ArrayList<Long> orderAddTime = new ArrayList<>();
 
 
     private HudRectangle rectangle;
@@ -193,12 +202,12 @@ public class OverCookedQuest extends AbstractCustomQuest {
         Item steak = Items.COOKED_BEEF;
         Item lettuce = Item.REGISTRY.getObject(lett);
         Item chicken = Items.COOKED_CHICKEN;
-        Item potato = Items.POTATO;
+        Item potato = Items.BAKED_POTATO;
         Item water = Items.POTIONITEM;
 
-        Item[] all = new Item[] {chicken, lettuce, potato, water};
+        Item[] all = new Item[] {chicken, lettuce, potato, water, steak};
         Item[] veg = new Item[] {lettuce, potato, water};
-        Item[] meat = new Item[] {chicken, potato, water};
+        Item[] meat = new Item[] {chicken, potato, water, steak};
         Item[] nopot = new Item[] {chicken, lettuce, steak, water};
         Item[] plain = new Item[] {chicken, lettuce, water};
         //Sandwiches
@@ -225,6 +234,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         ServerUtils.sendQuestData(EnumPacketServer.QuestStart, player, Long.toString(this.DIMID));
         updateWorldTime();
         setTPLocations();
+        spawnNPCs();
         sameBlock = false;
     }
 
@@ -261,6 +271,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
         if(overcookWs != null && !overcookWs.isRemote) {
             for (EntityPlayer Player : this.playersInGame) {
                 ServerUtils.telport((EntityPlayerMP) Player, ChefGusteau.LOCATION, 0);
+                EntityPlayerMP playerMP = (EntityPlayerMP) Player;
+                player.sendStatusMessage(new TextComponentTranslation("The final score was: " + score, new Object[0]).setStyle((new Style()).setColor(TextFormatting.YELLOW)), false);
             }
             playersInGame.clear();
             resetWorldTime();
@@ -268,6 +280,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
             curOrders.clear();
             orderAddTime.clear();
             isStarted = false;
+            serverWaitTime = waitTime;
         } else{
             System.out.println("Client ending, unregistering HUD elements");
             hudTimer.unregister();
@@ -311,6 +324,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
             serverStartWaitTime = curTime;
         }
         int secsPassed = QuestUtils.getRemainingSeconds(curTime, serverStartWaitTime);
+        serverWaitTime = curTime - serverStartWaitTime;
         if(secsPassed >= waitTime/1000){
             System.out.println("Trigger start for players");
             for(EntityPlayer player: this.playersInGame){
@@ -345,9 +359,6 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 BlockPos cur = (playMP.getPosition());
                 BlockPos actual = new BlockPos(cur.getX(), cur.getY()-1, cur.getZ());
                 if(overcookWs.getBlockState(actual).getBlock() != null && overcookWs.getBlockState(actual).getBlock() == Blocks.REDSTONE_BLOCK){
-//                    System.out.println("On redstone!");
-//                    System.out.println("Location: " + cur);
-//                    System.out.println("Last location was: " + last);
                     if(!sameBlock) {
                         checkPosition((EntityPlayerMP) player);
                     }
@@ -411,15 +422,18 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 for(EntityPlayer player : playersInGame) {
                     ServerUtils.sendQuestData(EnumPacketServer.OverCookedNewOrder, (EntityPlayerMP) player, Integer.toString(next));
                 }
+                System.out.println("Next food is " + recipes.get(next));
+
                 curOrders.add(recipes.get(next));
                 orderAddTime.add(System.currentTimeMillis());
                 lastGenerated = System.currentTimeMillis();
                 nextGenerated = lastGenerated + randTime();
                 System.out.println("Next generation at : " + nextGenerated);
-            } else if(System.currentTimeMillis() >= nextGenerated){
+            } else if(System.currentTimeMillis() >= nextGenerated || curOrders.size() == 0){
                 for(EntityPlayer player : playersInGame) {
                     ServerUtils.sendQuestData(EnumPacketServer.OverCookedNewOrder, (EntityPlayerMP) player, Integer.toString(next));
                 }
+                System.out.println("Next food is " + recipes.get(next));
                 curOrders.add(recipes.get(next));
                 orderAddTime.add(System.currentTimeMillis());
                 lastGenerated = System.currentTimeMillis();
@@ -437,7 +451,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     }
 
     //generates random time for next order
-    public long randTime(){return (long)(Math.random() * 10000) + 20000;}
+    public long randTime(){return (long)(Math.random() * 10000) + 65000;}
 
     //Updates the world time to stop daynight and fire spread and time set
     public void updateWorldTime(){
@@ -478,6 +492,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
                     ServerUtils.sendQuestData(EnumPacketServer.OverCookedOrderExpire, (EntityPlayerMP) player, Integer.toString(i));
                     orderAddTime.remove(i);
                     curOrders.remove(i);
+                    if(score > 0)
+                        score += failedOrder;
                     return;
                 }
             }
@@ -488,18 +504,26 @@ public class OverCookedQuest extends AbstractCustomQuest {
     public void clientSideExpire(int expired)
     {
         orders.expire(expired);
-        score += failedOrder;
+        if(score > 0)
+            score += failedOrder;
+    }
+
+    public void  clientSideComplete(int complete){
+        System.out.println("A player has completed an order!");
+        orders.complete(complete);
+        score += completeOrder;
     }
 
     //Adds new order generated from server to client side server -> client packet
     public void newOrder(int added){
-        orders.add(recipes.get(added));
+        orders.add(recipes.get(added),expirationTime);
     }
 
     //Checks where the player is to determine which station they are at
     public void checkPosition(EntityPlayerMP playerMP){
+        Potion slowness = Potion.getPotionById(2);
         BlockPos pos = playerMP.getPosition();
-        BlockPos actual = new BlockPos(pos.getX(), pos.getY()-1, pos.getZ());
+        BlockPos actual = new BlockPos(pos.getX(), pos.getY(), pos.getZ());
         int x = actual.getX();
         int y = actual.getY();
         int z = actual.getZ();
@@ -513,6 +537,22 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 System.out.println("On a station");
                 System.out.println("Player is holding " + curHand.getDisplayName());
                 if (key.contains("Cooking")){
+                    if(playerMP.getHeldItemMainhand().getItem() == Items.CHICKEN){
+                        System.out.println("Player is holding chicken");
+                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.COOKED_CHICKEN));
+                        playerMP.addPotionEffect(new PotionEffect(slowness, 3 * 20, 255, false, false));
+                    }
+                    else if (playerMP.getHeldItemMainhand().getItem() == Items.BEEF){
+                        System.out.println("Player is holding beef");
+                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.COOKED_BEEF));
+                        playerMP.addPotionEffect(new PotionEffect(slowness, 3 * 20, 255, false, false));
+                    }
+                }else if(key.contains("Water")){
+                    if(playerMP.getHeldItemMainhand().getItem() == Items.AIR){
+                        System.out.println("Player is holding nothing");
+                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.GLASS_BOTTLE));
+                    }
+                }else if(key.contains("Cutting")){
                     System.out.println("Checking Assembly");
                     for(Recipe rec : curOrders){
                         if(rec.canMake(playerMP)){
@@ -521,29 +561,48 @@ public class OverCookedQuest extends AbstractCustomQuest {
                             if(rec.getName().contains("Sandwich"))
                             {
                                 playerMP.inventory.addItemStackToInventory(new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwich"))).setStackDisplayName(rec.getName()));
+                                playerMP.sendStatusMessage(new TextComponentTranslation("Made A " + rec.getName(), new Object[0]).setStyle((new Style()).setColor(TextFormatting.GREEN)),false);
                             }else if(rec.getName().contains("Hamburger")){
                                 playerMP.inventory.addItemStackToInventory(new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:hamburger"))).setStackDisplayName(rec.getName()));
+                                playerMP.sendStatusMessage(new TextComponentTranslation("Made A " + rec.getName(), new Object[0]).setStyle((new Style()).setColor(TextFormatting.GREEN)),false);
                             }
+                            playerMP.addPotionEffect(new PotionEffect(slowness, 6 * 20, 255, false, false));
                             break;
                         }
                     }
-                }else if(key.contains("Water")){
-                    if(playerMP.getHeldItemMainhand().getItem() == Items.AIR){
-                        System.out.println("Player is holding nothing");
-                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.GLASS_BOTTLE));
+                }else if(key.contains("Farm")) {
+                    if (key.contains("Potato")) {
+                        if (playerMP.getHeldItemMainhand().getItem() == Items.AIR) {
+                            playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.POTATO));
+                        }
+                    } else if (key.contains("Lettuce")) {
+                        if (playerMP.getHeldItemMainhand().getItem() == Items.AIR) {
+                            playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:lettuce"))));
+                        }
                     }
-                }else if(key.contains("Cutting")){
-
                 }
             //Exception of the previous IF-statement due to oven containing a row of redstone blocks and me not wanting to put each and everyone of them in map
             }else if(x >= stations.get("Oven1").getX() && x <= stations.get("Oven2").getX() && y == stations.get("Oven1").getY() && z == stations.get("Oven1").getZ()){
-                if(playerMP.getHeldItemMainhand().getItem() == Items.CHICKEN){
-                    System.out.println("Player is holding chicken");
-                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.COOKED_CHICKEN));
+                if(playerMP.getHeldItemMainhand().getItem() == Items.POTATO){
+                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.BAKED_POTATO));
+                    playerMP.addPotionEffect(new PotionEffect(slowness, 4 * 20, 255, false, false));
+
                 }
-                else if (playerMP.getHeldItemMainhand().getItem() == Items.BEEF){
-                    System.out.println("Player is holding beef");
-                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.COOKED_BEEF));
+            }else if(z <= stations.get("FarmBeef1").getZ() && z >= stations.get("FarmBeef2").getZ() && y == stations.get("FarmBeef1").getY() && x == stations.get("FarmBeef1").getX()){
+                if(playerMP.getHeldItemMainhand().getItem() == Items.AIR){
+                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.BEEF));
+                }
+            }else if(x <= stations.get("FarmChicken1").getX() && x >= stations.get("FarmChicken2").getX() && y == stations.get("FarmChicken1").getY() && z == stations.get("FarmChicken1").getZ()){
+                if(playerMP.getHeldItemMainhand().getItem() == Items.AIR){
+                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.CHICKEN));
+                }
+            }else if(z >= stations.get("BakerySandwich1").getZ() && z <= stations.get("BakerySandwich2").getZ() && y == stations.get("BakerySandwich1").getY() && x == stations.get("BakerySandwich1").getX()){
+                if (playerMP.getHeldItemMainhand().getItem() == Items.AIR) {
+                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:hamburgerbun"))));
+                }
+            }else if(x >= stations.get("BakeryHamburger1").getX() && x <= stations.get("BakeryHamburger2").getX() && y == stations.get("BakeryHamburger1").getY() && z == stations.get("BakeryHamburger1").getZ()){
+                if (playerMP.getHeldItemMainhand().getItem() == Items.AIR) {
+                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwichbread"))));
                 }
             }
         }
@@ -564,6 +623,19 @@ public class OverCookedQuest extends AbstractCustomQuest {
         stations.put("Cutting3", new BlockPos(49,4,0));
         stations.put("Cutting4", new BlockPos(47,4,2));
         stations.put("Cutting5", new BlockPos(45,4,2));
+        stations.put("Restaurant", new BlockPos(956,7,30));
+        stations.put("FarmBeef1", new BlockPos(-46, 4, -38));
+        stations.put("FarmBeef2", new BlockPos(-46, 4, -40));
+        stations.put("FarmChicken1", new BlockPos(-38, 4, -46));
+        stations.put("FarmChicken2", new BlockPos(-40,4,-46));
+        stations.put("FarmPotato1", new BlockPos(-40,4,-41));
+        stations.put("FarmPotato2", new BlockPos(-40,4,-42));
+        stations.put("FarmLettuce1", new BlockPos(-41,4,-40));
+        stations.put("FarmLettuce2", new BlockPos(-42,4,-40));
+        stations.put("BakerySandwich1", new BlockPos(42,4,45));
+        stations.put("BakerySandwich2", new BlockPos(42,4,47));
+        stations.put("BakeryHamburger1", new BlockPos(45,4,42));
+        stations.put("BakeryHamburger2", new BlockPos(47,4,42));
     }
 
     public void removeIngredients(EntityPlayerMP playerMP, Recipe rec){
@@ -589,5 +661,51 @@ public class OverCookedQuest extends AbstractCustomQuest {
             }
         }
 
+    }
+
+    public void spawnNPCs(){
+        for (Map.Entry<String, AbstractCustomNpc> iter: NpcDatabase.npcs.entrySet()) {
+            AbstractCustomNpc cur = iter.getValue();
+            if(cur.getName() == "Shuttle" || cur.getName() == "Manager" || cur.getName() == "Waiter"){
+                if(cur.isSpawned) continue;
+                EntityCustomNpc npcEntity = NpcUtils.spawnNpc(cur.getLocation(), overcookWs,overcookWs,cur.getName(), cur.getTexture());
+                cur.setUUID(npcEntity.getUniqueID().toString());
+            }
+        }
+        System.out.println("Attempted to spawn NPCs");
+    }
+
+    public void orderComplete(EntityPlayerMP playerMP){
+//        System.out.println("Testing for " + order);
+//        if(curOrders.get(0).getName() == order){
+//            score += completeOrder;
+//            for(EntityPlayer player: playersInGame) {
+//                player.sendStatusMessage(new TextComponentTranslation("Order for " + order + " Has Been Completed!", new Object[0]).setStyle((new Style()).setColor(TextFormatting.BLUE)), false);
+//            }
+//        }
+        for(int i = 0; i < playerMP.inventory.getSizeInventory(); i++){
+            if(playerMP.inventory.getStackInSlot(i) != null){
+                if(curOrders.size() > 0 && playerMP.inventory.getStackInSlot(i).getDisplayName() == curOrders.get(0).getName()){
+                    playerMP.sendStatusMessage(new TextComponentTranslation("Order for " + curOrders.get(0).getName() + " Has Been Completed!", new Object[0]).setStyle((new Style()).setColor(TextFormatting.BLUE)), false);
+                    playerMP.inventory.setInventorySlotContents(i, new ItemStack(Items.AIR));
+                    curOrders.remove(0);
+                    orderAddTime.remove(0);
+                    score += completeOrder;
+                    for(EntityPlayer player : playersInGame) {
+                        ServerUtils.sendQuestData(EnumPacketServer.OverCookedOrderComplete, (EntityPlayerMP) player, "0");
+                    }
+                }
+            }
+        }
+    }
+
+    public void teleportPlayer(String coord, EntityPlayerMP playerMP){
+        String[] coords = coord.split(" ");
+        int x = (int)Double.parseDouble(coords[0]);
+        int y = (int)Double.parseDouble(coords[1]);
+        int z = (int)Double.parseDouble(coords[2]);
+        Vec3d destination = new Vec3d(x,y,z);
+        ServerUtils.telport(playerMP,destination, this.DIMID);
+        System.out.println("Teleport " + playerMP.getName() + " to " + destination);
     }
 }

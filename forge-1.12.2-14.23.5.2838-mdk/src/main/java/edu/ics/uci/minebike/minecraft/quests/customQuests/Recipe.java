@@ -55,7 +55,7 @@ public class Recipe
                 }
                 else {
                     for (int j = 0; j < insideBread.length; j++) {
-                        if (stack.getItem() == insideBread[j])
+                        if (stack.getItem() == insideBread[j] && !(ingredientCnt <= 0))
                             ingredientCnt--;
                     }
                 }

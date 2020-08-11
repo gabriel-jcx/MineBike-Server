@@ -11,7 +11,8 @@ public enum EnumPacketServer {
     FishingDistance,
     OverCookedWaitTime,
     OverCookedNewOrder,
-    OverCookedOrderExpire;
+    OverCookedOrderExpire,
+    OverCookedOrderComplete;
     private EnumPacketServer(){
 
     }
