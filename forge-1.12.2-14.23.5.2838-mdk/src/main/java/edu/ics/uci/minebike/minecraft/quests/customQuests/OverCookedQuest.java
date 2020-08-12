@@ -12,6 +12,7 @@ import edu.ics.uci.minebike.minecraft.CommonUtils;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
+import edu.ics.uci.minebike.minecraft.client.hud.HudTexture;
 import edu.ics.uci.minebike.minecraft.item.*;
 import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
@@ -260,6 +261,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         isWaiting = false;
         isStarted = true;
         regScore();
+        HudTexture test = new HudTexture(50,10,70,70,"textures/GUI/burger-all.png");
 
     }// This is the start interface for client
 
@@ -272,7 +274,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
             for (EntityPlayer Player : this.playersInGame) {
                 ServerUtils.telport((EntityPlayerMP) Player, ChefGusteau.LOCATION, 0);
                 EntityPlayerMP playerMP = (EntityPlayerMP) Player;
-                player.sendStatusMessage(new TextComponentTranslation("The final score was: " + score, new Object[0]).setStyle((new Style()).setColor(TextFormatting.YELLOW)), false);
+                Player.sendStatusMessage(new TextComponentTranslation("The final score was: " + score, new Object[0]).setStyle((new Style()).setColor(TextFormatting.YELLOW)), false);
             }
             playersInGame.clear();
             resetWorldTime();
