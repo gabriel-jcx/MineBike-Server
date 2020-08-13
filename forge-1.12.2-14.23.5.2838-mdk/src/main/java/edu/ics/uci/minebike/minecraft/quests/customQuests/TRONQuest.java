@@ -138,15 +138,20 @@ public class TRONQuest extends AbstractCustomQuest {
     private HudString warningString; // Displays when player stops moving
     private HudString warningNumber; // Counts down when player stops moving
     private ForgeDirection npcRunDirection; // which direction npc is currently going
-
+    public int[] playerCo = new int[2]; //to keep track of player coordinates
+    public boolean startLocatingPlayer = false;
+    //public EntityPlayer player1;
 
     public TRONQuest() {
         super();
         this.DIMID = 250;
-        this.isStarted = false;
+        this.isStarted = false; //don't set to true or else the server will crash on startup
+        //setting it to true will mean that a part of onWorldEvent will run and search for the player's coordinates
         this.questStartLocation = new Vec3d (0, 10, 0);
         QuestUtils.populateTRONPlayerLocations(playerSpawnLocations,this.MAX_PLAYER_COUNT);
         QuestUtils.populateTRONNPCLocations(NPCSpawnLocations, this.MAX_NPC_COUNT);
+        playerCo[0] = 3; //sets default value to prevent errors
+        playerCo[1] = 3;
 
         npcPath = new int[3];
         npcPathList = new ArrayList<int[]>();
@@ -175,14 +180,21 @@ public class TRONQuest extends AbstractCustomQuest {
                 {
                     ((EntityCustomNpc) entity).delete();
                     System.out.println("Rinzler was deleted!");
+                    //once this loop has finished, the quest can start because all the entities have been loaded
                 }
             }
+            //isStarted = true;
+            init = true;
         }
         //-----
 
         RinzlerNPC = NpcUtils.spawnNpc(rinzlerCord,
                 DimensionManager.getWorld(this.DIMID), player.getEntityWorld(), "Rinzler",
                 "customnpcs:textures/entity/humanmale/kingsteve.png");
+
+        //Get rid of all junk from Soccer quest
+        //Use this command in onWorldTick
+        //RinzlerNPC.wrappedNPC.getAi();
 
         // teleporting here seems to be a problem!
         //Potion slow_potion = Potion.getPotionById(2);
@@ -196,8 +208,10 @@ public class TRONQuest extends AbstractCustomQuest {
         //player.setPosition()
 //        ServerUtils.sendQuestData(EnumPacketServer.SoccerQueueingTime,(EntityPlayerMP)player, Long.toString(this.server_waitingTime));
         playersInGame.add((EntityPlayerMP)player);
+        this.player = player;
+        startLocatingPlayer = true;
+        //init = true;
         return true;
-
     }
 
     @Override
@@ -299,17 +313,21 @@ public class TRONQuest extends AbstractCustomQuest {
     //       Every tick is 0.05 seconds and 50 milliseconds
     @Override
     public void onWorldTick(TickEvent.WorldTickEvent event) {
+      //System.out.println(event.world.isRemote);
         if(!event.world.isRemote){ // Server side
-            if(isStarted)
+          //System.out.println(isStarted);
+            if(isStarted || init)
             {
-
                 // Figure out what server need to do for each tick?
-                npcPath = new int[3];
-                int[] newLoc = { (int) npc.posX + 2, (int) npc.posZ };
-                npcPathList.add(npcPath); // must add npc path twice for unknown reasons
-                npcPathList.add(npcPath);
+                //npcPath = new int[3];
+                //int[] newLoc = { (int) npc.posX + 2, (int) npc.posZ };
+                //npcPathList.add(npcPath); // must add npc path twice for unknown reasons
+                //npcPathList.add(npcPath);
                 //event.world.setBlockState(player.posX, 45, player.posZ, Blocks.STAINED_GLASS_PANE, 14, 2);
-                BlockPos block1 = new BlockPos(player.posX - 1, 5, player.posZ - 1);
+                //--Need to create a
+                //int posX = (int) player.posX; //this is the main problem
+                //int posZ = (int) player.posZ;
+                BlockPos block1 = new BlockPos(playerCo[0] - 5, 5, playerCo[1] - 5);
                 event.world.setBlockState(block1, (IBlockState) Blocks.STAINED_GLASS_PANE.getDefaultState());
                 System.out.println("the if statement has been reached");
                 //npcLocation.add(0, newLoc); // adds the npc coordinates to the beginning of the list
@@ -323,8 +341,18 @@ public class TRONQuest extends AbstractCustomQuest {
     }
 
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if(isStarted){
+        System.out.println("onPlayerTick");
+        //EntityPlayer temp = (EntityPlayer) playersInGame.get(0);
+        if (startLocatingPlayer)
+        {
+            playerCo[0] = (int) player.posX;
+            playerCo[1] = (int) player.posZ;
+        }
+        if(init){
             this.clientStartTick(event);
+            System.out.println("did this print after the player spawned");
+            //int posX = (int) player.posX;
+            //int posZ = (int) player.posZ;
         }
 //        DimensionManager.getWorld(222).spawnParticle(EnumParticleTypes.WATER_WAKE);
     }
@@ -392,7 +420,7 @@ public class TRONQuest extends AbstractCustomQuest {
             server_startTime = System.currentTimeMillis();
             server_endTime = server_startTime + GAME_SESSION_TIME;
             // Set game state
-            isStarted = true;
+             isStarted = true;
             //isWaiting = false;
         }
     }
@@ -408,7 +436,7 @@ public class TRONQuest extends AbstractCustomQuest {
 
         //clockRect = new HudRectangle(-30, 30, 60, 30, 0x00000000, true, false);
         //clockStr = new HudString(0, 35, QuestUtils.formatSeconds(client_waitingTime_seconds),2.0f,true, false);
-
+        isStarted = false;
         //isWaiting = true;
     }
 
