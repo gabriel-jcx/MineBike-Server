@@ -31,6 +31,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import noppes.npcs.NoppesUtilPlayer;
 import noppes.npcs.Server;
 
 import edu.ics.uci.minebike.minecraft.ServerUtils;
@@ -99,6 +100,7 @@ public class Minequest extends AbstractCustomQuest
 	public ArrayList<EntityPlayer> playersInGame;
 
 	private int currentZ;
+	private int endZ;
 	private HudRectangle rectangle;
 	private HudString hudTimer;
 
@@ -107,7 +109,7 @@ public class Minequest extends AbstractCustomQuest
 	private boolean testSpot;
 
 	private boolean runStarted;
-
+	private boolean generatingWalls;
 	public Minequest() {
 		super();
 		//initializing all private variables
@@ -141,6 +143,9 @@ public class Minequest extends AbstractCustomQuest
 
 		testSpot = false;
 		runStarted = false;
+		generatingWalls = false;
+
+		endZ = 907;
 	}
 
 	@Override
@@ -151,34 +156,24 @@ public class Minequest extends AbstractCustomQuest
 	@Override
 	public boolean onPlayerJoin(EntityPlayer player) {
 		this.player = player;
-		player.setSpawnPoint(new BlockPos(-1149, 65, 869),true); //Doesn't seem to work
+		player.world.setSpawnPoint(new BlockPos(-1149, 65, 869)); //Doesn't seem to work
 		isStarted = true;
 		System.out.println("Player attempting to join");
-			setupQuestEnv(player.world, player);
-			ServerUtils.telport((EntityPlayerMP) player, this.questStartLocation, this.DIMID);
-
+		setupQuestEnv(player.world, player);
+		ServerUtils.telport((EntityPlayerMP) player, this.questStartLocation, this.DIMID);
 			return true;
 		}
 
-public void testWall() {
-	System.out.println("Starting Test Wall");
-	while(currentZ<=890) {
-		if (System.currentTimeMillis() % 1000 == 0) {
-			System.out.println("currentZ is now" + currentZ);
-			generateLavaWall(-1181, currentZ, player.world);
+
+public void testReset(){
+		System.out.println("Starting Test Reset");
+		currentZ = 887;
+		while(currentZ<= 907){
+			System.out.println("currentZ is now"+ currentZ);
+			resetCeiling(-1181,currentZ, player.world);
 			currentZ++;
 		}
-	}
-}
-public void testHoles(){
-		System.out.println("Starting Test Hole");
-		while(currentZ <= 890){
-			if(System.currentTimeMillis() % 1000 == 0){
-				System.out.println("currentZ is now" + currentZ);
-				makeHoles(-1181, currentZ, player.world);
-				currentZ++;
-			}
-		}
+		currentZ=887;
 }
 	@Override
 	public void start(EntityPlayerMP playerMP) {
@@ -227,53 +222,34 @@ public void testHoles(){
 	}
 
 	public void finishGame() {
-		resetToAirCont(0, 0, player.world);
+
 		if (score > highscore)
 			highscore = 0;
 		score = 0;
 
 	}
 
-	private void generateLavaWall(double startx, double z, World world) { //x should be the same down the lane
-		System.out.println("Starting Wall");
-		for (int x = (int) startx; x < startx + 10; x++) {
-			System.out.println("First For Loop Activated");
-			BlockPos gangnam = new BlockPos(x, 68, z);
-			if (world.getBlockState(gangnam).getBlock() ==  Blocks.AIR) {
-				world.setBlockState(gangnam, Blocks.FLOWING_LAVA.getDefaultState());
-				System.out.println("Lava was made");
-			}
-		}
-	}
 
 	private void makeHoles(double startx, double z, World world) { //x should be the same down the lane
 		System.out.println("Starting Holes");
 		for (int x = (int) startx; x < startx + 10; x++) {
 			System.out.println("First For Loop Activated");
-			for(int y = 69; y < 71;y++)
-			{
-			BlockPos obama = new BlockPos(x, y, z);
-	//		world.setBlockState(obama, Blocks.AIR.getDefaultState());
+			BlockPos obama = new BlockPos(x, 70, z);
 			world.destroyBlock(obama, false);
 			System.out.println("Holes were made");
 			}
-			}
 		}
 
 
 
-	private void resetToAirCont(double startx, double startz, World world) {
-
-		for (int z = (int) startz + 1; z < startz + 10; z++) {
-			for (int y = 21; y < 24; y++) {
-				BlockPos seoul = new BlockPos((int) startx, y, z);
-				if (world.getBlockState(seoul) == Blocks.LAVA)
-					world.setBlockState(seoul, (IBlockState) Blocks.AIR);
-
-			}
+	private void resetCeiling(double startx, double startz, World world) {
+		for (int x = (int) startx; x < startx + 10; x++) {
+			System.out.println("First For Loop Activated");
+			BlockPos obama = new BlockPos(x, 70, startz);
+			world.setBlockState(obama, Blocks.STONE_SLAB.getDefaultState());
+			System.out.println("Ceiling Reset");
 		}
 	}
-
 
 	public void updatePoints() {
 		if(runStarted) {
@@ -311,43 +287,72 @@ public void testHoles(){
 			}
 		}
 	}
-
+	public void getLatestCheckpointZ()
+	{
+		for(int x = 7; x>=0; x--) {
+			if (checkPointStatus[x] == true)
+				player.setSpawnPoint(new BlockPos(checkPointLocations.get(x).x, checkPointLocations.get(x).y, checkPointLocations.get(x).z), true);
+		}
+	}
 	public void serverStartTick() {
 		if (player == null)
 			return;
-		if(player.getPosition().getX() == -1168 && player.getPosition().getY() == 63 && player.getPosition().getZ() ==896 && testSpot == false)
-		{
-			System.out.println("Player at test location");
+		if (((EntityPlayerMP) player).getPosition().getX() == -1168 && ((EntityPlayerMP) player).getPosition().getY() == 63 && ((EntityPlayerMP) player).getPosition().getZ() == 896 && testSpot == false) {
+			System.out.println("Player at Holes location");
 			testSpot = true;
-			testHoles();
+			System.out.println("testSpot Marked True");
+			generatingWalls = true;
 			//testWall();
 		}
+		if (generatingWalls == true) {
+			if (currentZ > endZ) {
+				generatingWalls = false;
+				return;
+			}
+			if (currentTick == 0) {
+				System.out.println("currentZ is now" + currentZ);
+				makeHoles(-1181, currentZ, player.world);
+				currentZ++;
+			}
+		}
 
-		if (runStarted) {
-			if (player.isDead) {
-				if (checkPointStatus[7] == true)
-					player.setSpawnPoint(new BlockPos(checkPointLocations.get(7).x, checkPointLocations.get(7).y, checkPointLocations.get(7).z), true);
-				else if (checkPointStatus[6] == true)
-					player.setSpawnPoint(new BlockPos(checkPointLocations.get(6).x, checkPointLocations.get(6).y, checkPointLocations.get(6).z), true);
-				else if (checkPointStatus[5] == true)
-					player.setSpawnPoint(new BlockPos(checkPointLocations.get(5).x, checkPointLocations.get(5).y, checkPointLocations.get(5).z), true);
-				else if (checkPointStatus[4] == true)
-					player.setSpawnPoint(new BlockPos(checkPointLocations.get(4).x, checkPointLocations.get(4).y, checkPointLocations.get(4).z), true);
-				else if (checkPointStatus[3] == true)
-					player.setSpawnPoint(new BlockPos(checkPointLocations.get(3).x, checkPointLocations.get(3).y, checkPointLocations.get(3).z), true);
-				else if (checkPointStatus[2] == true)
-					player.setSpawnPoint(new BlockPos(checkPointLocations.get(2).x, checkPointLocations.get(2).y, checkPointLocations.get(2).z), true);
-				else if (checkPointStatus[1] == true)
-					player.setSpawnPoint(new BlockPos(checkPointLocations.get(1).x, checkPointLocations.get(1).y, checkPointLocations.get(1).z), true);
+		System.out.println(testSpot);
+		if (((EntityPlayerMP) player).getPosition().getX() == -1168 && ((EntityPlayerMP) player).getPosition().getY() == 63 && ((EntityPlayerMP) player).getPosition().getZ() == 900 && testSpot == true) {
+			System.out.println("Player at Ceiling location");
+			testSpot = false;
+			System.out.println("testSpot Marked False");
+			testReset();
+			generatingWalls = false;
+		}
+		BlockPos dab = (new BlockPos(((EntityPlayerMP) player).getPosition().getX(), ((EntityPlayerMP) player).getPosition().getY() - 1, ((EntityPlayerMP) player).getPosition().getZ()));
+		System.out.println(dab);
+		if (((EntityPlayerMP)player).world.getBlockState(dab).getBlock() == Blocks.MAGENTA_GLAZED_TERRACOTTA)
+		{
+			//	System.out.println(((EntityPlayerMP) player).world.getBlockState(new BlockPos(((EntityPlayerMP) player).getPosition().getX(), ((EntityPlayerMP) player).getPosition().getY() - 1, ((EntityPlayerMP) player).getPosition().getZ())).getBlock().toString());
+				((EntityPlayerMP) player).setSpawnPoint(dab, true);
+				System.out.println("New Spawn made");
+		}
 
-				//if(currentZ ) // Figure out how to check if currentZ of wall is ahead of player death location and if so end the game
-				//resetToAirCont(0, 0, player.world);
-				//points = 0;
+			//if(((EntityPlayerMP)player).getPosition().getZ() == 900 && testSpot == true) // Simulate reaching end of the course
+
+
+
+			if (runStarted && player.isDead) {
+				if (currentZ > player.world.getSpawnPoint().getZ()) { // wall is ahead of last checkpoint, automatically lose
+					if (points > highscore)
+						highscore = points;
+					points = 0;
+				}
+//				for(int x = 7; x>=0; x--) {
+//					if (checkPointStatus[x] == true)
+//						player.setSpawnPoint(new BlockPos(checkPointLocations.get(x).x, checkPointLocations.get(x).y, checkPointLocations.get(x).z), true);
+//				}
+
 				System.out.println("Player Died");
 			}
 			updatePoints();
 		}
-	}
+
 
 	public void onWorldTick(TickEvent.WorldTickEvent event) {
 		//Server Side
@@ -366,14 +371,6 @@ public void testHoles(){
 			System.out.println("Player Died");
 		}
 		//updatePoints();
-
-//		if(player.getPosition().getX() == -1168 && player.getPosition().getY() == 63 && player.getPosition().getZ() ==896 && testSpot == false)
-//		{
-//			System.out.println("Player at test location");
-//			testSpot = true;
-//			testHoles();
-//			//testWall();
-//		}
 
 		//backRectangle = new HudRectangle(-25, 5, 50, 30, 0xffff9f38, true, false);
 
