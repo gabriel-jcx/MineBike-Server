@@ -16,6 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.locks.ReentrantLock;
 
 @SideOnly(Side.CLIENT)
 public class HudManager extends GuiScreen {
@@ -27,6 +28,7 @@ public class HudManager extends GuiScreen {
 //    public Minecraft mc;
     public static int mcWidth;
     public static int mcHeight;
+    public ReentrantLock shape_lock = new ReentrantLock();
     private HudManager(Minecraft mc){
         this.mc = mc;
     }
@@ -58,12 +60,17 @@ public class HudManager extends GuiScreen {
 
 
         updateResolution();
-        for(HudShape shape : shapes){
+        shape_lock.lock();
+        try {
+            for (HudShape shape : shapes) {
 //            if(shape instanceof  HudString){
 //                HudString str = (HudString)shape;
 //                System.out.println(str.text);
 //            }
-            shape.draw();
+                shape.draw();
+            }
+        }finally{
+            shape_lock.unlock();
         }
 ////        System.out.println("not returned");
 //        for(HudRectangle rect: rectangles)

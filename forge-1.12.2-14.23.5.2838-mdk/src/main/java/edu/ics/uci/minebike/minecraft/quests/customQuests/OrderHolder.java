@@ -1,8 +1,10 @@
 package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
 
+import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
+import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -95,7 +97,12 @@ public class OrderHolder {
                 timer.get(i).y = timer.get(i-1).y;
             }
         }
-        timer.get(ind).unregister();
+        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
+        try{
+            timer.get(ind).unregister();
+        }finally{
+            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
+        }
         timer.remove(ind);
         expiration.remove(ind);
         startTimes.remove(ind);

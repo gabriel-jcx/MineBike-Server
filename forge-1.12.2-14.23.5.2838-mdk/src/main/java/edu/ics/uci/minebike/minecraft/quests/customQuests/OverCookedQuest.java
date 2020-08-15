@@ -10,6 +10,7 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.CommonUtils;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
+import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import edu.ics.uci.minebike.minecraft.client.hud.HudTexture;
@@ -285,9 +286,15 @@ public class OverCookedQuest extends AbstractCustomQuest {
             serverWaitTime = waitTime;
         } else{
             System.out.println("Client ending, unregistering HUD elements");
-            hudTimer.unregister();
-            scoreTitle.unregister();
-            scoreVal.unregister();
+            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
+            try{
+                hudTimer.unregister();
+                scoreTitle.unregister();
+                scoreVal.unregister();
+            }finally{
+                HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
+            }
+
             orders.endGame();
             isStarted = false;
             score = 0;
