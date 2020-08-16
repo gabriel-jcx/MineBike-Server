@@ -82,6 +82,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     private Map<String, BlockPos> stations = new HashMap<>();
     private ArrayList<Recipe> recipes = new ArrayList<>();
+    private ArrayList<String> locations = new ArrayList<>();
 
 
 
@@ -160,6 +161,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 serverStartWaitTime = System.currentTimeMillis();
                 serverEndWaitTime = serverStartWaitTime + waitTime;
                 serverGameEndTime = serverEndWaitTime + gameTime;
+                updateWorldTime();
+                setTPLocations();
             }
             if(playersInGame.size() <= maxPlayerCount) {
                 ServerUtils.sendQuestData(EnumPacketServer.OverCookedWaitTime,(EntityPlayerMP)player,Long.toString(this.serverWaitTime));
@@ -234,8 +237,6 @@ public class OverCookedQuest extends AbstractCustomQuest {
     {
         System.out.print("Started For Player" + player.getName());
         ServerUtils.sendQuestData(EnumPacketServer.QuestStart, player, Long.toString(this.DIMID));
-        updateWorldTime();
-        setTPLocations();
         spawnNPCs();
         sameBlock = false;
     }
@@ -465,6 +466,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     //Updates the world time to stop daynight and fire spread and time set
     public void updateWorldTime(){
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        System.out.println("Updating World Time To Be Static");
         if(server.worlds != null && server.worlds.length > 0){
             curWorldTime = server.worlds[0].getWorldTime();
             for(World worl : server.worlds){
@@ -525,7 +527,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     //Adds new order generated from server to client side server -> client packet
     public void newOrder(int added){
-        orders.add(recipes.get(added),expirationTime);
+        orders.add(recipes.get(added),expirationTime, locations.get(added));
     }
 
     //Checks where the player is to determine which station they are at
@@ -620,6 +622,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     //Puts all the keys and values into the Hashmap of locations
     public void setTPLocations(){
+        System.out.println("Setup Hashmap for TP Locations");
         stations.put("Beacon", new BlockPos(0,4,0));
         stations.put("Cooking1", new BlockPos(-46,4,1));
         stations.put("Cooking2", new BlockPos(-46,4,-1));
