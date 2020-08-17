@@ -33,7 +33,7 @@ public class OrderHolder {
         startTimes.add(curTime);
         expiration.add(endTime);
         timer.add(new HudString(-200,35 + timer.size() * 10,newFood.getName() + "  Time Left: " + QuestUtils.getRemainingSeconds(endTime,curTime),true, false));
-        textures.add(new HudTexture(50 + 70 * textures.size(), 10, 70, 70, location));
+        textures.add(new HudTexture(50, 10 + 80 * textures.size(), 70, 70, location));
     }
 
     public Recipe remove(int ind){
@@ -107,6 +107,7 @@ public class OrderHolder {
         for(int i = 0 ; i < expiration.size(); i++){
             if(i > ind){
                 timer.get(i).y = timer.get(i-1).y;
+                textures.get(i).y = textures.get(i-1).y;
             }
         }
         HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();

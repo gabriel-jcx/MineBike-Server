@@ -86,8 +86,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
 
 
-    private long gameTime = 480000; //ms 8min
-    private long waitTime = 10000;//ms 10sec
+    private final long gameTime = 480000; //ms 8min
+    private final long waitTime = 10000;//ms 10sec
     private long expirationTime = 90000;//1.5mins
 
 
@@ -96,8 +96,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
     private long serverGameEndTime = 0;
     private long serverWaitTime = waitTime;
     private long serverStartTime = gameTime;
-    private int maxPlayerCount = 4;
-    private int maxOrderCount = 5;
+    private final int maxPlayerCount = 4;
+    private final int maxOrderCount = 5;
     private long timeLeft = 0;
     private long curWorldTime = 0;
 
@@ -228,6 +228,17 @@ public class OverCookedQuest extends AbstractCustomQuest {
         recipes.add(new Recipe(hamburgerbun, nopot,"Potato-Less Hamburger"));
         recipes.add(new Recipe(hamburgerbun, plain,"Plain Hamburger"));
 
+        locations.add("textures/gui/sandwichAll.png");
+        locations.add("textures/gui/sandwichVeg.png");
+        locations.add("textures/gui/sandwichMeat.png");
+        locations.add("textures/gui/sandwichNopot.png");
+        locations.add("textures/gui/sandwichPlain.png");
+        locations.add("textures/gui/burgerAll.png");
+        locations.add("textures/gui/burgerVeg.png");
+        locations.add("textures/gui/burgerMeat.png");
+        locations.add("textures/gui/burgerNopot.png");
+        locations.add("textures/gui/burgerPlain.png");
+
     }
 
     //Server Side Start
@@ -263,7 +274,6 @@ public class OverCookedQuest extends AbstractCustomQuest {
         isWaiting = false;
         isStarted = true;
         regScore();
-        HudTexture test = new HudTexture(50,10,70,70,"textures/GUI/burger-all.png");
 
     }// This is the start interface for client
 
