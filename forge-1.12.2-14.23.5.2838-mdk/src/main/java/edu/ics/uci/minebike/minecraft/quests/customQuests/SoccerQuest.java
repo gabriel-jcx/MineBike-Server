@@ -298,10 +298,10 @@ public class SoccerQuest extends AbstractCustomQuest {
 //        DimensionManager.getWorld(222).spawnParticle(EnumParticleTypes.WATER_WAKE);
     }
     public void leftScoreUpdate(){
-        scoreLeftStr.text = Integer.toString(++scoreLeft);
+        scoreLeftStr.setText(Integer.toString(++scoreLeft));
     }
     public void rightScoreUpdate(){
-        scoreRightStr.text = Integer.toString(++scoreRight);
+        scoreRightStr.setText(Integer.toString(++scoreRight));
     }
     private void serverStartTick(TickEvent.WorldTickEvent event){
         long curr = System.currentTimeMillis();
@@ -366,14 +366,14 @@ public class SoccerQuest extends AbstractCustomQuest {
 
         // The logic works based on the fact that the GAME last more than 3 seconds!!!
         if(curr - client_startTime < 5000) // 3000ms for displaying GAMESTART!
-            clockStr.text = "GAME START! KICK THE BALL TOWARDS THE GOAL!~";
+            clockStr.setText("GAME START! KICK THE BALL TOWARDS THE GOAL!~");
         else if(curr >= client_endTime){
             System.out.println("Game END on client!");
             this.end();
         }
         else{
             long remaining_millisecs = client_endTime - curr;
-            clockStr.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(remaining_millisecs));
+            clockStr.setText(QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(remaining_millisecs)));
         }
     }
 
@@ -435,7 +435,7 @@ public class SoccerQuest extends AbstractCustomQuest {
 
         int remaining_seconds = QuestUtils.getRemainingSeconds(client_waitingTime);
         if(remaining_seconds >= 0 ){
-            clockStr.text = QuestUtils.formatSeconds(remaining_seconds);
+            clockStr.setText(QuestUtils.formatSeconds(remaining_seconds));
         }
 
 //        System.out.println("Client have " + clockStr.text + "left");
