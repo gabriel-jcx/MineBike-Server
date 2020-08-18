@@ -15,11 +15,12 @@ public class HudString extends HudShape {
     public boolean centerX;
     public boolean centerY;
     public float scale;
-    public String text;
+    private String text;
     public int color;
     public String getText(){
         return this.text;
     }
+
     @Override
     public void draw() {
         this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
@@ -113,6 +114,15 @@ public class HudString extends HudShape {
         this.color = 0xffffffff;
         this.shadow = true;
         HudManager.getInstance(mc).shapes.add(this);
+    }
+
+    public void setText(String tex){
+        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
+        try{
+            this.text = tex;
+        }finally{
+            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
+        }
     }
 
     /**

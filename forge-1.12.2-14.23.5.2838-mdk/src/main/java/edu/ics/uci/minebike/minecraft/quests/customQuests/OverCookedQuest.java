@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
+//import com.sun.org.apache.xpath.internal.operations.Bool;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.CommonUtils;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
@@ -60,7 +60,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.Server;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.Sys;
-import sun.plugin2.util.ColorUtil;
+//import sun.plugin2.util.ColorUtil;
 
 public class OverCookedQuest extends AbstractCustomQuest {
 
@@ -166,8 +166,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
             }
             if(playersInGame.size() <= maxPlayerCount) {
                 ServerUtils.sendQuestData(EnumPacketServer.OverCookedWaitTime,(EntityPlayerMP)player,Long.toString(this.serverWaitTime));
+                System.out.println("Teleporting Player: " + player.getName() + " to Overcooked Quest Dim");
                 ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
-                System.out.print("Teleported Player: " + player.getName() + " to Overcooked Quest Dim");
                 player.addPotionEffect(new PotionEffect(night_vision, (int)(gameTime + waitTime)/1000 * 20, 5, false, false));
                 player.addPotionEffect(new PotionEffect(saturation, (int)(gameTime + waitTime)/1000 * 20, 5, false, false));
                 playersInGame.add(player);
@@ -176,7 +176,6 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 playersInQueue.add(player);
                 ServerUtils.sendQuestData(EnumPacketServer.QuestJoinFailed,(EntityPlayerMP)player, Long.toString(this.waitTime));
                 player.sendStatusMessage(new TextComponentTranslation("Game is currently full. Position in queue: " + playersInQueue.size(), new Object[0]).setStyle((new Style()).setColor(TextFormatting.DARK_RED)),false);
-
                 return false;
             }
         }
@@ -400,7 +399,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         int remainingWait = QuestUtils.getRemainingSeconds(clientWaitTime);
         if(remainingWait >= 0)
         {
-            hudTimer.text = QuestUtils.formatSeconds(remainingWait);
+            hudTimer.setText(QuestUtils.formatSeconds(remainingWait));
         }
     }
 
@@ -412,12 +411,12 @@ public class OverCookedQuest extends AbstractCustomQuest {
             end();
         }else{
             if(curTime - clientStartTime < 3000) {
-                hudTimer.text = "Start Cooking!";
+                hudTimer.setText("Start Cooking!");
             }else{
-                hudTimer.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(clientEndTime,curTime));
+                hudTimer.setText(QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(clientEndTime,curTime)));
             }
             orders.update(curTime);
-            scoreVal.text = Integer.toString(score);
+            scoreVal.setText(Integer.toString(score));
         }
     }
 

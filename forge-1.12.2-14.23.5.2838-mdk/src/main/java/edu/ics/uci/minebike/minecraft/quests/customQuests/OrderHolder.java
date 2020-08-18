@@ -61,7 +61,7 @@ public class OrderHolder {
         }
         int cur = 0;
         for(HudString time : timer){
-            time.text = foods.get(cur).getName() + "  Time Left: " + QuestUtils.getRemainingSeconds(expiration.get(cur), curTime);
+            time.setText(foods.get(cur).getName() + "  Time Left: " + QuestUtils.getRemainingSeconds(expiration.get(cur), curTime));
             if(expiration.get(cur) - curTime < 10000)
             {
                 time.color = 0x00ffffff;
