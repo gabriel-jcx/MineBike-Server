@@ -1,7 +1,8 @@
 item.game_fish_rod.name=Game_fish_rod
-item.lettuce.name=Lettuce
+item.lettuce.name=Lettuce Leaf
 item.hamburger.name=Hamburger
 item.hamburgerbun.name=Hamburger Bun
 item.sandwich.name=Sandwich
 item.sandwichbread.name=Sandwich Bread
+item.lettucehead.name=Lettuce Head
 game.inprogress=Game Currently Running
