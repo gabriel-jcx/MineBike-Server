@@ -95,7 +95,7 @@ public class Minequest extends AbstractCustomQuest
 	private long clientStartWaitTime = 0;
 	private long clientEndWaitTime = 0;
 
-	private long waitTime = 10000;//ms 10sec
+	private int lavaGenerationInterval = 2000;//ms 10sec
 
 	public ArrayList<EntityPlayer> playersInGame;
 
@@ -120,6 +120,7 @@ public class Minequest extends AbstractCustomQuest
 		highscore = 0;
 		currentZ = 887;
 
+		// Resources don't seem to work ?
 		ResourceLocation[] instructionTextureLocations = new ResourceLocation[]
 				{
 						new ResourceLocation("textures/GUI/instructions/MinerQuestInstruction1.png"),
@@ -156,7 +157,7 @@ public class Minequest extends AbstractCustomQuest
 	@Override
 	public boolean onPlayerJoin(EntityPlayer player) {
 		this.player = player;
-		player.world.setSpawnPoint(new BlockPos(-1149, 65, 869)); //Doesn't seem to work
+		player.world.setSpawnPoint(new BlockPos(-1149, 65, 869));
 		isStarted = true;
 		System.out.println("Player attempting to join");
 		setupQuestEnv(player.world, player);
@@ -287,13 +288,7 @@ public void testReset(){
 			}
 		}
 	}
-	public void getLatestCheckpointZ()
-	{
-		for(int x = 7; x>=0; x--) {
-			if (checkPointStatus[x] == true)
-				player.setSpawnPoint(new BlockPos(checkPointLocations.get(x).x, checkPointLocations.get(x).y, checkPointLocations.get(x).z), true);
-		}
-	}
+
 	public void serverStartTick() {
 		if (player == null)
 			return;
@@ -329,13 +324,13 @@ public void testReset(){
 		if (((EntityPlayerMP)player).world.getBlockState(dab).getBlock() == Blocks.MAGENTA_GLAZED_TERRACOTTA)
 		{
 			//	System.out.println(((EntityPlayerMP) player).world.getBlockState(new BlockPos(((EntityPlayerMP) player).getPosition().getX(), ((EntityPlayerMP) player).getPosition().getY() - 1, ((EntityPlayerMP) player).getPosition().getZ())).getBlock().toString());
-				((EntityPlayerMP) player).setSpawnPoint(dab, true);
+		//		((EntityPlayerMP)player).world.setSpawnPoint(dab);
+				player.world.setSpawnPoint(dab);
 				System.out.println("New Spawn made");
+				System.out.println("New Spawn Coordinates are:" + player.world.getSpawnPoint());
 		}
 
 			//if(((EntityPlayerMP)player).getPosition().getZ() == 900 && testSpot == true) // Simulate reaching end of the course
-
-
 
 			if (runStarted && player.isDead) {
 				if (currentZ > player.world.getSpawnPoint().getZ()) { // wall is ahead of last checkpoint, automatically lose
@@ -385,16 +380,6 @@ public void testReset(){
 
 }
 
-
-//
-//	public void clientStartWaiting(String waitingTime) {
-//		clientWaitTime = Long.parseLong(waitingTime);
-//		int waitingSeconds = QuestUtils.getRemainingSeconds(clientWaitTime);
-//		clientStartWaitTime = System.currentTimeMillis();
-//		clientEndWaitTime = clientStartWaitTime + clientWaitTime;
-//		hudTimer = new HudString(0, 35, QuestUtils.formatSeconds(waitingSeconds), 2.0f, true, false);
-//		isWaiting = true;
-//	}
 
 
 
