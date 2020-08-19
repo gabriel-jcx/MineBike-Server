@@ -16,13 +16,14 @@ public class ItemManager {
     public static final CookSandwichBread SANDWICH_BREAD = new CookSandwichBread();
     public static final CookSandwich SANDWICH = new CookSandwich();
     public static final CookLettuce LETTUCE = new CookLettuce();
+    public static final CookLttceHd LETTUCE_HEAD = new CookLttceHd();
 
 
     public ItemManager() {
     }
 
     public static void register(IForgeRegistry<Item> registry) {
-        registry.registerAll(new Item[]{GAME_FISHING_ROD,BURGER,BURGER_BUN, SANDWICH,SANDWICH_BREAD,LETTUCE});
+        registry.registerAll(new Item[]{GAME_FISHING_ROD,BURGER,BURGER_BUN, SANDWICH,SANDWICH_BREAD,LETTUCE,LETTUCE_HEAD});
     }
 
 
@@ -35,6 +36,7 @@ public class ItemManager {
         SANDWICH_BREAD.registerItemModel(SANDWICH_BREAD);
         SANDWICH.registerItemModel(SANDWICH);
         LETTUCE.registerItemModel(LETTUCE);
+        LETTUCE_HEAD.registerItemModel(LETTUCE_HEAD);
 
         //ModelLoader.setCustomModelResourceLocation(GAME_FISHING_ROD, 0, new ModelResourceLocation(GAME_FISHING_ROD.getRegistryName(), "inventory"));
 
