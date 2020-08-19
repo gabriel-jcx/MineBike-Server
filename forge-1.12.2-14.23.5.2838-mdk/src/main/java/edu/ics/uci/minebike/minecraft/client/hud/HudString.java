@@ -9,14 +9,17 @@ import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class HudString extends HudShape {
-    public int x;
-    public int y;
+    private int x;
+    private int y;
     public boolean shadow;
     public boolean centerX;
     public boolean centerY;
     public float scale;
     private String text;
-    public int color;
+    private int color;
+
+    public int getX(){return this.x;}
+    public int getY(){return this.y;}
     public String getText(){
         return this.text;
     }
@@ -116,14 +119,7 @@ public class HudString extends HudShape {
         HudManager.getInstance(mc).shapes.add(this);
     }
 
-    public void setText(String tex){
-        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
-        try{
-            this.text = tex;
-        }finally{
-            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
-        }
-    }
+
 
     /**
      * takes: <br>
@@ -182,6 +178,41 @@ public class HudString extends HudShape {
         this.color = color;
         this.shadow = false;
         HudManager.getInstance(mc).shapes.add(this);
+    }
+
+
+
+    public void setText(String text){
+        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
+        try{
+            this.text = text;
+        }finally{
+            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
+        }
+    }
+    public void setColor(int color){
+        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
+        try{
+            this.color = color;
+        }finally{
+            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
+        }
+    }
+    public void setX(int x){
+        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
+        try{
+            this.x = x;
+        }finally{
+            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
+        }
+    }
+    public void setY(int y){
+        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
+        try{
+            this.y = y;
+        }finally{
+            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
+        }
     }
 
 }

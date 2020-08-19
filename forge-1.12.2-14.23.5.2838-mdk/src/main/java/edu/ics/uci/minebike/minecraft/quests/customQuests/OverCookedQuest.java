@@ -87,7 +87,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
 
     private final long gameTime = 480000; //ms 8min
-    private final long waitTime = 10000;//ms 10sec
+    private final long waitTime = 15000;//ms 15sec
     private long expirationTime = 90000;//1.5mins
 
 

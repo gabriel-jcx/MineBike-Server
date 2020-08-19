@@ -64,7 +64,7 @@ public class OrderHolder {
             time.setText(foods.get(cur).getName() + "  Time Left: " + QuestUtils.getRemainingSeconds(expiration.get(cur), curTime));
             if(expiration.get(cur) - curTime < 10000)
             {
-                time.color = 0x00ffffff;
+                time.setColor(0x00ffffff);
             }
             cur++;
         }
@@ -90,8 +90,8 @@ public class OrderHolder {
     public void expire(int ind){
         for(int i = 0 ; i < expiration.size(); i++){
             if(i > ind){
-                timer.get(i).y = timer.get(i-1).y;
-                textures.get(i).y = textures.get(i-1).y;
+                timer.get(i).setY(timer.get(i-1).getY());
+                textures.get(i).setY(textures.get(i-1).getY());
             }
         }
         timer.get(ind).unregister();
@@ -106,8 +106,8 @@ public class OrderHolder {
     public void complete(int ind){
         for(int i = 0 ; i < expiration.size(); i++){
             if(i > ind){
-                timer.get(i).y = timer.get(i-1).y;
-                textures.get(i).y = textures.get(i-1).y;
+                timer.get(i).setY(timer.get(i-1).getY());
+                textures.get(i).setY(textures.get(i-1).getY());
             }
         }
         HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
