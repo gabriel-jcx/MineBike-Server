@@ -1,10 +1,19 @@
 item.game_fish_rod.name=Game_fish_rod
-item.lettuce.name=Lettuce Leaf
-item.hamburger.name=Hamburger
+//overcookedItems
+item.burger_all.name=Loaded Hamburger
+item.burger_meat.name=Meat Lover's Hamburger
+item.burger_nopot.name=Potato-Less Hamburger
+item.burger_plain.name=Plain Hamburger
+item.burger_veg.name=Veggie Hamburger
+item.sandwich_all.name=Loaded Sandwich
+item.sandwich_meat.name=Meat Lover's Sandwich
+item.sandwich_nopot.name=Potato-Less Sandwich
+item.sandwich_plain.name=Plain Sandwich
+item.sandwich_veg.name=Veggie Sandwich
 item.hamburger_bun.name=Hamburger Bun
-item.sandwich.name=Sandwich
 item.sandwich_bread.name=Sandwich Bread
-item.lettuce_head.name=Lettuce Head
 item.sliced_beef.name=Sliced Beef
 item.sliced_chicken.name=Sliced Chicken
+item.lettuce.name=Lettuce Leaf
+item.lettuce_head.name=Lettuce Head
 game.inprogress=Game Currently Running

@@ -5,19 +5,15 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class CookSlicedChicken  extends ItemFood {
-    public CookSlicedChicken()
-    {
-        super(10,2.5f,false);
-        setUnlocalizedName("sliced_chicken");
-        setRegistryName("sliced_chicken");
+public class SandwichBread  extends ItemFood {
+    public SandwichBread() {
+        super(10, 6f, false);
+        setUnlocalizedName("sandwich_bread");
+        setRegistryName("sandwich_bread");
         setCreativeTab(CreativeTabs.FOOD);
     }
 
-    @SideOnly(Side.CLIENT)
     public void registerItemModel(Item item) {
         ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(this.getRegistryName(), "inventory"));
     }

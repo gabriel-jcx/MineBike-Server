@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "minebikemod:items/sandwich_bread"
+    "layer0": "minebikemod:items/overcookedItems/sandwich_bread"
   }
 }

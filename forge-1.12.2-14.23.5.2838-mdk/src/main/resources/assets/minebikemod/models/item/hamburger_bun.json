@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "minebikemod:items/hamburger_bun"
+    "layer0": "minebikemod:items/overcookedItems/hamburger_bun"
   }
 }
