@@ -204,6 +204,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         ResourceLocation beefslice = new ResourceLocation("minebikemod:sliced_beef");
         ResourceLocation slicedchicken = new ResourceLocation("minebikemod:sliced_chicken");
 
+        //Ingredients
         Item sandwichbread = Item.REGISTRY.getObject(bread);
         Item hamburgerbun = Item.REGISTRY.getObject(bun);
         Item slicedbeef = Item.REGISTRY.getObject(beefslice);
@@ -212,23 +213,36 @@ public class OverCookedQuest extends AbstractCustomQuest {
         Item potato = Items.BAKED_POTATO;
         Item water = Items.POTIONITEM;
 
+        //Actual Foods
+        Item sandloaded = Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwich_all"));
+        Item sandveg = Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwich_veg"));
+        Item sandmeat = Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwich_meat"));
+        Item sandnopot = Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwich_nopot"));
+        Item sandplain = Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwich_plain"));
+
+        Item burgloaded = Item.REGISTRY.getObject(new ResourceLocation("minebikemod:burger_all"));
+        Item burgveg = Item.REGISTRY.getObject(new ResourceLocation("minebikemod:burger_veg"));
+        Item burgmeat = Item.REGISTRY.getObject(new ResourceLocation("minebikemod:burger_meat"));
+        Item burgnopot = Item.REGISTRY.getObject(new ResourceLocation("minebikemod:burger_nopot"));
+        Item burgplain = Item.REGISTRY.getObject(new ResourceLocation("minebikemod:burger_plain"));
+
         Item[] all = new Item[] {chicken, lettuce, potato, water, slicedbeef};
         Item[] veg = new Item[] {lettuce, potato, water};
         Item[] meat = new Item[] {chicken, potato, water, slicedbeef};
         Item[] nopot = new Item[] {chicken, lettuce, slicedbeef, water};
         Item[] plain = new Item[] {chicken, lettuce, water};
         //Sandwiches
-        recipes.add(new Recipe(sandwichbread, all,"Loaded Sandwich"));
-        recipes.add(new Recipe(sandwichbread, veg, "Veggie Sandwich"));
-        recipes.add(new Recipe(sandwichbread, meat, "Meat Lover's Sandwich"));
-        recipes.add(new Recipe(sandwichbread, nopot,"Potato-Less Sandwich"));
-        recipes.add(new Recipe(sandwichbread, plain,"Plain Sandwich"));
+        recipes.add(new Recipe(sandwichbread, all,"Loaded Sandwich", sandloaded));
+        recipes.add(new Recipe(sandwichbread, veg, "Veggie Sandwich", sandveg));
+        recipes.add(new Recipe(sandwichbread, meat, "Meat Lover's Sandwich", sandmeat));
+        recipes.add(new Recipe(sandwichbread, nopot,"Potato-Less Sandwich", sandnopot));
+        recipes.add(new Recipe(sandwichbread, plain,"Plain Sandwich", sandplain));
         //Hamburgers
-        recipes.add(new Recipe(hamburgerbun, all,"Loaded Hamburger"));
-        recipes.add(new Recipe(hamburgerbun, veg, "Veggie Hamburger"));
-        recipes.add(new Recipe(hamburgerbun, meat, "Meat Lover's Hamburger"));
-        recipes.add(new Recipe(hamburgerbun, nopot,"Potato-Less Hamburger"));
-        recipes.add(new Recipe(hamburgerbun, plain,"Plain Hamburger"));
+        recipes.add(new Recipe(hamburgerbun, all,"Loaded Hamburger", burgloaded));
+        recipes.add(new Recipe(hamburgerbun, veg, "Veggie Hamburger", burgveg));
+        recipes.add(new Recipe(hamburgerbun, meat, "Meat Lover's Hamburger", burgmeat));
+        recipes.add(new Recipe(hamburgerbun, nopot,"Potato-Less Hamburger", burgnopot));
+        recipes.add(new Recipe(hamburgerbun, plain,"Plain Hamburger", burgplain));
 
         locations.add("textures/gui/sandwich_All_ui.png");
         locations.add("textures/gui/sandwich_Veg_ui.png");
@@ -588,7 +602,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 //                                    playerMP.inventory.addItemStackToInventory(new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwich"))).setStackDisplayName(rec.getName()));
 //                                    playerMP.sendStatusMessage(new TextComponentTranslation("Made A " + rec.getName(), new Object[0]).setStyle((new Style()).setColor(TextFormatting.GREEN)), false);
 //                                } else if (rec.getName().contains("Hamburger")) {
-//                                    playerMP.inventory.addItemStackToInventory(new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:hamburger"))).setStackDisplayName(rec.getName()));
+//                                    playerMP.inventory.addItemStackToInventory(new ItemStack(rec.getFood()));
 //                                    playerMP.sendStatusMessage(new TextComponentTranslation("Made A " + rec.getName(), new Object[0]).setStyle((new Style()).setColor(TextFormatting.GREEN)), false);
 //                                }
 //                                playerMP.addPotionEffect(new PotionEffect(slowness, 6 * 20, 255, false, false));
