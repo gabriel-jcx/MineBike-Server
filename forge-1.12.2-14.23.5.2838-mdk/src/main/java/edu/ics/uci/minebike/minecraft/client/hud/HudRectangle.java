@@ -10,13 +10,16 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
+import java.util.concurrent.locks.ReentrantLock;
 
 @SideOnly(Side.CLIENT)
 public class HudRectangle extends HudShape {
     private int w;  // width
     private int h;  // height
     private int color;
+    //private ReentrantLock lock;
     public HudRectangle(int x, int y, int w, int h, int color, boolean centerX, boolean centerY){
+        super();
         this.centerX = centerX;
         this.centerY = centerY;
         this.setCenter(x,y);
@@ -25,16 +28,31 @@ public class HudRectangle extends HudShape {
         this.color = color;
         HudManager.getInstance(mc).shapes.add(this);
     }
-//    @Override
-////    public void finalize(){
-////        // Remove this from the Manager on object destruction
-////        if(HudManager.getInstance(mc).rectangles.contains(this))
-////            HudManager.getInstance(mc).rectangles.remove(this);
-//    }
+
     public int getX(){
         return this.x;
     }
+
+    public void setWidth(int width){
+        this.lock.lock();
+        try{
+            w = width;
+        }finally {
+            lock.unlock();
+        }
+    }
+
+    public void setHeight(int height){
+        this.lock.lock();
+        try{
+            h = height;
+        }finally {
+            lock.unlock();
+        }
+    }
+
     //@Override
+    @Deprecated
     protected void drawRectangle(int x1, int y1, int x2, int y2, int color)
     {
         int temp;
@@ -65,11 +83,8 @@ public class HudRectangle extends HudShape {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        //store the color so we can restore it back
-    //			    FloatBuffer currentColor = BufferUtils.createFloatBuffer(16);
-    //			    GL11.glGetFloat(GL11.GL_CURRENT_COLOR, currentColor);
+
         GL11.glColor4f(r, g, b, a);
-        //this is where it becomes drawn
 
         BufferBuilder buffer = Tessellator.getInstance().getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
@@ -79,14 +94,8 @@ public class HudRectangle extends HudShape {
         buffer.pos(x2, y2, 0.0D).endVertex();
         buffer.pos(x2, y1, 0.0D).endVertex();
         buffer.pos(x1, y1, 0.0D).endVertex();
-        //tessellator.startDrawingQuads();
-        //tessellator.addVertex((double)x1, (double)y2, 0.0D);
-    //				    tessellator.addVertex((double)x2, (double)y2, 0.0D);
-    //				    tessellator.addVertex((double)x2, (double)y1, 0.0D);
-    //				    tessellator.addVertex((double)x1, (double)y1, 0.0D);
-        //TODO: addvertex might be wrong
+
         tessellator.draw();
-    //			    GL11.glColor4f(currentColor.get(0), currentColor.get(1), currentColor.get(2), currentColor.get(3));
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopAttrib();
@@ -108,55 +117,4 @@ public class HudRectangle extends HudShape {
 
     }
 
-//    public void drawRectangle(int x1, int y1, int x2, int y2, int color){
-//        int temp;
-//
-//        //swaps if it's in the wrong orientation
-//        if (x1 < x2)
-//        {
-//            temp = x1;
-//            x1 = x2;
-//            x2 = temp;
-//        }
-//
-//        if (y1 < y2)
-//        {
-//            temp = y1;
-//            y1 = y2;
-//            y2 = temp;
-//        }
-//
-//        //rgba masks
-//        float r = (float)(color >> 24 & 255) / 255.0F;
-//        float g = (float)(color >> 16 & 255) / 255.0F;
-//        float b = (float)(color >> 8  & 255) / 255.0F;
-//        float a = (float)(color >> 0  & 255) / 255.0F;
-//
-//        //gl stuff
-//        Tessellator tessellator = Tessellator.getInstance();
-//        GL11.glPushAttrib(GL11.GL_COLOR);
-//        GL11.glPushMatrix();
-//        GL11.glEnable(GL11.GL_BLEND);
-//        GL11.glDisable(GL11.GL_TEXTURE_2D);
-//        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//
-//        GL11.glColor4f(r, g, b, a);
-//        //this is where it becomes drawn
-//
-//        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-//        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-//
-//        buffer.pos(x1, y2, 0.0D).endVertex();
-//
-//        buffer.pos(x2, y2, 0.0D).endVertex();
-//        buffer.pos(x2, y1, 0.0D).endVertex();
-//        buffer.pos(x1, y1, 0.0D).endVertex();
-//        //
-//        //TODO: addvertex might be wrong
-//        tessellator.draw();
-//        GL11.glEnable(GL11.GL_TEXTURE_2D);
-//        GL11.glDisable(GL11.GL_BLEND);
-//        GL11.glPopAttrib();
-//        GL11.glPopMatrix();
-//    }
 }

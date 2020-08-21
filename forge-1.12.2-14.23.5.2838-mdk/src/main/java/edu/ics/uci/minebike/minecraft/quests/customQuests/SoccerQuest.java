@@ -226,7 +226,8 @@ public class SoccerQuest extends AbstractCustomQuest {
 
         // Hud Elements
         clockStr.setY(clockStr.getY() - 20);
-        clockStr.scale = 1.0f; // make it smaller during the game
+        clockStr.setScale(1.0f);
+        //clockStr.scale = 1.0f; // make it smaller during the game
 
 //        scoreLeftRect = new HudRectangle();
         scoreLeftStr = new HudString(-40,35, Integer.toString(scoreLeft), 1.5f, 0x00ff0000, true, false);

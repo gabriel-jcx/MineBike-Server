@@ -11,10 +11,8 @@ import org.lwjgl.opengl.GL11;
 public class HudString extends HudShape {
     private int x;
     private int y;
-    public boolean shadow;
-    public boolean centerX;
-    public boolean centerY;
-    public float scale;
+    private boolean shadow;
+    private float scale;
     private String text;
     private int color;
 
@@ -24,6 +22,7 @@ public class HudString extends HudShape {
         return this.text;
     }
 
+
     @Override
     public void draw() {
         this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
@@ -32,41 +31,6 @@ public class HudString extends HudShape {
                         : 0));
         int offset_y = (this.y + (this.centerY ? HudManager.mcHeight/2 : 0));
         this.drawString(fontRenderer,this.text,offset_x,offset_y,this.color);
-//        this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
-//        //translate to where it is going to be displayed, then scale it
-//        GL11.glPushMatrix();
-//        GL11.glPushAttrib(GL11.GL_TEXTURE_BIT);
-//        GL11.glPushAttrib(GL11.GL_COLOR);
-//        GL11.glTranslatef(
-//                (int) (this.x + (this.centerX ?
-//                        (HudManager.mcWidth/2-fontRenderer.getStringWidth(this.text)/2 * this.scale)
-//                        : 0)),
-//                this.y + (this.centerY ? HudManager.mcHeight/2 : 0),
-//                0.0f);
-//
-//        GL11.glScalef(this.scale, this.scale, this.scale);
-////					this breaks the other textures
-//        if (this.shadow)
-//        {
-//            fontRenderer.drawStringWithShadow(
-//                    this.text,
-//                    0,
-//                    0,
-//                    this.color >> 8);
-//        }
-//        else
-//        {
-//            fontRenderer.drawString(
-//                    this.text,
-//                    0,
-//                    0,
-//                    this.color >> 8);
-//        }
-//        GL11.glScalef(1.0f, 1.0f, 1.0f);
-//        GL11.glPopAttrib();
-//        GL11.glPopAttrib();
-//        GL11.glPopMatrix();
-//        drawHoveringText(this.text, this.x , this.y);
     }
     /**
      * takes: <br>
@@ -76,6 +40,7 @@ public class HudString extends HudShape {
      */
     public HudString(int x, int y, String text)
     {
+        super();
         this.x = x;
         this.y = y;
 
@@ -104,6 +69,7 @@ public class HudString extends HudShape {
      */
     public HudString(int x, int y, String text, boolean centerX, boolean centerY)
     {
+        super();
         this.x = x;
         this.y = y;
 
@@ -135,6 +101,7 @@ public class HudString extends HudShape {
      */
     public HudString(int x, int y, String text, float scale, boolean centerX, boolean centerY)
     {
+        super();
         this.x = x;
         this.y = y;
 
@@ -165,6 +132,7 @@ public class HudString extends HudShape {
      */
     public HudString(int x, int y, String text, float scale, int color, boolean centerX, boolean centerY)
     {
+        super();
         this.x = x;
         this.y = y;
 
@@ -181,38 +149,45 @@ public class HudString extends HudShape {
     }
 
 
-
-    public void setText(String text){
-        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
-        try{
+    synchronized public void setScale(float scale){
+//        lock.lock();
+//        try {
+            this.scale = scale;
+//        }finally {
+//            lock.unlock();
+//        }
+    }
+    synchronized public void setText(String text){
+//        lock.lock();
+//        try{
             this.text = text;
-        }finally{
-            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
-        }
+//        }finally{
+//            lock.unlock();
+//        }
     }
-    public void setColor(int color){
-        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
-        try{
+    synchronized public void setColor(int color){
+//        lock.lock();
+//        try{
             this.color = color;
-        }finally{
-            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
-        }
+//        }finally{
+//            lock.unlock();
+//        }
     }
-    public void setX(int x){
-        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
-        try{
+    synchronized public void setX(int x){
+//        lock.lock();
+//        try{
             this.x = x;
-        }finally{
-            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
-        }
+//        }finally{
+//            lock.unlock();
+//        }
     }
-    public void setY(int y){
-        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
-        try{
+    synchronized public void setY(int y){
+//        lock.lock();
+//        try{
             this.y = y;
-        }finally{
-            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
-        }
+//        }finally{
+//            lock.unlock();
+//        }
     }
 
 }
