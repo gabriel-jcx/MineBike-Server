@@ -163,6 +163,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 serverGameEndTime = serverEndWaitTime + gameTime;
                 updateWorldTime();
                 setTPLocations();
+                resetBeacon();
             }
             if(playersInGame.size() <= maxPlayerCount) {
                 ServerUtils.sendQuestData(EnumPacketServer.OverCookedWaitTime,(EntityPlayerMP)player,Long.toString(this.serverWaitTime));
@@ -197,22 +198,24 @@ public class OverCookedQuest extends AbstractCustomQuest {
     public void setRecipes()
     {
 //        recipes.add();
-        ResourceLocation bread = new ResourceLocation("minebikemod:sandwichbread");
-        ResourceLocation bun = new ResourceLocation("minebikemod:hamburgerbun");
+        ResourceLocation bread = new ResourceLocation("minebikemod:sandwich_bread");
+        ResourceLocation bun = new ResourceLocation("minebikemod:hamburger_bun");
         ResourceLocation lett = new ResourceLocation("minebikemod:lettuce");
+        ResourceLocation beefslice = new ResourceLocation("minebikemod:sliced_beef");
+        ResourceLocation slicedchicken = new ResourceLocation("minebikemod:sliced_chicken");
 
         Item sandwichbread = Item.REGISTRY.getObject(bread);
         Item hamburgerbun = Item.REGISTRY.getObject(bun);
-        Item steak = Items.COOKED_BEEF;
+        Item slicedbeef = Item.REGISTRY.getObject(beefslice);
         Item lettuce = Item.REGISTRY.getObject(lett);
-        Item chicken = Items.COOKED_CHICKEN;
+        Item chicken = Item.REGISTRY.getObject(slicedchicken);
         Item potato = Items.BAKED_POTATO;
         Item water = Items.POTIONITEM;
 
-        Item[] all = new Item[] {chicken, lettuce, potato, water, steak};
+        Item[] all = new Item[] {chicken, lettuce, potato, water, slicedbeef};
         Item[] veg = new Item[] {lettuce, potato, water};
-        Item[] meat = new Item[] {chicken, potato, water, steak};
-        Item[] nopot = new Item[] {chicken, lettuce, steak, water};
+        Item[] meat = new Item[] {chicken, potato, water, slicedbeef};
+        Item[] nopot = new Item[] {chicken, lettuce, slicedbeef, water};
         Item[] plain = new Item[] {chicken, lettuce, water};
         //Sandwiches
         recipes.add(new Recipe(sandwichbread, all,"Loaded Sandwich"));
@@ -227,16 +230,16 @@ public class OverCookedQuest extends AbstractCustomQuest {
         recipes.add(new Recipe(hamburgerbun, nopot,"Potato-Less Hamburger"));
         recipes.add(new Recipe(hamburgerbun, plain,"Plain Hamburger"));
 
-        locations.add("textures/gui/sandwichAll.png");
-        locations.add("textures/gui/sandwichVeg.png");
-        locations.add("textures/gui/sandwichMeat.png");
-        locations.add("textures/gui/sandwichNopot.png");
-        locations.add("textures/gui/sandwichPlain.png");
-        locations.add("textures/gui/burgerAll.png");
-        locations.add("textures/gui/burgerVeg.png");
-        locations.add("textures/gui/burgerMeat.png");
-        locations.add("textures/gui/burgerNopot.png");
-        locations.add("textures/gui/burgerPlain.png");
+        locations.add("textures/gui/sandwich_All_ui.png");
+        locations.add("textures/gui/sandwich_Veg_ui.png");
+        locations.add("textures/gui/sandwich_Meat_ui.png");
+        locations.add("textures/gui/sandwich_Nopot_ui.png");
+        locations.add("textures/gui/sandwich_Plain_ui.png");
+        locations.add("textures/gui/burger_All_ui.png");
+        locations.add("textures/gui/burger_Veg_ui.png");
+        locations.add("textures/gui/burger_Meat_ui.png");
+        locations.add("textures/gui/burger_Nopot_ui.png");
+        locations.add("textures/gui/burger_Plain_ui.png");
 
     }
 
@@ -365,10 +368,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         //Need to add NPC interaction here to submit orders
         long curTime = System.currentTimeMillis();
         if(curTime >= serverGameEndTime){
-            if(overcookWs.getBlockState(stations.get("Beacon")).getBlock() == Blocks.STAINED_GLASS_PANE) {
-                System.out.println("Reset Beacon Color");
-                overcookWs.setBlockState(stations.get("Beacon"), Blocks.AIR.getDefaultState());
-            }
+            resetBeacon();
             end();
         }else{
             checkExpiration();
@@ -573,22 +573,31 @@ public class OverCookedQuest extends AbstractCustomQuest {
                         playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Items.GLASS_BOTTLE));
                     }
                 }else if(key.contains("Cutting")){
-                    System.out.println("Checking Assembly");
-                    for(Recipe rec : curOrders){
-                        if(rec.canMake(playerMP)){
-                            System.out.println("Player can make: " + rec.getName());
-                            removeIngredients(playerMP, rec);
-                            if(rec.getName().contains("Sandwich"))
-                            {
-                                playerMP.inventory.addItemStackToInventory(new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwich"))).setStackDisplayName(rec.getName()));
-                                playerMP.sendStatusMessage(new TextComponentTranslation("Made A " + rec.getName(), new Object[0]).setStyle((new Style()).setColor(TextFormatting.GREEN)),false);
-                            }else if(rec.getName().contains("Hamburger")){
-                                playerMP.inventory.addItemStackToInventory(new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:hamburger"))).setStackDisplayName(rec.getName()));
-                                playerMP.sendStatusMessage(new TextComponentTranslation("Made A " + rec.getName(), new Object[0]).setStyle((new Style()).setColor(TextFormatting.GREEN)),false);
-                            }
-                            playerMP.addPotionEffect(new PotionEffect(slowness, 6 * 20, 255, false, false));
-                            break;
-                        }
+                    if(playerMP.getHeldItemMainhand().getItem() == Item.REGISTRY.getObject(new ResourceLocation("minebikemod:lettuce_head"))) {
+                        System.out.println("Player has a lettuce head");
+                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:lettuce")),3));
+                    }else if(playerMP.getHeldItemMainhand().getItem() == Items.COOKED_BEEF){
+                        System.out.println("Player has cooked beef");
+                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sliced_beef"))));
+//                        System.out.println("Checking Assembly");
+//                        for (Recipe rec : curOrders) {
+//                            if (rec.canMake(playerMP)) {
+//                                System.out.println("Player can make: " + rec.getName());
+//                                removeIngredients(playerMP, rec);
+//                                if (rec.getName().contains("Sandwich")) {
+//                                    playerMP.inventory.addItemStackToInventory(new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwich"))).setStackDisplayName(rec.getName()));
+//                                    playerMP.sendStatusMessage(new TextComponentTranslation("Made A " + rec.getName(), new Object[0]).setStyle((new Style()).setColor(TextFormatting.GREEN)), false);
+//                                } else if (rec.getName().contains("Hamburger")) {
+//                                    playerMP.inventory.addItemStackToInventory(new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:hamburger"))).setStackDisplayName(rec.getName()));
+//                                    playerMP.sendStatusMessage(new TextComponentTranslation("Made A " + rec.getName(), new Object[0]).setStyle((new Style()).setColor(TextFormatting.GREEN)), false);
+//                                }
+//                                playerMP.addPotionEffect(new PotionEffect(slowness, 6 * 20, 255, false, false));
+//                                break;
+//                            }
+//                        }
+                    }else if(playerMP.getHeldItemMainhand().getItem() == Items.COOKED_CHICKEN){
+                        System.out.println("Player has cooked chicken");
+                        playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sliced_chicken"))));
                     }
                 }else if(key.contains("Farm")) {
                     if (key.contains("Potato")) {
@@ -618,11 +627,11 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 }
             }else if(z >= stations.get("BakerySandwich1").getZ() && z <= stations.get("BakerySandwich2").getZ() && y == stations.get("BakerySandwich1").getY() && x == stations.get("BakerySandwich1").getX()){
                 if (playerMP.getHeldItemMainhand().getItem() == Items.AIR) {
-                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:hamburgerbun"))));
+                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:hamburger_bun"))));
                 }
             }else if(x >= stations.get("BakeryHamburger1").getX() && x <= stations.get("BakeryHamburger2").getX() && y == stations.get("BakeryHamburger1").getY() && z == stations.get("BakeryHamburger1").getZ()){
                 if (playerMP.getHeldItemMainhand().getItem() == Items.AIR) {
-                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwichbread"))));
+                    playerMP.inventory.setInventorySlotContents(playerMP.inventory.currentItem, new ItemStack(Item.REGISTRY.getObject(new ResourceLocation("minebikemod:sandwich_bread"))));
                 }
             }
         }
@@ -657,6 +666,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
         stations.put("BakerySandwich2", new BlockPos(42,4,47));
         stations.put("BakeryHamburger1", new BlockPos(45,4,42));
         stations.put("BakeryHamburger2", new BlockPos(47,4,42));
+//        stations.put("Assembly1", new BlockPos());
+//        stations.put("Assembly2", new BlockPos());
     }
 
     public void removeIngredients(EntityPlayerMP playerMP, Recipe rec){
@@ -728,5 +739,12 @@ public class OverCookedQuest extends AbstractCustomQuest {
         Vec3d destination = new Vec3d(x,y,z);
         ServerUtils.telport(playerMP,destination, this.DIMID);
         System.out.println("Teleport " + playerMP.getName() + " to " + destination);
+    }
+
+    public void resetBeacon(){
+        if(overcookWs.getBlockState(stations.get("Beacon")).getBlock() == Blocks.STAINED_GLASS_PANE) {
+            System.out.println("Reset Beacon Color");
+            overcookWs.setBlockState(stations.get("Beacon"), Blocks.AIR.getDefaultState());
+        }
     }
 }
