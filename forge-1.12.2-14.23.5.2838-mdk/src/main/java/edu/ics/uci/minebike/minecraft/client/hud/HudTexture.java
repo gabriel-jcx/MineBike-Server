@@ -13,18 +13,18 @@ import org.lwjgl.opengl.GL11;
 
 
 @SideOnly(Side.CLIENT)
+//
 public class HudTexture extends HudShape{
     private int x;
     private int y;
     private int w;
     private int h;
     private int alpha;
-    public boolean centerX;
-    public boolean centerY;
-    public ResourceLocation resourceLocation;
+    private ResourceLocation resourceLocation;
 
-    public HudTexture(int x, int y, int w, int h, String location)
+    public HudTexture(int x, int y, int w, int h, String location, int alpha)
     {
+        super();
         this.x = x;
         this.y = y;
 
@@ -36,13 +36,14 @@ public class HudTexture extends HudShape{
 
         this.resourceLocation = new ResourceLocation(BiGXMain.MOD_ID, location);
 
-        this.alpha = 255;
+        this.alpha = alpha;
         HudManager.getInstance(mc).shapes.add(this);
 
     }
 
-    public HudTexture(int x, int y, int w, int h, String location, boolean centerX, boolean centerY)
+    public HudTexture(int x, int y, int w, int h, String location, boolean centerX, boolean centerY, int alpha)
     {
+        super();
         this.x = x;
         this.y = y;
 
@@ -54,7 +55,7 @@ public class HudTexture extends HudShape{
 
         this.resourceLocation = new ResourceLocation(BiGXMain.MOD_ID, location);
 
-        this.alpha = 255;
+        this.alpha = alpha;
         HudManager.getInstance(mc).shapes.add(this);
 
     }
@@ -67,17 +68,12 @@ public class HudTexture extends HudShape{
                 this.y + offY,
                 this.w,
                 this.h,
-                255,
+                this.alpha,
                 this.resourceLocation);
     }
 
     public void drawTexture(int x, int y, int w, int h, int alpha, ResourceLocation location)
     {
-//        if(location == null){
-//            System.out.println("Location is null");
-//            return;
-//        }
-        //draw the hudTexture
         Tessellator tessellator = Tessellator.getInstance();
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_TEXTURE_BIT);
@@ -88,15 +84,10 @@ public class HudTexture extends HudShape{
         GL11.glColor4f(1.0f, 1.0f, 1.0f, (alpha * 1.0f / 255.0f));
 
         BufferBuilder buff = tessellator.getBuffer();
-//drawTexturedModalRect();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         //this is where it becomes drawn
         Minecraft.getMinecraft().getTextureManager().bindTexture(location);
         buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-//        tessellator.addVertexWithUV((double)hudTexture.x, (double)hudTexture.y, 0.0D, 0.0d, 0.0d);
-//        tessellator.addVertexWithUV((double)hudTexture.x, (double)hudTexture.y + hudTexture.h, 0.0D, 0.0d, 1.0d);
-//        tessellator.addVertexWithUV((double)hudTexture.x + hudTexture.w, (double)hudTexture.y + hudTexture.h, 0.0D, 1.0d, 1.0d);
-//        tessellator.addVertexWithUV((double)hudTexture.x + hudTexture.w, (double)hudTexture.y, 0.0D, 1.0d, 0.0d);
         buff.pos(x,y,0.0D).tex(0.0d,0.0d).endVertex();
         buff.pos(x,y + h,0.0D).tex(0.0d,1.0d).endVertex();
         buff.pos(x + w,y + h,0.0D).tex(1.0d,1.0d).endVertex();
@@ -118,43 +109,47 @@ public class HudTexture extends HudShape{
     public int getAlpha(){return this.alpha;}
 
     public void setX(int x){
-        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
-        try{
+//        lock.lock();
+//        try{
             this.x = x;
-        }finally{
-            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
-        }
+//        }finally{
+//            lock.unlock();
+//        }
     }
     public void setY(int y){
-        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
-        try{
+//        lock.lock();
+//        try{
             this.y = y;
-        }finally{
-            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
-        }
+//        }finally{
+//            lock.unlock();
+//        }
     }
-    public void setW(int w){
-        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
-        try{
+    synchronized void setWidth(int w){
+//        lock.lock();
+//        try{
             this.w = w;
-        }finally{
-            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
-        }
+//        }finally{
+//            lock.unlock();
+//        }
     }
-    public void setH(int h){
-        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
-        try{
+    synchronized public void setHeight(int h){
+//        lock.lock();
+//        try{
             this.h = h;
-        }finally{
-            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
-        }
+//        }finally{
+//            lock.unlock();
+//        }
     }
-    public void setAlpha(int alpha){
-        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
-        try{
+    synchronized public void setAlpha(int alpha){
+//        lock.lock();
+//        try{
             this.alpha = alpha;
-        }finally{
-            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
-        }
+//        }finally{
+//            lock.unlock();
+//        }
+    }
+    synchronized public void setScale(int scale){
+        lock.lock();
+
     }
 }

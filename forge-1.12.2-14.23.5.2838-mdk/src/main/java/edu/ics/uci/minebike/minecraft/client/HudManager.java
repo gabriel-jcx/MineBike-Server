@@ -54,30 +54,19 @@ public class HudManager extends GuiScreen {
         return instance;
     }
     @SubscribeEvent
-    public void onGameOverlayChange(RenderGameOverlayEvent event){
+    synchronized void onGameOverlayChange(RenderGameOverlayEvent event){
         // return on Non-text change
         if(event.isCancelable() || event.getType() != event.getType().TEXT) return;
-
-
         updateResolution();
-        shape_lock.lock();
-        try {
+//        this.shape_lock.lock();
+//        try {
             for (HudShape shape : shapes) {
-//            if(shape instanceof  HudString){
-//                HudString str = (HudString)shape;
-//                System.out.println(str.text);
-//            }
                 shape.draw();
             }
-        }finally{
-            shape_lock.unlock();
-        }
-////        System.out.println("not returned");
-//        for(HudRectangle rect: rectangles)
-//            rect.draw();
-//        for(HudString str: strings){
-//            str.draw();
+//        }finally{
+//            this.shape_lock.unlock();
 //        }
+
     }
     private void updateResolution(){
         ScaledResolution sr = new ScaledResolution(this.mc);
