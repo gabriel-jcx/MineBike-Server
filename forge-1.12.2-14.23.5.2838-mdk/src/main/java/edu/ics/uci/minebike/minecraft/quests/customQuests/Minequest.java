@@ -28,6 +28,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -47,6 +48,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+
 
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -91,11 +93,8 @@ public class Minequest extends AbstractCustomQuest
 	private long serverStartWaitTime = 0;
 	private int maxPlayerCount = 5;
 
-	private long clientWaitTime = 0;
-	private long clientStartWaitTime = 0;
-	private long clientEndWaitTime = 0;
-
-	private int lavaGenerationInterval = 2000;//ms 10sec
+	private long lavaGenerationInterval = 1000; // Alter to change pace of lava generation according to player's heart rate, for multiplayer would need an array for each individual lane
+	private long lastLavaGen = 0;
 
 	public ArrayList<EntityPlayer> playersInGame;
 
@@ -106,10 +105,10 @@ public class Minequest extends AbstractCustomQuest
 
 	public ArrayList<Vec3d> checkPointLocations;
 	public boolean[] checkPointStatus;
-	private boolean testSpot;
 
-	private boolean runStarted;
+	private boolean runStarted; // Signifies if the run started, Need to change to an array for multiplayer
 	private boolean generatingWalls;
+
 	public Minequest() {
 		super();
 		//initializing all private variables
@@ -142,7 +141,7 @@ public class Minequest extends AbstractCustomQuest
 		checkPointLocations = new ArrayList<>();
 		checkPointStatus = new boolean[7];
 
-		testSpot = false;
+
 		runStarted = false;
 		generatingWalls = false;
 
@@ -289,51 +288,65 @@ public void testReset(){
 		}
 	}
 
-	public void serverStartTick() {
+
+public void checkStartLocations(){
+		BlockPos laneOne =  new BlockPos(-1157, 53, 827);
+		BlockPos laneTwo = new BlockPos(-1163, 53, 825);
+		BlockPos laneThree = new BlockPos(-1165, 53, 818);
+		BlockPos laneFour = new BlockPos(-1163, 53, 811);
+		BlockPos laneFive = new BlockPos(-1157,53,809);
+//	if (((EntityPlayerMP) player).getPosition().getX() == -1168 && ((EntityPlayerMP) player).getPosition().getY() == 63 && ((EntityPlayerMP) player).getPosition().getZ() == 900) {
+//if(player.interactOn())
+//
+//		testReset();
+//	generatingWalls = false;
+	//}
+}
+
+@SideOnly(Side.SERVER)
+public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent respawn){
+	this.player = respawn.player;
+	System.out.println("this.player is pointing to new player");
+}
+
+public void serverStartTick() {
 		if (player == null)
 			return;
-		if (((EntityPlayerMP) player).getPosition().getX() == -1168 && ((EntityPlayerMP) player).getPosition().getY() == 63 && ((EntityPlayerMP) player).getPosition().getZ() == 896 && testSpot == false) {
-			System.out.println("Player at Holes location");
-			testSpot = true;
-			System.out.println("testSpot Marked True");
-			generatingWalls = true;
-			//testWall();
-		}
-		if (generatingWalls == true) {
+		long curTime = System.currentTimeMillis();
+
+		if (generatingWalls == true && curTime - lastLavaGen >= lavaGenerationInterval) {
 			if (currentZ > endZ) {
 				generatingWalls = false;
 				return;
 			}
-			if (currentTick == 0) {
+			lastLavaGen = curTime;
+			// if (currentTick == 0) {
 				System.out.println("currentZ is now" + currentZ);
 				makeHoles(-1181, currentZ, player.world);
 				currentZ++;
-			}
+			// }
 		}
 
-		System.out.println(testSpot);
-		if (((EntityPlayerMP) player).getPosition().getX() == -1168 && ((EntityPlayerMP) player).getPosition().getY() == 63 && ((EntityPlayerMP) player).getPosition().getZ() == 900 && testSpot == true) {
-			System.out.println("Player at Ceiling location");
-			testSpot = false;
-			System.out.println("testSpot Marked False");
-			testReset();
-			generatingWalls = false;
-		}
+
 		BlockPos dab = (new BlockPos(((EntityPlayerMP) player).getPosition().getX(), ((EntityPlayerMP) player).getPosition().getY() - 1, ((EntityPlayerMP) player).getPosition().getZ()));
+		BlockPos playerPos = ((EntityPlayerMP)player).getPosition();
 		System.out.println(dab);
 		if (((EntityPlayerMP)player).world.getBlockState(dab).getBlock() == Blocks.MAGENTA_GLAZED_TERRACOTTA)
 		{
 			//	System.out.println(((EntityPlayerMP) player).world.getBlockState(new BlockPos(((EntityPlayerMP) player).getPosition().getX(), ((EntityPlayerMP) player).getPosition().getY() - 1, ((EntityPlayerMP) player).getPosition().getZ())).getBlock().toString());
-		//		((EntityPlayerMP)player).world.setSpawnPoint(dab);
-				player.world.setSpawnPoint(dab);
+			//	((EntityPlayerMP)player).world.setSpawnPoint(dab);
+			//	((EntityPlayerMP)player).setSpawnPoint(dab, true);
+
+				((EntityPlayerMP)player).setSpawnChunk(playerPos, true, 420);
+				//.world.setSpawnPoint(dab);
 				System.out.println("New Spawn made");
-				System.out.println("New Spawn Coordinates are:" + player.world.getSpawnPoint());
+				System.out.println("New Spawn Coordinates are:" + player.getBedLocation(420));
 		}
 
-			//if(((EntityPlayerMP)player).getPosition().getZ() == 900 && testSpot == true) // Simulate reaching end of the course
+			//if(((EntityPlayerMP)player).getPosition().getZ() == 900) // Simulate reaching end of the course
 
-			if (runStarted && player.isDead) {
-				if (currentZ > player.world.getSpawnPoint().getZ()) { // wall is ahead of last checkpoint, automatically lose
+			if (runStarted && player.isDead) {// this is old code bc runstarted never put to true, need to make an array for each lane
+				if (currentZ > player.getBedLocation().getZ()) { // wall is ahead of last checkpoint, automatically lose
 					if (points > highscore)
 						highscore = points;
 					points = 0;
@@ -348,13 +361,22 @@ public void testReset(){
 			updatePoints();
 		}
 
+	public void teleportPlayer(String coord, EntityPlayerMP playerMP){
+		String[] coords = coord.split(" ");
+		int x = (int)Double.parseDouble(coords[0]);
+		int y = (int)Double.parseDouble(coords[1]);
+		int z = (int)Double.parseDouble(coords[2]);
+		Vec3d destination = new Vec3d(x,y,z);
+		ServerUtils.telport(playerMP,destination, this.DIMID);
+		System.out.println("Teleport " + playerMP.getName() + " to " + destination);
+	}
 
 	public void onWorldTick(TickEvent.WorldTickEvent event) {
 		//Server Side
 		if (!event.world.isRemote && isStarted) {
 				serverStartTick();
 			}
-		}
+	}
 
 
 	public void clientStartTick() {
@@ -365,9 +387,7 @@ public void testReset(){
 			points = 0;
 			System.out.println("Player Died");
 		}
-		//updatePoints();
 
-		//backRectangle = new HudRectangle(-25, 5, 50, 30, 0xffff9f38, true, false);
 
 	//	thePointsString += points;
 	//	pointsString = new HudString(0, 10, thePointsString, 2.0f, true, false);
@@ -376,13 +396,17 @@ public void testReset(){
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		this.player = event.player;
 		clientStartTick();
+
 	}
 
+	//needs to be coded
+//	public void end(){
+//		//server side
+//		if(!player.world.isRemote()){
+//
+//		}else{
+//			//client
+//		}
+//	}
+
 }
-
-
-
-
-
-
-
