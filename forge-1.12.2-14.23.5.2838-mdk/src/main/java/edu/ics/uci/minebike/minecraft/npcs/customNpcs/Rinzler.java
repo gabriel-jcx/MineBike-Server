@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class Rinzler extends AbstractCustomNpc {
     public static final String NAME = "Rinzler";
-    public static final Vec3d LOCATION = new Vec3d(0,10,0); // TODO: figure out the location
+    public static final Vec3d LOCATION = new Vec3d(0,8,0); // TODO: figure out the location
     public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/kingsteve.png";
 
     public Rinzler(){
