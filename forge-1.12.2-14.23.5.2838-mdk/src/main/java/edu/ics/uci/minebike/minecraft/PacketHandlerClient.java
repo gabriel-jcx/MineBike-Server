@@ -4,6 +4,7 @@ import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import edu.ics.uci.minebike.minecraft.item.CustomHook;
 import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
+import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -69,6 +70,11 @@ public class PacketHandlerClient {
             OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
             int complete = Integer.parseInt(CommonUtils.readString(buffer));
             cook.clientSideComplete(complete);
+        }else if(type == EnumPacketServer.OverCookedSpawnParticle){
+            OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
+            String particle = CommonUtils.readString(buffer);
+            System.out.println("Attempting to spawn " + particle);
+            cook.clientSpawnParticle(particle);
         }
 
 

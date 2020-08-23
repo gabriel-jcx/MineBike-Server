@@ -12,7 +12,8 @@ public enum EnumPacketServer {
     OverCookedWaitTime,
     OverCookedNewOrder,
     OverCookedOrderExpire,
-    OverCookedOrderComplete;
+    OverCookedOrderComplete,
+    OverCookedSpawnParticle;
     private EnumPacketServer(){
 
     }
