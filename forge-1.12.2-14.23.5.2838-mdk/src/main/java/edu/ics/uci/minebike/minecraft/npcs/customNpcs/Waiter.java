@@ -36,7 +36,7 @@ import java.util.ArrayList;
 
 public class Waiter extends AbstractCustomNpc{
     public static final String NAME = "Waiter";
-    public static final Vec3d LOCATION = new Vec3d(948,7,32);
+    public static final Vec3d LOCATION = new Vec3d(543,7,-3);
     public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/tuxedosteve.png";
     public Waiter(){
         name = NAME;
