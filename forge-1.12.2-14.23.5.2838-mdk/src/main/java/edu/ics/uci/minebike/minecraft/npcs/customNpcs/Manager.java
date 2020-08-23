@@ -31,7 +31,7 @@ import noppes.npcs.entity.EntityCustomNpc;
 
 public class Manager extends AbstractCustomNpc {
     public static final String NAME = "Manager";
-    public static final Vec3d LOCATION = new Vec3d(959,7,33);
+    public static final Vec3d LOCATION = new Vec3d(542,7,8);
     public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/pinstripessteve.png";
     public Manager(){
         name = NAME;
