@@ -33,11 +33,8 @@ public class OrderHolder {
         startTimes.add(curTime);
         expiration.add(endTime);
         timer.add(new HudString(-200,35 + timer.size() * 10,newFood.getName() + "  Time Left: " + QuestUtils.getRemainingSeconds(endTime,curTime),true, false));
-<<<<<<< HEAD
- //       textures.add(new HudTexture(30, 10 + 80 * textures.size(), 132, 68, location, 255));
-=======
-        textures.add(new HudTexture(50, 10 + 80 * textures.size(), 70, 70, location, 255));
->>>>>>> cb886d4849a49a6b14d11f25eea85f30a9d44d1c
+        textures.add(new HudTexture(30, 10 + 80 * textures.size(), 132, 68, location, 255));
+//        textures.add(new HudTexture(50, 10 + 80 * textures.size(), 70, 70, location, 255));
     }
 
     public Recipe remove(int ind){

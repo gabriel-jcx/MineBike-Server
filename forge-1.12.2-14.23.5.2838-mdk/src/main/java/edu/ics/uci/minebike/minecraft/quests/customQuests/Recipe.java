@@ -14,12 +14,14 @@ public class Recipe
     private Item orderType; //type of bread
     private Item[] insideBread; //array of ingredients
     private String name;
+    private Item thisFood;
 
-    public Recipe(Item type, Item[] items, String foodName)
+    public Recipe(Item type, Item[] items, String foodName, Item currentFood)
     {
         orderType = type;
         insideBread = items;
         name = foodName;
+        thisFood = currentFood;
     }
 
     //return type of bread
@@ -35,6 +37,8 @@ public class Recipe
     }
 
     public String getName(){return  name;}
+
+    public Item getFood(){return thisFood;}
 
     //returns true if recipe can be made with player's inventory
     @SideOnly(Side.SERVER)

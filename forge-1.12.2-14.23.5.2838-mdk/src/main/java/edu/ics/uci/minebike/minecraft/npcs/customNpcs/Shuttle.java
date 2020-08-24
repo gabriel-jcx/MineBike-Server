@@ -41,7 +41,7 @@ public class Shuttle extends AbstractCustomNpc{
     @Override
     public void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event){
         System.out.println("The shuttle was interacted");
-        Vec3d destination = new Vec3d(956, 7, 30);
+        Vec3d destination = new Vec3d(540, 7, 0);
         String packet = destination.x + " " + destination.y + " " + destination.z;
         if(event.getWorld().isRemote) {
             ClientUtils.sendData(EnumPacketClient.CookTeleport, packet);
