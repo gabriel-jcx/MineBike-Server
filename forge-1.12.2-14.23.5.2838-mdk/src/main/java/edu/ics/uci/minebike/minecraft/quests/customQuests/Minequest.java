@@ -95,7 +95,7 @@ public class Minequest extends AbstractCustomQuest {
     private final long serverStartWaitTime = 0;
     private final int maxPlayerCount = 5;
 
-    private final long lavaGenerationInterval = 1000; // Alter to change pace of lava generation according to player's heart rate, for multiplayer would need an array for each individual lane
+    private final long lavaGenerationInterval = 800; // Alter to change pace of lava generation according to player's heart rate, for multiplayer would need an array for each individual lane
 
 
     private ArrayList<EntityPlayer> playersInServer;
@@ -221,57 +221,63 @@ public class Minequest extends AbstractCustomQuest {
     }
 
 
-    private void makeHoles(double startx, double z, World world) { //x should be the same down the lane
-        System.out.println("Starting Holes");
-        for (int x = (int) startx; x < startx + 10; x++) {
-            System.out.println("First For Loop Activated");
-            BlockPos obama = new BlockPos(x, 70, z);
-            world.destroyBlock(obama, false);
-            System.out.println("Holes were made");
-        }
-    }
+
 
 
     private void resetCeiling(int laneNumber) {
         if (laneNumber == 1) {
-            for (int x = -1152; x <= -1143; x++) {
-                System.out.println("First For Loop Activated");
-                BlockPos obama = new BlockPos(x, 59, 800);
-                player.world.setBlockState(obama, Blocks.STONE_SLAB.getDefaultState());
-                System.out.println("Ceiling Reset");
+            for(int z = 800; z >= endZ; z--) {
+                for (int x = -1152; x <= -1143; x++) {
+                    System.out.println("First For Loop Activated");
+                    BlockPos obama = new BlockPos(x, 59, z);
+                    player.world.setBlockState(obama, Blocks.STONE_SLAB.getDefaultState());
+                }
             }
+            System.out.println("Ceiling 1 reset");
         }
         else if (laneNumber == 2){
-            for (int x = -1141; x <= -1132; x++) {
-                System.out.println("First For Loop Activated");
-                BlockPos obama = new BlockPos(x, 59, 800);
-                player.world.setBlockState(obama, Blocks.STONE_SLAB.getDefaultState());
-                System.out.println("Ceiling Reset");
-            }
-        }
-        else if(laneNumber == 3){
-            for (int x = -1130; x <= -1121; x++) {
-                System.out.println("First For Loop Activated");
-                BlockPos obama = new BlockPos(x, 59, 800);
-                player.world.setBlockState(obama, Blocks.STONE_SLAB.getDefaultState());
-                System.out.println("Ceiling Reset");
+            for(int z = 800; z >= endZ; z--) {
+                for (int x = -1141; x <= -1132; x++) {
+                    System.out.println("First For Loop Activated");
+                    BlockPos obama = new BlockPos(x, 59,z);
+                    player.world.setBlockState(obama, Blocks.STONE_SLAB.getDefaultState());
+                    System.out.println("Ceiling 2 Reset");
                 }
+            }
+            System.out.println("Ceiling " + laneNumber + "reset");
+        }
+        else if(laneNumber == 3) {
+            for(int z = 800; z >= endZ; z--) {
+                for (int x = -1130; x <= -1121; x++) {
+                    System.out.println("First For Loop Activated");
+                    BlockPos obama = new BlockPos(x, 59, z);
+                    player.world.setBlockState(obama, Blocks.STONE_SLAB.getDefaultState());
+                    System.out.println("Ceiling 3 Reset");
+                }
+            }
+        System.out.println("Ceiling " + laneNumber + "reset");
         }
         else if(laneNumber ==4){
-            for (int x = -1119; x <= -1110; x++) {
-                System.out.println("First For Loop Activated");
-                BlockPos obama = new BlockPos(x, 59, 800);
-                player.world.setBlockState(obama, Blocks.STONE_SLAB.getDefaultState());
-                System.out.println("Ceiling Reset");
+            for(int z = 800; z >= endZ; z--) {
+                for (int x = -1119; x <= -1110; x++) {
+                    System.out.println("First For Loop Activated");
+                    BlockPos obama = new BlockPos(x, 59, z);
+                    player.world.setBlockState(obama, Blocks.STONE_SLAB.getDefaultState());
+                    System.out.println("Ceiling 4 Reset");
+                }
             }
+        System.out.println("Ceiling " + laneNumber + "reset");
         }
         else if(laneNumber ==5){
-            for (int x = -1108; x <= -1099; x++) {
-                System.out.println("First For Loop Activated");
-                BlockPos obama = new BlockPos(x, 59, 800);
-                player.world.setBlockState(obama, Blocks.STONE_SLAB.getDefaultState());
-                System.out.println("Ceiling Reset");
-             }
+            for(int z = 800; z >= endZ; z--) {
+                for (int x = -1108; x <= -1099; x++) {
+                    System.out.println("First For Loop Activated");
+                    BlockPos obama = new BlockPos(x, 59, z);
+                    player.world.setBlockState(obama, Blocks.STONE_SLAB.getDefaultState());
+                    System.out.println("Ceiling 5 Reset");
+                }
+            }
+        System.out.println("Ceiling " + laneNumber + "reset");
         }
     }
 
@@ -312,44 +318,46 @@ public class Minequest extends AbstractCustomQuest {
 
 
     public void startLane(int laneNumber, EntityPlayer thePlayer) {
+        System.out.println("startLane executed for:" + thePlayer.getName() + "in lane" + laneNumber);
         switch (laneNumber) {
             case 1:
+                System.out.println("Case for Lane 1 initiated");
                 if (laneStartStatus.get(0) == true)
                     break;
+                System.out.println("Lane is open");
                 laneStartStatus.set(0, true);
-                System.out.println("Case for Lane 1 initiated");
                 playersInLanes.set(0,thePlayer);
                 thePlayer.setPosition(-1148, 53, 799);
                 break;
             case 2:
+                System.out.println("Case for Lane 2 initiated");
                 if (laneStartStatus.get(1) == true)
                     break;
                 laneStartStatus.set(1, true);
-                System.out.println("Case for Lane 2 initiated");
                 playersInLanes.set(1,thePlayer);
                 thePlayer.setPosition(-1137, 53, 799);
                 break;
             case 3:
+                System.out.println("Case for Lane 3 initiated");
                 if (laneStartStatus.get(2) == true)
                     break;
                 laneStartStatus.set(2, true);
-                System.out.println("Case for Lane 3 initiated");
                 playersInLanes.set(2,thePlayer);
                 thePlayer.setPosition(-1126, 53, 799);
                 break;
             case 4:
+                System.out.println("Case for Lane 4 initiated");
                 if (laneStartStatus.get(3) == true)
                     break;
                 laneStartStatus.set(3, true);
-                System.out.println("Case for Lane 4 initiated");
                 playersInLanes.set(3,thePlayer);
                 thePlayer.setPosition(-1115, 53, 799);
                 break;
             case 5:
+                System.out.println("Case for Lane 5 initiated");
                 if (laneStartStatus.get(4) == true)
                     break;
                 laneStartStatus.set(4, true);
-                System.out.println("Case for Lane 5 initiated");
                 playersInLanes.set(4,thePlayer);
                 thePlayer.setPosition(-1104, 53, 799);
                 break;
@@ -360,23 +368,24 @@ public class Minequest extends AbstractCustomQuest {
     public void checkStartLocations() {
         System.out.println("Checking Start Locations");
         for (EntityPlayer thePlayer : playersInServer) {
-            if (thePlayer.getPosition() == laneStartLocations.get(0)) {
+            System.out.println("checkStartLocations shows " + thePlayer.getName() + " location to be: " + thePlayer.getPosition());
+            if (thePlayer.getPosition().getX() == laneStartLocations.get(0).getX() && thePlayer.getPosition().getY() == laneStartLocations.get(0).getY() && thePlayer.getPosition().getZ() == laneStartLocations.get(0).getZ()) {
                 System.out.println("LaneOne Initiated");
                 startLane(1, thePlayer);
             }
-            else if (thePlayer.getPosition() == laneStartLocations.get(1)) {
+            else if (thePlayer.getPosition().getX() == laneStartLocations.get(1).getX() && thePlayer.getPosition().getY() == laneStartLocations.get(1).getY() && thePlayer.getPosition().getZ() == laneStartLocations.get(1).getZ()) {
                 System.out.println("LaneTwo Initiated");
                 startLane(2, thePlayer);
             }
-            else if (thePlayer.getPosition() == laneStartLocations.get(2)) {
+            else if (thePlayer.getPosition().getX() == laneStartLocations.get(2).getX() && thePlayer.getPosition().getY() == laneStartLocations.get(2).getY() && thePlayer.getPosition().getZ() == laneStartLocations.get(2).getZ()) {
                 System.out.println("LaneThree Initiated");
                 startLane(3, thePlayer);
             }
-            else if (thePlayer.getPosition() == laneStartLocations.get(3)) {
+            else if (thePlayer.getPosition().getX() == laneStartLocations.get(3).getX() && thePlayer.getPosition().getY() == laneStartLocations.get(3).getY() && thePlayer.getPosition().getZ() == laneStartLocations.get(3).getZ()) {
                 System.out.println("LaneFour Initiated");
                 startLane(4, thePlayer);
             }
-            else if (thePlayer.getPosition() == laneStartLocations.get(4)) {
+            else if (thePlayer.getPosition().getX() == laneStartLocations.get(4).getX() && thePlayer.getPosition().getY() == laneStartLocations.get(4).getY() && thePlayer.getPosition().getZ() == laneStartLocations.get(4).getZ()) {
                 System.out.println("LaneFive Initiated");
                 startLane(5, thePlayer);
             }
@@ -389,62 +398,109 @@ public class Minequest extends AbstractCustomQuest {
         System.out.println("this.player is pointing to new player");
     }
 
+    private void makeHoles(double startx, double z, World world) { //x should be the same down the lane
+        System.out.println("Starting Holes");
+        for (int x = (int) startx; x < startx + 10; x++) {
+            System.out.println("First For Loop Activated");
+            BlockPos obama = new BlockPos(x, 59, z);
+            world.destroyBlock(obama, false);
+            System.out.println("Holes were made");
+        }
+    }
+
     public void generateLavaTick() {
         if (laneStartStatus.get(0) == true) {
+            System.out.println("lane one open for generateLavaTick");
             if (System.currentTimeMillis() - lastLavaGen.get(0) >= lavaGenerationInterval) {
-                if (currentZ.get(0) > endZ) {
+                System.out.println("Lava gen logic executed");
+                if (currentZ.get(0) <= endZ) {
+                    System.out.println("currentZ overpasses end in lane 1");
+                    endLane(1);
+                    return;
+                }
+                if(playersInLanes.get(0).getPosition().getZ() <= endZ){
+                    System.out.println(playersInLanes.get(0).getName() + "has completed lane 1");
+                    endLane(1);
                     return;
                 }
                 lastLavaGen.set(0, System.currentTimeMillis());
-                System.out.println("currentZ is now" + currentZ);
-                makeHoles(-1181, currentZ.get(0), player.world);
-                currentZ.set(0, currentZ.get(0) + 1);
+                System.out.println("currentZ is now " + currentZ.get(0));
+                makeHoles(-1152, currentZ.get(0), playersInLanes.get(0).world);
+                currentZ.set(0, currentZ.get(0) - 1);
             }
         }
         if (laneStartStatus.get(1) == true) {
-            if (System.currentTimeMillis() - lastLavaGen.get(0) >= lavaGenerationInterval) {
-                if (currentZ.get(0) > endZ) {
+            if (System.currentTimeMillis() - lastLavaGen.get(1) >= lavaGenerationInterval) {
+                if (currentZ.get(1) <= endZ) {
+                    System.out.println("currentZ overpasses end in lane 2");
+                    endLane(1);
                     return;
                 }
-                lastLavaGen.set(0, System.currentTimeMillis());
+                if(playersInLanes.get(1).getPosition().getZ() <= endZ){
+                    System.out.println(playersInLanes.get(1).getName() + "has completed lane 2");
+                    endLane(2);
+                    return;
+                }
+                lastLavaGen.set(1, System.currentTimeMillis());
                 System.out.println("currentZ is now" + currentZ);
-                makeHoles(-1181, currentZ.get(1), player.world);
-                currentZ.set(1, currentZ.get(1) + 1);
+                makeHoles(-1141, currentZ.get(1), playersInLanes.get(1).world);
+                currentZ.set(1, currentZ.get(1) - 1);
             }
         }
         if (laneStartStatus.get(2) == true) {
-            if (System.currentTimeMillis() - lastLavaGen.get(0) >= lavaGenerationInterval) {
-                if (currentZ.get(0) > endZ) {
+            if (System.currentTimeMillis() - lastLavaGen.get(2) >= lavaGenerationInterval) {
+                if (currentZ.get(2) <= endZ) {
+                    System.out.println("currentZ overpasses end in lane 3");
+                    endLane(3);
                     return;
                 }
-                lastLavaGen.set(0, System.currentTimeMillis());
+                if(playersInLanes.get(2).getPosition().getZ() <= endZ){
+                    System.out.println(playersInLanes.get(2).getName() + "has completed lane 3");
+                    endLane(3);
+                    return;
+                }
+                lastLavaGen.set(2, System.currentTimeMillis());
                 System.out.println("currentZ is now" + currentZ);
-                makeHoles(-1181, currentZ.get(2), player.world);
-                currentZ.set(2, currentZ.get(2) + 1);
+                makeHoles(-1130, currentZ.get(2), playersInLanes.get(2).world);
+                currentZ.set(2, currentZ.get(2) - 1);
             }
 
         }
         if (laneStartStatus.get(3) == true) {
-            if (System.currentTimeMillis() - lastLavaGen.get(0) >= lavaGenerationInterval) {
-                if (currentZ.get(0) > endZ) {
+            if (System.currentTimeMillis() - lastLavaGen.get(3) >= lavaGenerationInterval) {
+                if (currentZ.get(3) <= endZ) {
+                    System.out.println("currentZ overpasses end in lane 4");
+                    endLane(4);
                     return;
                 }
-                lastLavaGen.set(0, System.currentTimeMillis());
+                if(playersInLanes.get(3).getPosition().getZ() <= endZ){
+                    System.out.println(playersInLanes.get(3).getName() + "has completed lane 4");
+                    endLane(4);
+                    return;
+                }
+                lastLavaGen.set(3, System.currentTimeMillis());
                 System.out.println("currentZ is now" + currentZ);
-                makeHoles(-1181, currentZ.get(3), player.world);
-                currentZ.set(3, currentZ.get(3) + 1);
+                makeHoles(-1119, currentZ.get(3), playersInLanes.get(3).world);
+                currentZ.set(3, currentZ.get(3) - 1);
             }
 
         }
         if (laneStartStatus.get(4) == true) {
-            if (System.currentTimeMillis() - lastLavaGen.get(0) >= lavaGenerationInterval) {
-                if (currentZ.get(0) > endZ) {
+            if (System.currentTimeMillis() - lastLavaGen.get(4) >= lavaGenerationInterval) {
+                if (currentZ.get(4) <= endZ) {
+                    System.out.println("currentZ overpasses end in lane 5");
+                    endLane(5);
                     return;
                 }
-                lastLavaGen.set(0, System.currentTimeMillis());
+                if(playersInLanes.get(4).getPosition().getZ() <= endZ){
+                    System.out.println(playersInLanes.get(4).getName() + "has completed lane 5");
+                    endLane(5);
+                    return;
+                }
+                lastLavaGen.set(4, System.currentTimeMillis());
                 System.out.println("currentZ is now" + currentZ);
-                makeHoles(-1181, currentZ.get(4), player.world);
-                currentZ.set(4, currentZ.get(4) + 1);
+                makeHoles(-1108, currentZ.get(4), playersInLanes.get(4).world);
+                currentZ.set(4, currentZ.get(4) - 1);
             }
 
         }
@@ -454,12 +510,11 @@ public class Minequest extends AbstractCustomQuest {
     public void serverStartTick() {
         if (player.getPosition() == null)
             return;
-
         checkStartLocations();
         generateLavaTick();
+
         BlockPos dab = (new BlockPos(player.getPosition().getX(), player.getPosition().getY() - 1, player.getPosition().getZ()));
         BlockPos playerPos = player.getPosition();
-        System.out.println(dab);
         if (((EntityPlayerMP) player).world.getBlockState(dab).getBlock() == Blocks.MAGENTA_GLAZED_TERRACOTTA) {
             player.setSpawnChunk(playerPos, true, 420);
             System.out.println("New Spawn made");
@@ -476,17 +531,6 @@ public class Minequest extends AbstractCustomQuest {
 
 
         }
-
-
-    public void teleportPlayer(String coord, EntityPlayerMP playerMP) {
-        String[] coords = coord.split(" ");
-        int x = (int) Double.parseDouble(coords[0]);
-        int y = (int) Double.parseDouble(coords[1]);
-        int z = (int) Double.parseDouble(coords[2]);
-        Vec3d destination = new Vec3d(x, y, z);
-        ServerUtils.telport(playerMP, destination, this.DIMID);
-        System.out.println("Teleport " + playerMP.getName() + " to " + destination);
-    }
 
     public void onWorldTick(TickEvent.WorldTickEvent event) {
         //Server Side
@@ -514,13 +558,18 @@ public class Minequest extends AbstractCustomQuest {
     }
 
     //needs to be coded
-    public void end() {
-        //server side
-//		if(!player.world.isRemote()){
-        //	System.out.println("Not Remote");
-        //	}else{
-        //client
-        //	}
+    public void endLane(int laneNumber) {
+        playersInLanes.get(laneNumber - 1).setPosition(-1157,53,818);
+        playersInLanes.set(laneNumber - 1, null);
+        resetCeiling(laneNumber);
+        laneStartStatus.set(laneNumber -1, false);
+        lastLavaGen.set(laneNumber - 1, (long) 0);
+        currentZ.set(laneNumber - 1, 799);
+
+    }
+
+    public void end(){
+
     }
 
 }
