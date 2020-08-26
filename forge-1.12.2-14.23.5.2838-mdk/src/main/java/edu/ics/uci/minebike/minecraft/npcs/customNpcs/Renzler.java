@@ -32,8 +32,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class Renzler extends AbstractCustomNpc {
     public static final String NAME = "Renzler";
-    public static final Vec3d LOCATION = new Vec3d(-266, 65, -117); // coordinates used to tp to after the quest
-    //saved coordinates --> new Vec3d(-266, 65, -117);
+    // coordinates used to tp to after the quest, may have to change depending on your overworld
+    public static final Vec3d LOCATION = new Vec3d(-266, 65, -117);
     public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/kingsteve.png";
     public Renzler(){
         name = NAME;
