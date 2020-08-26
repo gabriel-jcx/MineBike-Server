@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 //import org.ngs.bigx.dictionary.objects.clinical.BiGXPatientPrescription;
 //import org.ngs.bigx.minecraft.bike.BiGXPacketHandler;
 
+// should outer AI update QuestHeartRate
 public class OuterAI extends QuestHeartRate{
 
     //Stores the quest/mini games' world dimension and their avg heart rate for that game

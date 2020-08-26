@@ -26,9 +26,9 @@ public class QuestHeartRate  {
     protected Integer time=0;
     public Integer current_heart_rate=0;
     //use to calculate the avg
-    public Integer total_heart_rate=0;
+    public Integer quest_heart_rate_sum=0; //
     //how many heart rate data has been loaded
-    public Integer num_heart_rate=0;
+    public Integer num_heart_rate=0; //
     //The avg heart rate return from mini quest, use to receive packet
     public static Integer quest_avg=0;
     private Integer check_remain=0;
@@ -39,9 +39,12 @@ public class QuestHeartRate  {
 
     }
     //Only use this for outer AI
+
+    protected get_avg
+    @Deprecated
     public void setCurrent_heart_rate( Integer load){
         current_heart_rate=load;
-        total_heart_rate+=current_heart_rate;
+        quest_heart_rate_sum+=current_heart_rate;
         num_heart_rate+=1;
         check_remaining();
 
@@ -51,7 +54,7 @@ public class QuestHeartRate  {
 //        return avg;
 //    }
     protected Integer calc_avg(){
-        return (int)total_heart_rate/current_heart_rate;
+        return (int)quest_heart_rate_sum/num_heart_rate;
     }
     protected  boolean reach_target(){
         Integer avg= calc_avg();
