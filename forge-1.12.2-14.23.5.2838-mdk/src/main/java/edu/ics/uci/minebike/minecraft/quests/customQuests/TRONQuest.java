@@ -177,9 +177,7 @@ public class TRONQuest extends AbstractCustomQuest {
     @Override
     public boolean onPlayerJoin(EntityPlayer player)
     {
-
-
-        System.out.println("On PlayerJoin triggerd on server side");
+        System.out.println("On PlayerJoin triggered on server side");
         ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
 
         WorldServer ws = DimensionManager.getWorld(250);
@@ -204,6 +202,7 @@ public class TRONQuest extends AbstractCustomQuest {
         }
 
         RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], 5, newLoc[2], npcSpeed); //trying to go to the randomized destination
+        //RinzlerNPC.wrappedNPC.navigateTo(-50, 5, -50, npcSpeed);
         IPos temp = RinzlerNPC.wrappedNPC.getNavigationPath();
         if (temp != null)
             System.out.println("Rinzler navigating to " + temp.toString());
@@ -212,7 +211,7 @@ public class TRONQuest extends AbstractCustomQuest {
 //        RinzlerNPC.getNavigator().setPath(new Path(temp),npcSpeed);
 //        RinzlerNPC.getNavigator().tryMoveToXYZ(newLoc[0], 5, newLoc[2], npcSpeed);
 //        RinzlerNPC.getNavigator().updatePath();
-////        RinzlerNPC.ais.setMovingType(2); // moving type 2 for
+//        RinzlerNPC.ais.setMovingType(2); // moving type 2 for
 //
 //        RinzlerNPC.updateClient();
         // Init Rinzler AI
@@ -306,8 +305,9 @@ public class TRONQuest extends AbstractCustomQuest {
             }
         }
     }
-    private void check_if_Rinzler_stuck(int tempSpeedX, int tempSpeedZ){
-        if (tempSpeedX == 0 && tempSpeedZ == 0) {
+    //changed this to double because the game was rounding down his speed and ending the game early
+    private void check_if_Rinzler_stuck(double tempSpeedX, double tempSpeedZ){
+        if (Math.abs(tempSpeedX) <= .25 && Math.abs(tempSpeedZ) <= .25) {
             NPCImmobileTimer++;
             //this code used to be for teleporting Rinzler around, it works if uncommented
                     /*if (NPCImmobileTimer > 500)
@@ -320,7 +320,7 @@ public class TRONQuest extends AbstractCustomQuest {
                         System.out.println("Tried to teleport Rinzler");
                         NPCImmobileTimer = 0;
                     }*/
-            if (NPCImmobileTimer >= 1000) //if Rinzler is continuously immobile for more than ~5 seconds
+            if (NPCImmobileTimer >= 1000) //if Rinzler is continuously immobile for more than ~10 seconds
             {
                 init = false;
                 returnToMainMenu();
@@ -342,11 +342,7 @@ public class TRONQuest extends AbstractCustomQuest {
                 {
                     reset_arena(event);
                     doOnce = false;
-                    //tried putting line 289 here instead, Rinzler didn't even twitch
-                    //RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], 5, newLoc[2], npcSpeed); //trying to go to the randomized destination
                 }
-                //RinzlerNPC.wrappedNPC.getAi();\
-
                 //((EntityLiving) (RinzlerNPC)).getMoveHelper().setMoveTo(1, 1, 1, 1); // this is the function
 
                 //RinzlerNPC.wrappedNPC.setHome(newLoc[0], 5, newLoc[2]);
@@ -362,16 +358,14 @@ public class TRONQuest extends AbstractCustomQuest {
                 int currentCoZNPC = (int) RinzlerNPC.wrappedNPC.getZ();
 
                 System.out.println("Rinzler X location: " + currentCoXNPC + ", Z Location: " + currentCoZNPC);
-                System.out.println("Player X = " + currentCoXPlayer + ", Player Z = " + currentCoZPlayer);
-                System.out.println("Rinzler is Navitagting " + RinzlerNPC.wrappedNPC.isNavigating());
-                //System.out.println(glassPanes);
+                //System.out.println("Player X = " + currentCoXPlayer + ", Player Z = " + currentCoZPlayer);
+                System.out.println("Rinzler is Navigating " + RinzlerNPC.wrappedNPC.isNavigating());
 
                 //If Rinzler gets close to his destination, then it is reset
                 // IF no longer navigating, move again
                 if ((currentCoXNPC <= newLoc[0] - 3 || currentCoZNPC <= newLoc[2] - 3) || RinzlerNPC.wrappedNPC.isNavigating() == false) {
                     System.out.println("Navigating to new location");
                     //RinzlerNPC.wrappedNPC.clearNavigation();
-
                     newLoc[0] = ((int) (Math.random() * 201)) - 100;
                     newLoc[2] = ((int) (Math.random() * 201)) - 100;
                     RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], 5, newLoc[2], npcSpeed); //trying to go to the randomized destination
@@ -388,19 +382,20 @@ public class TRONQuest extends AbstractCustomQuest {
 //                    return; // add function exit here
                 }
                 //System.out.println("Rinzler's speed is " + RinzlerNPC.wrappedNPC.getMotionX());
-                int tempSpeedX = (int) RinzlerNPC.wrappedNPC.getMotionX();
-                int tempSpeedZ = (int) RinzlerNPC.wrappedNPC.getMotionZ();
+                double tempSpeedX = RinzlerNPC.wrappedNPC.getMotionX();
+                double tempSpeedZ = RinzlerNPC.wrappedNPC.getMotionZ();
+                System.out.println("Rinzler X speed: " + tempSpeedX);
+                System.out.println("Rinzler Z speed: " + tempSpeedZ);
 
                 check_if_Rinzler_stuck(tempSpeedX, tempSpeedZ);
                 //timer to check if Rinzler has stopped moving for ~1000 ticks
-
 
                 //variables used to hold the current coordinates of the NPC and player
                 int[] tempCoordinatePlayer = {currentCoXPlayer, currentCoZPlayer};
                 int[] tempCoordinateNPC = {currentCoXNPC, currentCoZNPC};
 
-                System.out.println(playerLocation);
-                System.out.println(npcLocation);
+                //System.out.println(playerLocation);
+                //System.out.println(npcLocation);
 
                 if (!setPanePlayer && isNewPlayer(tempCoordinatePlayer))  //can the glass panes be set down yet for the player?
                 {
