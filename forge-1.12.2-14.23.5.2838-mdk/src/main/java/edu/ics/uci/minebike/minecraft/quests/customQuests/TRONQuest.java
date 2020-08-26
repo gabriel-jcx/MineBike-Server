@@ -19,6 +19,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.pathfinding.Path;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
@@ -38,6 +40,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import noppes.npcs.api.IPos;
 import noppes.npcs.api.NpcAPI;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.controllers.data.Quest;
@@ -108,8 +111,8 @@ public class TRONQuest extends AbstractCustomQuest {
     private HudString scoreRightStr;
 
     //Where Rinzler will spawn on the start of the quest
-    public Vec3d rinzlerCord = new Vec3d(0, 6, 10); //spawn Rinzler a bit a away from the player
-    EntityCustomNpc RinzlerNPC;
+    public Vec3d rinzlerCord = new Vec3d(10, 6, 10); //spawn Rinzler a bit a away from the player
+    EntityCustomNpc RinzlerNPC = null;
     private int npcSpeed;
     private int[] warning = { 100, 400 }; // location from where the warningString and warningNumber are based off of
     private HudString warningString; // Displays when player stops moving
@@ -134,14 +137,16 @@ public class TRONQuest extends AbstractCustomQuest {
     public ArrayList<int[]> npcLocation; //coordinates stored to place down glass panes for the npc
     boolean setPanePlayer; // flag to tell onWorldTick to place glass pane for player
     boolean setPaneNpc; // flag to tell onWorldTick to place glass pane for npc
+    boolean RinzlerSpawned = false;
     int[] newLoc; //coordinate we hope the NPC will seek out
+    int[] prev_newLoc;
     int NPCImmobileTimer; //iterator timer to detect how long the NPC has been stuck
 
     public TRONQuest() {
         super();
         this.DIMID = 250;
         //setting it to true will mean that a part of onWorldEvent will run and search for the player's coordinates
-        this.questStartLocation = new Vec3d (0,     8, 0);
+        this.questStartLocation = new Vec3d (0,8, 0);
         QuestUtils.populateTRONPlayerLocations(playerSpawnLocations,this.MAX_PLAYER_COUNT);
         QuestUtils.populateTRONNPCLocations(NPCSpawnLocations, this.MAX_NPC_COUNT);
         //define the variables, see explanations above
@@ -158,6 +163,7 @@ public class TRONQuest extends AbstractCustomQuest {
         setPanePlayer = false;
         setPaneNpc = false;
         newLoc = new int[]{(int) Math.random() * 200 + 1, 5, (int) Math.random() * 200 + 1};
+        prev_newLoc = new int[]{0,0,0,};
         System.out.println("Seeking out coordinates " + newLoc[0] + " and " + newLoc[2]);
         NPCImmobileTimer = 0;
         npcPath = new int[3];
@@ -166,10 +172,13 @@ public class TRONQuest extends AbstractCustomQuest {
     }
 
     // This onPlayerJoin is only called on the server side
+
     @SideOnly(Side.SERVER)
     @Override
     public boolean onPlayerJoin(EntityPlayer player)
     {
+
+
         System.out.println("On PlayerJoin triggerd on server side");
         ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
 
@@ -178,20 +187,36 @@ public class TRONQuest extends AbstractCustomQuest {
         Iterator iter = ws.loadedEntityList.iterator();
         while(iter.hasNext()){
             Entity entity = (Entity)iter.next();
-            System.out.println(entity.getName() + "is an entity");
+            System.out.println(entity.getName() + " is an entity");
             if(entity instanceof EntityCustomNpc){
                 if(entity.getName().equals("Rinzler"))
                 {
-                    ((EntityCustomNpc) entity).delete();
+                    RinzlerNPC = (EntityCustomNpc) entity;
                     System.out.println("Rinzler was deleted!");
                     //once this loop has finished, the quest can start because all the entities have been loaded
                 }
             }
         }
+        if(RinzlerNPC == null){
+            RinzlerNPC = NpcUtils.spawnNpc(rinzlerCord,
+                    DimensionManager.getWorld(this.DIMID), player.getEntityWorld(), "Rinzler",
+                    "customnpcs:textures/entity/humanmale/kingsteve.png");
+        }
 
-        RinzlerNPC = NpcUtils.spawnNpc(rinzlerCord,
-                DimensionManager.getWorld(this.DIMID), player.getEntityWorld(), "Rinzler",
-                "customnpcs:textures/entity/humanmale/kingsteve.png");
+        RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], 5, newLoc[2], npcSpeed); //trying to go to the randomized destination
+        IPos temp = RinzlerNPC.wrappedNPC.getNavigationPath();
+        if (temp != null)
+            System.out.println("Rinzler navigating to " + temp.toString());
+//        RinzlerNPC.getMoveHelper().setMoveTo(newLoc[0], 5, newLoc[2], npcSpeed);
+//        PathPoint[] temp = {new PathPoint(newLoc[0],5,newLoc[2])};
+//        RinzlerNPC.getNavigator().setPath(new Path(temp),npcSpeed);
+//        RinzlerNPC.getNavigator().tryMoveToXYZ(newLoc[0], 5, newLoc[2], npcSpeed);
+//        RinzlerNPC.getNavigator().updatePath();
+////        RinzlerNPC.ais.setMovingType(2); // moving type 2 for
+//
+//        RinzlerNPC.updateClient();
+        // Init Rinzler AI
+//        RinzlerNPC.ais.setMovingType(2); // moving type 2 for
         playersInGame.add((EntityPlayerMP)player);
         this.player = player;
         //the player and Rinzler are loaded, so methods in onWorldTick can run without crashing
@@ -234,6 +259,10 @@ public class TRONQuest extends AbstractCustomQuest {
     }
     @Override
     public void end() {
+        System.out.println("******** TRON Quest END *********");
+        if(RinzlerNPC != null){
+            RinzlerNPC.delete();
+        }
         return;
     }
 
@@ -260,74 +289,27 @@ public class TRONQuest extends AbstractCustomQuest {
 
     // NOTE: Minecraft runs 20 ticks per second
     //       Every tick is 0.05 seconds and 50 milliseconds
-    @Override
-    public void onWorldTick(TickEvent.WorldTickEvent event) {
-      //System.out.println(event.world.isRemote);
-        if(!event.world.isRemote){ // Server side
-            if(init)
+
+    private void reset_arena(TickEvent.WorldTickEvent event){
+        World w = event.world;
+        //        RinzlerNPC.ais.setMovingType(2); // moving type 2 for
+
+        for (int i = 0; i < 201; i++)
+        {
+            for (int j = 0; j < 201; j++)
             {
-                if (doOnce) //wipe the arena of all glass panes and reset the boolean
-                {
-                    for (int i = 0; i < 201; i++)
-                    {
-                        for (int j = 0; j < 201; j++)
-                        {
-                            glassPanes[i][j] = false;
-                            BlockPos block1 = new BlockPos(i - 100, 5, j - 100);
-                            BlockPos block2 = new BlockPos(i - 100, 4, j - 100);
-                            event.world.setBlockState(block1, (IBlockState) Blocks.AIR.getDefaultState());
-                            event.world.setBlockState(block2, (IBlockState) Blocks.AIR.getDefaultState());
-                        }
-                    }
-                    doOnce = false;
-                    //tried putting line 289 here instead, Rinzler didn't even twitch
-                    //RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], 5, newLoc[2], npcSpeed); //trying to go to the randomized destination
-                }
-                //RinzlerNPC.wrappedNPC.getAi();
-                RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], 5, newLoc[2], npcSpeed); //trying to go to the randomized destination
-                //RinzlerNPC.wrappedNPC.setHome(newLoc[0], 5, newLoc[2]);
-                //System.out.println("Homing destination " + RinzlerNPC.wrappedNPC.getHomeX());
-                //RinzlerNPC.wrappedNPC.setHome();
-                System.out.println("Navigation path " + RinzlerNPC.wrappedNPC.getNavigationPath());
-
-                int currentCoXPlayer = (int) player.posX;//get location of player for quick access
-                int currentCoZPlayer = (int) player.posZ;
-                int currentCoXNPC = (int) RinzlerNPC.wrappedNPC.getX(); //get location of NPC for quick access
-                int currentCoZNPC = (int) RinzlerNPC.wrappedNPC.getZ();
-
-                System.out.println("Rinzler X location: " + currentCoXNPC);
-                System.out.println("Rinzler Z location: " + currentCoZNPC);
-                System.out.println("Player X " + currentCoXPlayer);
-                System.out.println("Player Z " + currentCoZPlayer);
-                //System.out.println(glassPanes);
-
-                //If Rinzler gets close to his destination, then it is reset
-                if(currentCoXNPC == newLoc[0] - 3 || currentCoZNPC == newLoc[2] - 3)
-                {
-                    System.out.println("Navigating to new location");
-                    //RinzlerNPC.wrappedNPC.clearNavigation();
-                    newLoc[0] = ((int) (Math.random() * 201)) - 100;
-                    newLoc[2] = ((int) (Math.random() * 201))- 100;
-                }
-                //RinzlerNPC.wrappedNPC.setMoveForward(10);
-                //prevent crashes if player steps outside the arena
-                //if true, then player stepped on the same block with a glass pane
-                if (currentCoXPlayer >= -100 && currentCoXPlayer <= 100 && currentCoZPlayer >= -100 && currentCoZPlayer
-                        <= 100 && glassPanes[currentCoXPlayer + 100][currentCoZPlayer + 100])
-                {
-                    init = false;
-                    returnToMainMenu();
-                    System.out.println("PLAYER LOST");
-                }
-                //System.out.println("Rinzler's speed is " + RinzlerNPC.wrappedNPC.getMotionX());
-                int tempSpeedX = (int) RinzlerNPC.wrappedNPC.getMotionX();
-                int tempSpeedZ = (int) RinzlerNPC.wrappedNPC.getMotionZ();
-
-                //timer to check if Rinzler has stopped moving for ~1000 ticks
-                if (tempSpeedX == 0 && tempSpeedZ == 0)
-                {
-                    NPCImmobileTimer++;
-                    //this code used to be for teleporting Rinzler around, it works if uncommented
+                glassPanes[i][j] = false;
+                BlockPos block1 = new BlockPos(i - 100, 5, j - 100);
+                BlockPos block2 = new BlockPos(i - 100, 4, j - 100);
+                w.setBlockState(block1,  Blocks.AIR.getDefaultState());
+                w.setBlockState(block2,  Blocks.AIR.getDefaultState());
+            }
+        }
+    }
+    private void check_if_Rinzler_stuck(int tempSpeedX, int tempSpeedZ){
+        if (tempSpeedX == 0 && tempSpeedZ == 0) {
+            NPCImmobileTimer++;
+            //this code used to be for teleporting Rinzler around, it works if uncommented
                     /*if (NPCImmobileTimer > 500)
                     {
                         int tempX = ((int) (Math.random() * 201)) - 100;
@@ -338,30 +320,94 @@ public class TRONQuest extends AbstractCustomQuest {
                         System.out.println("Tried to teleport Rinzler");
                         NPCImmobileTimer = 0;
                     }*/
-                    if (NPCImmobileTimer >= 1000) //if Rinzler is continuously immobile for more than ~5 seconds
-                    {
-                        init = false;
-                        returnToMainMenu();
-                        NPCImmobileTimer = 0;
-                        System.out.println("PLAYER WON");
-                    }
-                }
-                else
+            if (NPCImmobileTimer >= 1000) //if Rinzler is continuously immobile for more than ~5 seconds
+            {
+                init = false;
+                returnToMainMenu();
+                NPCImmobileTimer = 0;
+                System.out.println("PLAYER WON");
+                return;
+            }
+        } else {
+            NPCImmobileTimer = 0; //resets back to 0 if Rinzler has begun to move again
+        }
+    }
+
+    @Override // This function is already your serverStartTick no longer need that function call at the end
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
+      //System.out.println(event.world.isRemote);
+        if(!event.world.isRemote) {
+            if (init) {
+                if (doOnce) //wipe the arena of all glass panes and reset the boolean
                 {
-                    NPCImmobileTimer = 0; //resets back to 0 if Rinzler has begun to move again
+                    reset_arena(event);
+                    doOnce = false;
+                    //tried putting line 289 here instead, Rinzler didn't even twitch
+                    //RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], 5, newLoc[2], npcSpeed); //trying to go to the randomized destination
                 }
+                //RinzlerNPC.wrappedNPC.getAi();\
+
+                //((EntityLiving) (RinzlerNPC)).getMoveHelper().setMoveTo(1, 1, 1, 1); // this is the function
+
+                //RinzlerNPC.wrappedNPC.setHome(newLoc[0], 5, newLoc[2]);
+                //System.out.println("Homing destination " + RinzlerNPC.wrappedNPC.getHomeX());
+                //RinzlerNPC.wrappedNPC.setHome();
+                IPos temp = RinzlerNPC.wrappedNPC.getNavigationPath();
+                if (temp != null)
+                    System.out.println("Rinzler navigating to " + temp.toString());
+
+                int currentCoXPlayer = (int) player.posX;//get location of player for quick access
+                int currentCoZPlayer = (int) player.posZ;
+                int currentCoXNPC = (int) RinzlerNPC.wrappedNPC.getX(); //get location of NPC for quick access
+                int currentCoZNPC = (int) RinzlerNPC.wrappedNPC.getZ();
+
+                System.out.println("Rinzler X location: " + currentCoXNPC + ", Z Location: " + currentCoZNPC);
+                System.out.println("Player X = " + currentCoXPlayer + ", Player Z = " + currentCoZPlayer);
+                System.out.println("Rinzler is Navitagting " + RinzlerNPC.wrappedNPC.isNavigating());
+                //System.out.println(glassPanes);
+
+                //If Rinzler gets close to his destination, then it is reset
+                // IF no longer navigating, move again
+                if ((currentCoXNPC <= newLoc[0] - 3 || currentCoZNPC <= newLoc[2] - 3) || RinzlerNPC.wrappedNPC.isNavigating() == false) {
+                    System.out.println("Navigating to new location");
+                    //RinzlerNPC.wrappedNPC.clearNavigation();
+
+                    newLoc[0] = ((int) (Math.random() * 201)) - 100;
+                    newLoc[2] = ((int) (Math.random() * 201)) - 100;
+                    RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], 5, newLoc[2], npcSpeed); //trying to go to the randomized destination
+
+                }
+                //RinzlerNPC.wrappedNPC.setMoveForward(10);
+                //prevent crashes if player steps outside the arena
+                //if true, then player stepped on the same block with a glass pane
+                if (currentCoXPlayer >= -100 && currentCoXPlayer <= 100 && currentCoZPlayer >= -100 && currentCoZPlayer
+                        <= 100 && glassPanes[currentCoXPlayer + 100][currentCoZPlayer + 100]) {
+                    init = false;
+                    returnToMainMenu();
+                    System.out.println("PLAYER LOST");
+//                    return; // add function exit here
+                }
+                //System.out.println("Rinzler's speed is " + RinzlerNPC.wrappedNPC.getMotionX());
+                int tempSpeedX = (int) RinzlerNPC.wrappedNPC.getMotionX();
+                int tempSpeedZ = (int) RinzlerNPC.wrappedNPC.getMotionZ();
+
+                check_if_Rinzler_stuck(tempSpeedX, tempSpeedZ);
+                //timer to check if Rinzler has stopped moving for ~1000 ticks
+
 
                 //variables used to hold the current coordinates of the NPC and player
-                int[] tempCoordinatePlayer = { currentCoXPlayer, currentCoZPlayer };
-                int[] tempCoordinateNPC = { currentCoXNPC, currentCoZNPC };
+                int[] tempCoordinatePlayer = {currentCoXPlayer, currentCoZPlayer};
+                int[] tempCoordinateNPC = {currentCoXNPC, currentCoZNPC};
 
                 System.out.println(playerLocation);
                 System.out.println(npcLocation);
 
                 if (!setPanePlayer && isNewPlayer(tempCoordinatePlayer))  //can the glass panes be set down yet for the player?
                 {
+
+                    // NOTE: make this a function duplicate code!
                     setPanePlayer = true; // player may now set down a glass pane
-                    int[] newLoc2 = { currentCoXPlayer, currentCoZPlayer };
+                    int[] newLoc2 = {currentCoXPlayer, currentCoZPlayer};
                     playerLocation.add(0, newLoc2); // adds the player coordinates to the beginning of the list
                     int[] tempCo2 = playerLocation.remove(numStagesPlayer); // removes at end of list
                     //Don't forget to remove to keep length of waterfall consistent!
@@ -377,11 +423,11 @@ public class TRONQuest extends AbstractCustomQuest {
                     }
                     setPanePlayer = false;
                 }
-                if (!setPaneNpc && isNewNpc(tempCoordinateNPC))  //can the glass panes be set down yet for Rinzler?
+                if ( isNewNpc(tempCoordinateNPC))  //can the glass panes be set down yet for Rinzler?
                 {
-                    setPaneNpc = true; // Rinzler may now set down a glass pane
-                    int[] newLoc = { currentCoXNPC, currentCoZNPC };
-                    npcLocation.add(0, newLoc); // adds the Rinzler coordinates to the beginning of the list
+//                    setPaneNpc = true; // Rinzler may now set down a glass pane
+                    int[] newLoc = {currentCoXNPC, currentCoZNPC};
+                    npcLocation.add(0,newLoc); // adds the Rinzler coordinates to the beginning of the list
                     int[] tempCo = npcLocation.remove(numStagesNpc); // removes at end of list
                     //Don't forget to remove to keep length of waterfall consistent!
                     int tempX = tempCo[0];
@@ -394,13 +440,12 @@ public class TRONQuest extends AbstractCustomQuest {
                     {
                         glassPanes[tempX + 100][tempZ + 100] = true; //keep track of where the glass pane was set down
                     }
-                    setPaneNpc = false;
+//                    setPaneNpc = false;
                 }
-                this.serverStartTick(event);
+//                this.serverStartTick(event);
             }
-        } else { // Client Side
-//
         }
+
     }
 
     public void returnToMainMenu()
