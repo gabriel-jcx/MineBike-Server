@@ -69,6 +69,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     public int DIMID;
     public WorldServer overcookWs = DimensionManager.getWorld(this.DIMID);
+    public Vec3d questWaitingLocation = new Vec3d(-500, 5, 0);
 //    public Vec3d questStartLocation;
 
     private boolean isStarted;
@@ -157,10 +158,12 @@ public class OverCookedQuest extends AbstractCustomQuest {
             if (!isWaiting)
             {
 //                WorldServer ws = DimensionManager.getWorld(this.DIMID);
+                questWaitingLocation = new Vec3d(-500, 5 , 0);
                 overcookWs = DimensionManager.getWorld(this.DIMID);
                 isWaiting = true;
                 //Records current time and when waiting period ends. Starts Waiting. Sets End Time
                 serverStartWaitTime = System.currentTimeMillis();
+                serverWaitTime = waitTime;
                 serverEndWaitTime = serverStartWaitTime + waitTime;
                 serverGameEndTime = serverEndWaitTime + gameTime;
                 updateWorldTime();
@@ -170,7 +173,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
             if(playersInGame.size() <= maxPlayerCount) {
                 ServerUtils.sendQuestData(EnumPacketServer.OverCookedWaitTime,(EntityPlayerMP)player,Long.toString(this.serverWaitTime));
                 System.out.println("Teleporting Player: " + player.getName() + " to Overcooked Quest Dim");
-                ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
+                ServerUtils.telport((EntityPlayerMP)player, questWaitingLocation,this.DIMID);
                 player.addPotionEffect(new PotionEffect(night_vision, (int)(gameTime + waitTime)/1000 * 20, 5, false, false));
                 player.addPotionEffect(new PotionEffect(saturation, (int)(gameTime + waitTime)/1000 * 20, 5, false, false));
                 playersInGame.add(player);
@@ -266,6 +269,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     {
         System.out.print("Started For Player" + player.getName());
         ServerUtils.sendQuestData(EnumPacketServer.QuestStart, player, Long.toString(this.DIMID));
+        ServerUtils.telport(player, this.questStartLocation,this.DIMID);
         spawnNPCs();
         sameBlock = false;
     }
@@ -383,10 +387,10 @@ public class OverCookedQuest extends AbstractCustomQuest {
     {
         //Need to add NPC interaction here to submit orders
         long curTime = System.currentTimeMillis();
-        if(curTime >= serverGameEndTime){
-            resetBeacon();
-            end();
-        }else{
+//        if(curTime >= serverGameEndTime){
+//            resetBeacon();
+//            end();
+//        }else{
             checkExpiration();
             generateOrder();
             for(EntityPlayer player: playersInGame){
@@ -406,7 +410,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 if(overcookWs.getBlockState(stations.get("Beacon")).getBlock() == Blocks.AIR)
                     overcookWs.setBlockState(stations.get("Beacon"), Blocks.STAINED_GLASS_PANE.getDefaultState().withProperty(BlockStainedGlassPane.COLOR, EnumDyeColor.RED));
             }
-        }
+//        }
     }
 
     //Client side tick during waiting period
@@ -447,6 +451,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         hudTimer = new HudString(15,10, QuestUtils.formatSeconds(waitingSeconds),2.5f,true, false);
         isWaiting = true;
         orders = new OrderHolder();
+//        spawnNPCs();
     }
 
     //Server side generation of order and calculates when next order should be generated
@@ -526,12 +531,12 @@ public class OverCookedQuest extends AbstractCustomQuest {
             if(orderAddTime.get(i) + expirationTime < curTime){
                 for(EntityPlayer player : playersInGame) {
                     ServerUtils.sendQuestData(EnumPacketServer.OverCookedOrderExpire, (EntityPlayerMP) player, Integer.toString(i));
-                    orderAddTime.remove(i);
-                    curOrders.remove(i);
-                    if(score > 0)
-                        score += failedOrder;
-                    return;
                 }
+                orderAddTime.remove(i);
+                curOrders.remove(i);
+                if(score > 0)
+                    score += failedOrder;
+                return;
             }
         }
     }
@@ -568,7 +573,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
             //method .get[x,y,z]() is used to key the comparisons relevant with int to int comparison
             ItemStack curHand = playerMP.getHeldItemMainhand();
             InventoryPlayer inv = playerMP.inventory;
-            System.out.println("Current map value is" + curVal);
+//            System.out.println("Current map value is" + curVal);
             if(pos.equals(curVal)){
                 System.out.println("On a station");
                 System.out.println("Player is holding " + curHand.getDisplayName());
@@ -617,10 +622,10 @@ public class OverCookedQuest extends AbstractCustomQuest {
                             removeIngredients(playerMP, rec);
                             if (rec.getName().contains("Sandwich")) {
                                 playerMP.inventory.addItemStackToInventory(new ItemStack(rec.getFood()));
-                                playerMP.sendStatusMessage(new TextComponentTranslation("Made A " + rec.getName(), new Object[0]).setStyle((new Style()).setColor(TextFormatting.GREEN)), false);
+                                playerMP.sendStatusMessage(new TextComponentTranslation("Made A " + rec.getName() + " Go to the Serving Station", new Object[0]).setStyle((new Style()).setColor(TextFormatting.GREEN)), false);
                             } else if (rec.getName().contains("Hamburger")) {
                                 playerMP.inventory.addItemStackToInventory(new ItemStack(rec.getFood()));
-                                playerMP.sendStatusMessage(new TextComponentTranslation("Made A " + rec.getName(), new Object[0]).setStyle((new Style()).setColor(TextFormatting.GREEN)), false);
+                                playerMP.sendStatusMessage(new TextComponentTranslation("Made A " + rec.getName() + " Go to the Serving Station", new Object[0]).setStyle((new Style()).setColor(TextFormatting.GREEN)), false);
                             }
                             playerMP.addPotionEffect(new PotionEffect(slowness, 6 * 20, 255, false, false));
                             break;

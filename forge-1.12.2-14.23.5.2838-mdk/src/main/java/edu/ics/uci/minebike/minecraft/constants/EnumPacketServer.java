@@ -13,7 +13,8 @@ public enum EnumPacketServer {
     OverCookedNewOrder,
     OverCookedOrderExpire,
     OverCookedOrderComplete,
-    OverCookedSpawnParticle;
+    OverCookedSpawnParticle,
+    OverCookedEnd;
     private EnumPacketServer(){
 
     }

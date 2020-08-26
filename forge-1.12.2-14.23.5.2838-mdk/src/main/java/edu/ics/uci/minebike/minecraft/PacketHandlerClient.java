@@ -75,6 +75,9 @@ public class PacketHandlerClient {
             String particle = CommonUtils.readString(buffer);
             System.out.println("Attempting to spawn " + particle);
             cook.clientSpawnParticle(particle);
+        }else if(type == EnumPacketServer.OverCookedEnd){
+            OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
+            cook.end();
         }
 
 
