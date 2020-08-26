@@ -53,9 +53,6 @@ import java.util.Random;
 
 import static net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer;
 
-
-
-
 // NOTE: many of the fields can be more optimized i think, getting lazy now LOL
 public class TRONQuest extends AbstractCustomQuest {
 
@@ -166,7 +163,7 @@ public class TRONQuest extends AbstractCustomQuest {
         // npc
         setPanePlayer = false; // flag to tell onWorldTick to place glass pane for player
         setPaneNpc = false; // flag to tell onWorldTick to place glass pane for npc
-        newLoc = new int[]{(int) Math.random() * 200 + 1, 4, (int) Math.random() * 200 + 1}; // global variable
+        newLoc = new int[]{(int) Math.random() * 200 + 1, 5, (int) Math.random() * 200 + 1}; // global variable
         System.out.println("Seeking out coordinates " + newLoc[0] + " and " + newLoc[2]);
         NPCImmobileTimer = 0;
         npcPath = new int[3];
@@ -293,15 +290,18 @@ public class TRONQuest extends AbstractCustomQuest {
                 double xPos = RinzlerNPC.wrappedNPC.getX();
                 double zPos = RinzlerNPC.wrappedNPC.getZ();
                 //RinzlerNPC.wrappedNPC.getAi();
-                RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], newLoc[1], newLoc[2], npcSpeed);
+                RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], 5, newLoc[2], npcSpeed);
+
+                //RinzlerNPC.wrappedNPC.setHome(newLoc[0], 5, newLoc[2]);
                 //System.out.println("Homing destination " + RinzlerNPC.wrappedNPC.getHomeX());
                 //RinzlerNPC.wrappedNPC.setHome();
-                //System.out.println("Navigation path " + RinzlerNPC.wrappedNPC.getNavigationPath());
+                System.out.println("Navigation path " + RinzlerNPC.wrappedNPC.getNavigationPath());
 
                 //timer to check if Rinzler has stopped moving for ~100 ticks
 
                 if(xPos == newLoc[0] - 3 || zPos == newLoc[2] - 3)
                 {
+                    System.out.println("Navigating to new location");
                     //RinzlerNPC.wrappedNPC.clearNavigation();
                     newLoc[0] = ((int) (Math.random() * 201)) - 100;
                     newLoc[2] = ((int) (Math.random() * 201))- 100;
@@ -314,7 +314,7 @@ public class TRONQuest extends AbstractCustomQuest {
                 int currentCoXNPC = (int) RinzlerNPC.wrappedNPC.getX();
                 int currentCoZNPC = (int) RinzlerNPC.wrappedNPC.getZ();
                 System.out.println("Rinzler X location: " + currentCoXNPC);
-                System.out.println("Rinzler Z loaction: " + currentCoZNPC);
+                System.out.println("Rinzler Z location: " + currentCoZNPC);
 
                 System.out.println("Player X " + currentCoX);
                 System.out.println("Player Z " + currentCoZ);
@@ -327,13 +327,23 @@ public class TRONQuest extends AbstractCustomQuest {
                     System.out.println("PLAYER LOST");
                 }
 
-                System.out.println("Rinzler's speed is " + RinzlerNPC.wrappedNPC.getMotionX());
+                //System.out.println("Rinzler's speed is " + RinzlerNPC.wrappedNPC.getMotionX());
                 int tempSpeedX = (int) RinzlerNPC.wrappedNPC.getMotionX();
                 int tempSpeedZ = (int) RinzlerNPC.wrappedNPC.getMotionZ();
 
                 if (tempSpeedX == 0 && tempSpeedZ == 0)
                 {
                     NPCImmobileTimer++;
+                    /*if (NPCImmobileTimer > 500)
+                    {
+                        int tempX = ((int) (Math.random() * 201)) - 100;
+                        int tempZ = ((int) (Math.random() * 201)) - 100;
+                        RinzlerNPC.attemptTeleport(tempX, 5, tempZ);
+                        //RinzlerNPC.wrappedNPC.setHome(tempX - 20, 5, tempZ - 20);
+                        //RinzlerNPC.wrappedNPC.home;
+                        System.out.println("Tried to teleport Rinzler");
+                        NPCImmobileTimer = 0;
+                    }*/
                     if (NPCImmobileTimer >= 1000) //if Rinzler is continuously immobile for more than 5 seconds
                     {
                         init = false;

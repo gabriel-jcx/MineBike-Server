@@ -55,7 +55,7 @@ public class Renzler extends AbstractCustomNpc {
     public void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event) {
         if(!event.getWorld().isRemote) {
           MinecraftServer s = FMLCommonHandler.instance().getMinecraftServerInstance();
-          s.getCommandManager().executeCommand(s, "/tpx 250 0 10 0" );
+          s.getCommandManager().executeCommand(s, "/tpx 250 0 8 0" );
           //s.getCommandManager().executeCommand(s, "/noppes npc Rinzler delete" );
         }
 
