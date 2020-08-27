@@ -168,7 +168,7 @@ public class TRONQuest extends AbstractCustomQuest {
         NPCImmobileTimer = 0;
         npcPath = new int[3];
         npcPathList = new ArrayList<int[]>();
-        npcSpeed = 4;
+        npcSpeed = 3;
     }
 
     // This onPlayerJoin is only called on the server side
@@ -191,17 +191,20 @@ public class TRONQuest extends AbstractCustomQuest {
                 {
                     RinzlerNPC = (EntityCustomNpc) entity;
                     System.out.println("Rinzler was deleted!");
+                    //just delete them manually
                     //once this loop has finished, the quest can start because all the entities have been loaded
                 }
             }
         }
-        if(RinzlerNPC == null){
+        if(RinzlerNPC == null)
+        {
             RinzlerNPC = NpcUtils.spawnNpc(rinzlerCord,
                     DimensionManager.getWorld(this.DIMID), player.getEntityWorld(), "Rinzler",
                     "customnpcs:textures/entity/humanmale/kingsteve.png");
         }
 
         RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], 5, newLoc[2], npcSpeed); //trying to go to the randomized destination
+        //RinzlerNPC.wrappedNPC.setHome(newLoc[0], 5, newLoc[2]); //trying to go to the randomized destination
         //RinzlerNPC.wrappedNPC.navigateTo(-50, 5, -50, npcSpeed);
         IPos temp = RinzlerNPC.wrappedNPC.getNavigationPath();
         if (temp != null)
@@ -260,7 +263,7 @@ public class TRONQuest extends AbstractCustomQuest {
     public void end() {
         System.out.println("******** TRON Quest END *********");
         if(RinzlerNPC != null){
-            RinzlerNPC.delete();
+            //RinzlerNPC.delete();
         }
         return;
     }
@@ -369,7 +372,7 @@ public class TRONQuest extends AbstractCustomQuest {
                     newLoc[0] = ((int) (Math.random() * 201)) - 100;
                     newLoc[2] = ((int) (Math.random() * 201)) - 100;
                     RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], 5, newLoc[2], npcSpeed); //trying to go to the randomized destination
-
+                    //RinzlerNPC.wrappedNPC.setHome(newLoc[0], 5, newLoc[2]); //trying to go to the randomized destination
                 }
                 //RinzlerNPC.wrappedNPC.setMoveForward(10);
                 //prevent crashes if player steps outside the arena
@@ -470,7 +473,6 @@ public class TRONQuest extends AbstractCustomQuest {
         NPCImmobileTimer = 0;
         npcPath = new int[3];
         npcPathList = new ArrayList<int[]>();
-        npcSpeed = 4;
     }
 
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
