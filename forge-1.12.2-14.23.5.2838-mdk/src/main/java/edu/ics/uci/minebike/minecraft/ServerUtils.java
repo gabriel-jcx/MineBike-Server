@@ -25,7 +25,9 @@ public class ServerUtils {
     //@SideOnly(Side.CLIENT)
     synchronized public static void telport(EntityPlayerMP player, Vec3d pos, int dimID){
         DimChanger.changeDim(player, dimID);
-        player.setPositionAndUpdate(pos.x,pos.y,pos.z);
+//        player.
+        player.connection.setPlayerLocation(pos.x,pos.y,pos.z,player.rotationYaw,player.rotationPitch);
+//        player.
         //player.
 //        WorldServer ws = DimensionManager.getWorld(dimID);
 //        ws.
