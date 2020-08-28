@@ -1,13 +1,14 @@
 package edu.ics.uci.minebike.minecraft.client.AI;
 
 import edu.ics.uci.minebike.minecraft.ClientUtils;
+import edu.ics.uci.minebike.minecraft.client.hud.OuterAIHud;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 import org.ngs.bigx.minecraft.BiGX;
-
+import org.ngs.bigx.minecraft.client.AI.OuterAI.QuestStatus;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -47,15 +48,19 @@ public class OuterAI {
     private int currHR; // current heart rate
     private int currResistance = 0; // current resistance level
     private int prevSec;
+    private int currentQuest=1;
+
+
 
     //Assign mini game AI to this variable
     public QuestHeartRate running_game;
     //Check the whether there is a mini game running or not
-    public QuestStatus questStatus;
+    public  QuestStatus questStatus;
 
     private OuterAI(){
         questStatus = QuestStatus.NONE;
     }
+    private OuterAIHud hud= new OuterAIHud();
 
     public static OuterAI getInstance(){
         if(instance == null)
@@ -98,7 +103,8 @@ public class OuterAI {
                 //if kids are doing nothing in outer world, pop up a quest
                 else if( gameTimeDisplayTimer>time_threshold && !reach_target())
                 {
-                    pop_up_quest();
+                    popUpQuest();
+                    popUpHudShowing=true;
                 }
 
 
@@ -112,7 +118,7 @@ public class OuterAI {
             if (Keyboard.isKeyDown(0x2E) && popUpHudShowing)
             {
 
-                ClientUtils.sendData(EnumPacketClient.PlayerJoin,"222");
+                ClientUtils.sendData(EnumPacketClient.PlayerJoin,currentQuest);
                 popUpHudShowing=false;
             }
         }
@@ -128,21 +134,18 @@ public class OuterAI {
 
 
     //TODO: if the kids not in mini-game, and avg heart rate does not reach the goal for __ mins, pop up a quest
-    public void pop_up_quest(){
+    public void popUpQuest(){
         if(questList.size()==0){
             //Randomly generate a quest
             Random rand = new Random();
-            int randomQuest = generalQuestList.get(rand.nextInt(generalQuestList.size()));
-
+            currentQuest = generalQuestList.get(rand.nextInt(generalQuestList.size()));
         }
         else{
-            int bestQuest = questList.get(Collections.max(questList.keySet()));
+            currentQuest = questList.get(Collections.max(questList.keySet()));
+
             //TODO: spawn the quest, pop up hud may be?
         }
+        hud.showPopUpHUD(currentQuest);
     }
 
-    public enum QuestStatus {
-        RUNNING,
-        NONE
-    }
 }

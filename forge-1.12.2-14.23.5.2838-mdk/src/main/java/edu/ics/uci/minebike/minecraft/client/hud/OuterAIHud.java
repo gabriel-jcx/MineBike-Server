@@ -42,7 +42,7 @@ public class OuterAIHud {
 
 
     ResourceLocation heartLocation= new ResourceLocation(BiGXMain.MOD_ID +":textures/heart.png");
-    ResourceLocation popUpBackGround= new ResourceLocation(BiGXMain.MOD_ID +":textures/heart.png");
+    ResourceLocation popUpBackGround= new ResourceLocation(BiGXMain.MOD_ID +":textures/bg.png");
 
 
 
@@ -109,6 +109,12 @@ public class OuterAIHud {
 
         }
     }
+//    public void setPopUpQuest(int questNum){
+//
+//    }
+//    public void hidePopUpQuest(){
+//
+//    }
     public void showPopUpHUD(int dim){
 
         if (dim ==222){
@@ -117,6 +123,7 @@ public class OuterAIHud {
         else if (dim ==223){
             this.popUpQuest =new HudString(0, 0, "Fishing Quest",true,true);
         }
+        showPopUpBG();
         this.popUpInstruction= new HudString(0,10,"Press X to accept the quest with extra reward. Press C to cancel",true,true);
 
     }
