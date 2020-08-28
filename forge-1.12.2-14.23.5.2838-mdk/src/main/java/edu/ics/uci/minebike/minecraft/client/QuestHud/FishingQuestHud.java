@@ -1,4 +1,4 @@
-package edu.ics.uci.minebike.minecraft.client.hud;
+package edu.ics.uci.minebike.minecraft.client.QuestHud;
 
 import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;

@@ -1,5 +1,7 @@
-package edu.ics.uci.minebike.minecraft.client.AI;
+package edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
+import edu.ics.uci.minebike.minecraft.client.AI.Fishpond;
+import edu.ics.uci.minebike.minecraft.client.AI.QuestHeartRate;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import org.ngs.bigx.minecraft.BiGX;
 import org.ngs.bigx.minecraft.context.BigxClientContext;
