@@ -309,6 +309,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 ServerUtils.telport((EntityPlayerMP) Player, ChefGusteau.LOCATION, 0);
                 EntityPlayerMP playerMP = (EntityPlayerMP) Player;
                 Player.sendStatusMessage(new TextComponentTranslation("The final score was: " + score, new Object[0]).setStyle((new Style()).setColor(TextFormatting.YELLOW)), false);
+                ServerUtils.sendQuestData(EnumPacketServer.OverCookedEnd, playerMP);
             }
             playersInGame.clear();
             resetWorldTime();
@@ -387,10 +388,11 @@ public class OverCookedQuest extends AbstractCustomQuest {
     {
         //Need to add NPC interaction here to submit orders
         long curTime = System.currentTimeMillis();
-//        if(curTime >= serverGameEndTime){
-//            resetBeacon();
-//            end();
-//        }else{
+        if(curTime >= serverGameEndTime){
+            resetBeacon();
+            end();
+
+        }else{
             checkExpiration();
             generateOrder();
             for(EntityPlayer player: playersInGame){
@@ -410,7 +412,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 if(overcookWs.getBlockState(stations.get("Beacon")).getBlock() == Blocks.AIR)
                     overcookWs.setBlockState(stations.get("Beacon"), Blocks.STAINED_GLASS_PANE.getDefaultState().withProperty(BlockStainedGlassPane.COLOR, EnumDyeColor.RED));
             }
-//        }
+        }
     }
 
     //Client side tick during waiting period
@@ -426,10 +428,10 @@ public class OverCookedQuest extends AbstractCustomQuest {
     //Starts the game for timer side and updates the times on the orders
     public void clientStartTick(){
         long curTime = System.currentTimeMillis();
-        if(curTime >= clientEndTime) {
-            System.out.println("Client is ending");
-            end();
-        }else{
+//        if(curTime >= clientEndTime) {
+//            System.out.println("Client is ending");
+//            end();
+//        }else{
             if(curTime - clientStartTime < 3000) {
                 hudTimer.setText("Start Cooking!");
             }else{
@@ -437,7 +439,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
             }
             orders.update(curTime);
             scoreVal.setText(Integer.toString(score));
-        }
+//        }
     }
 
     //Initializes time for the client side as well as timer HUD
