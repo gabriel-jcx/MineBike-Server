@@ -1,7 +1,7 @@
 package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
 import edu.ics.uci.minebike.minecraft.ServerUtils;
-import edu.ics.uci.minebike.minecraft.client.AI.FishingAI;
+import edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI.FishingAI;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -18,7 +18,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
-import edu.ics.uci.minebike.minecraft.client.hud.FishingQuestHud;
+import edu.ics.uci.minebike.minecraft.client.QuestHud.FishingQuestHud;
 //import org.ngs.bigx.minecraft.BiGX;
 
 import java.util.Random;

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Fishpond {
+
     HashMap<String,Integer> easy= new HashMap<>();
     HashMap<String,Integer> medium= new HashMap<>();
     HashMap<String,Integer> hard= new HashMap<>();

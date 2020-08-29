@@ -153,14 +153,11 @@ public class CommonEventHandler {
             }
             spawned = true;
         }
-        if(event.side.isClient()&&spawned && event.player.world.provider.getDimension() == 0){
+        if(event.side.isClient() && event.player.world.provider.getDimension() == 0){
             if (outerHudShowing){
-
                 //outerHud initialized, updating it for every sec
                 outerAIHud.refresh();
-
             }
-
             else{
                 outerHudShowing=true;
                 System.out.println("OuterHudShowing");

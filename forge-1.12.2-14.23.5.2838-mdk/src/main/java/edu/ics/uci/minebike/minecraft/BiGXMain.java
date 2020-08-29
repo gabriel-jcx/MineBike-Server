@@ -28,7 +28,7 @@ public class BiGXMain {
     public static ServerSaveManager saveManager = new ServerSaveManager();
     public static CustomQuestManager questMangager;
     public static GameFishingEvent gameFishingEvent= new GameFishingEvent();
-    public static OuterAI outerAI= new OuterAI();
+    public static OuterAI outerAI;
 //    FMLne
     public HudManager hudManager;
     public static FMLEventChannel Channel;
@@ -70,7 +70,7 @@ public class BiGXMain {
         if(event.getSide().isClient()){
             hudManager = HudManager.getInstance(Minecraft.getMinecraft());
             MinecraftForge.EVENT_BUS.register(hudManager);
-
+            outerAI = OuterAI.
         }
 
         logger.info("MineBike: Init finished");

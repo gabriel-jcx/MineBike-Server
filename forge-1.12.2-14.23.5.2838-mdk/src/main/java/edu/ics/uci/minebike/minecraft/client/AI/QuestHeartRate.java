@@ -34,13 +34,15 @@ public class QuestHeartRate  {
     private Integer check_remain=0;
     private Integer check_fail=0;
 
-    BiGXPatientPrescription p= new BiGXPatientPrescription();
+    protected BiGXPatientPrescription p= new BiGXPatientPrescription();
     public QuestHeartRate() {
 
     }
     //Only use this for outer AI
 
-    protected get_avg
+    protected void get_avg(){
+
+    }
     @Deprecated
     public void setCurrent_heart_rate( Integer load){
         current_heart_rate=load;

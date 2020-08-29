@@ -1,14 +1,10 @@
 package edu.ics.uci.minebike.minecraft.item;
 
-import edu.ics.uci.minebike.minecraft.client.AI.FishingAI;
+import edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI.FishingAI;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.ItemFishedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
