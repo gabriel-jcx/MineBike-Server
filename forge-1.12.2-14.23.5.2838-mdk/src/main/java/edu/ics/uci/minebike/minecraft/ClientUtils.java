@@ -1,8 +1,10 @@
 package edu.ics.uci.minebike.minecraft;
 
+import edu.ics.uci.minebike.minecraft.client.AI.GamePlayTracker;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.village.MerchantRecipeList;
@@ -19,6 +21,10 @@ import java.util.UUID;
 import static noppes.npcs.Server.writeString;
 
 public class ClientUtils {
+
+    public static void sendPlayerGameplayData(GamePlayTracker localData){
+        sendData();
+    }
 
     // Send data to the Server
     public static void sendData(EnumPacketClient num, Object... objs){

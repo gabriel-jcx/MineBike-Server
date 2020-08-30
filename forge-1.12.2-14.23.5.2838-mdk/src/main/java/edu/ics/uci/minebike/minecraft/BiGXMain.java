@@ -25,7 +25,7 @@ public class BiGXMain {
     private static Logger logger;
     public static CommonEventHandler handler = new CommonEventHandler();
     public static CommonProxy proxy;// = new CommonProxy();
-    public static ServerSaveManager saveManager = new ServerSaveManager();
+    public static ServerSaveManager saveManager ;
     public static CustomQuestManager questMangager;
     public static GameFishingEvent gameFishingEvent= new GameFishingEvent();
     public static OuterAI outerAI;
@@ -70,7 +70,10 @@ public class BiGXMain {
         if(event.getSide().isClient()){
             hudManager = HudManager.getInstance(Minecraft.getMinecraft());
             MinecraftForge.EVENT_BUS.register(hudManager);
-            outerAI = OuterAI.
+            outerAI = OuterAI.getInstance();
+
+        }else{ // should be server side
+            saveManager = new ServerSaveManager();
         }
 
         logger.info("MineBike: Init finished");

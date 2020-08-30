@@ -3,8 +3,8 @@ import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.client.AI.Fishpond;
 import edu.ics.uci.minebike.minecraft.client.AI.QuestHeartRate;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
-import org.ngs.bigx.minecraft.BiGX;
-import org.ngs.bigx.minecraft.context.BigxClientContext;
+//import org.ngs.bigx.minecraft.BiGX;
+//import org.ngs.bigx.minecraft.context.BigxClientContext;
 
 import java.util.*;
 
@@ -75,7 +75,7 @@ public class FishingAI extends QuestHeartRate {
     }
     //tell the CustomHook fish name, return the resistance to FishingQuest
     private Integer randomFish(int l) {
-        System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
+//        System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
         Integer fishIndex=random.nextInt(l);
         Object key = allFishNamesInPond[random.nextInt(l)];
         lastFish= (String)key;

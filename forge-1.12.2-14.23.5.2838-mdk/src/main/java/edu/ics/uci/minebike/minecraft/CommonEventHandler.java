@@ -114,6 +114,7 @@ public class CommonEventHandler {
         System.out.println(event.player.dimension);
         System.out.println(event.player.getName() + " has logged out");
 
+        // Player Logout at
         if(event.player.world.provider.getDimension() == WorldProviderSoccerQuest.DIM_ID){
             SoccerQuest soccer = (SoccerQuest)CustomQuestManager.customQuests.get(222);
             soccer.playersInGame.remove((EntityPlayerMP)event.player);
@@ -121,6 +122,8 @@ public class CommonEventHandler {
                 soccer.end();
             }
         }
+        if(event.player.world.isRemote) // client side send Tracking Data to server
+            ServerUtils .sendPlayerGameplayData();
 
     }
     @SubscribeEvent

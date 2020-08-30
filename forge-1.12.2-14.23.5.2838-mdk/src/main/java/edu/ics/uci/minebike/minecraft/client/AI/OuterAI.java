@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
+import org.ngs.bigx.dictionary.objects.clinical.BiGXPatientPrescription;
 import org.ngs.bigx.minecraft.BiGX;
 import org.ngs.bigx.minecraft.client.AI.OuterAI.QuestStatus;
 import java.util.*;
@@ -23,8 +24,7 @@ import java.util.concurrent.TimeUnit;
 // should outer AI update QuestHeartRate
 public class OuterAI {
 
-    //Stores the quest/mini games' world dimension and their avg heart rate for that game
-    public Map<Integer, Integer> questList;
+
 
 //    public List<Integer> generalQuestList= new ArrayList<Integer>(){{
 //        //soccer,fishing
@@ -61,17 +61,21 @@ public class OuterAI {
     private int idleSeconds = 600;
     private int idleCounter = 0;
     private boolean targetReached = false;
+    private OuterAIHud hud = null;
+
+    private BiGXPatientPrescription prescription  = null;
 
     // time related memebers
-
+    //Stores the quest/mini games' world dimension and their avg heart rate for that game
+    public Map<Integer, Integer> questList; // Quest List should be included in the game tracker
     private void readData(){
     }
 
     private OuterAI(){
-        //
+        prescription = null;// TODO: read the patient prescription form
+        hud = new OuterAIHud();
 //        questStatus = QuestStatus.NONE;
     }
-    private OuterAIHud hud= new OuterAIHud();
 
     public static OuterAI getInstance(){
         if(instance == null)
@@ -104,6 +108,7 @@ public class OuterAI {
     private void updateResistance(){
         this.currResistance = BiGX.instance().clientContext.resistance;
     }
+
     private void checkPopUpQuest(){
         if(questStatus == EnumQuestStatus.None){
             idleCounter++;
@@ -168,7 +173,6 @@ public class OuterAI {
         else{
             currentQuest = questList.get(Collections.max(questList.keySet()));
 
-            //TODO: spawn the quest, pop up hud may be?
         }
         hud.showPopUpHUD(currentQuest);
     }
