@@ -48,7 +48,7 @@ public class OuterAI {
     // local instance
     private static OuterAI instance = null;
 
-    private static GamePlayTracker gamePlayTracker = null;
+    public static GamePlayTracker gamePlayTracker = null;
     // NOTE: public variables
 
 
@@ -65,7 +65,7 @@ public class OuterAI {
     private int idleCounter = 0;
     private boolean targetReached = false;
     private OuterAIHud hud = null;
-
+    private PlayerBehaviorAnalyzer playerBehaviorAnalyzer = null;
     private BiGXPatientPrescription prescription  = null;
 
     // time related memebers
@@ -77,6 +77,7 @@ public class OuterAI {
     private OuterAI(){
         prescription = null;// TODO: read the patient prescription form
         hud = new OuterAIHud();
+        playerBehaviorAnalyzer =  new PlayerBehaviorAnalyzer();
 //        questStatus = QuestStatus.NONE;
     }
 

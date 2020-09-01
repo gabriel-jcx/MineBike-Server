@@ -17,7 +17,6 @@ public abstract class AbstractQuestAI {
 
     protected float questAvgHR;
     protected BiGXPatientPrescription patientPrescription;
-
     public AbstractQuestAI(){
         isStarted = false;
         targetHRReached = false;
@@ -30,7 +29,7 @@ public abstract class AbstractQuestAI {
         remainingTargetTime = totalTargetTime;
         questAvgHR = 0; // init to zero
     }
-
+    abstract public String getQuestName();
     public int getRemainingTime_Sec(){
         return remainingTargetTime;
     }
@@ -45,6 +44,7 @@ public abstract class AbstractQuestAI {
         }
         return true;
     }
+
 
     protected int getMaxTargetHR(){
         return this.maxTargetHR;
