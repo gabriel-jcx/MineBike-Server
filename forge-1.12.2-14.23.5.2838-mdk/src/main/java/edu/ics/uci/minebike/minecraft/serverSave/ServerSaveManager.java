@@ -7,6 +7,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -42,12 +43,34 @@ public class ServerSaveManager {
         String name = player.getName();
         File save = FileSystems.getDefault().getPath(saveFolderName.concat(name)).toFile();
         try(FileWriter fileWriter = new FileWriter(save)){
-            fileWriter.write(object.toJson().toString());
+            fileWriter.write(object.toJsonStr());
         }catch (IOException e){
             e.printStackTrace();
             return false;
         }
         return true;
+    }
+
+    public GamePlayTracker readGPTfromFile(String name){
+        GamePlayTracker gpt = new GamePlayTracker();
+        if(isFileExist(saveFolderName.concat(name))){
+
+            // TODO: read file into a String.
+            try(FileReader reader = new FileReader(name + ".json")){
+//                reader.read
+            }catch(IOException e){
+                e.printStackTrace();
+
+            }
+        }
+        return gpt;
+    }
+
+    public static boolean isFileExist(String name){
+        if(FileSystems.getDefault().getPath(name).toFile().exists()){
+            return true;
+        }
+        return false;
     }
 
     public static boolean isFolderExist(String name){

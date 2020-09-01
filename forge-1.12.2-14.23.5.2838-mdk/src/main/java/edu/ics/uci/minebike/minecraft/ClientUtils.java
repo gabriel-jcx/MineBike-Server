@@ -22,9 +22,9 @@ import static noppes.npcs.Server.writeString;
 
 public class ClientUtils {
 
-    public static void sendPlayerGameplayData(GamePlayTracker localData){
-        sendData();
-    }
+//    public static void sendPlayerGameplayData(GamePlayTracker localData){
+//        sendData();
+//    }
 
     // Send data to the Server
     public static void sendData(EnumPacketClient num, Object... objs){

@@ -4,9 +4,10 @@ import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.client.hud.OuterAIHud;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import edu.ics.uci.minebike.minecraft.constants.EnumQuestStatus;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.ngs.bigx.dictionary.objects.clinical.BiGXPatientPrescription;
 import org.ngs.bigx.minecraft.BiGX;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 //import org.ngs.bigx.minecraft.bike.BiGXPacketHandler;
 
 // should outer AI update QuestHeartRate
+@SideOnly(Side.CLIENT)
 public class OuterAI {
 
 
@@ -46,6 +48,7 @@ public class OuterAI {
     // local instance
     private static OuterAI instance = null;
 
+    private static GamePlayTracker gamePlayTracker = null;
     // NOTE: public variables
 
 
@@ -56,7 +59,7 @@ public class OuterAI {
     private int currHR; // current heart rate
     private float currResistance = 0; // current resistance level
     private int prevSec;
-    private AbstractQuestAI currentQuest;
+    private AbstractQuestAI currentQuestAI;
     private EnumQuestStatus questStatus;
     private int idleSeconds = 600;
     private int idleCounter = 0;
@@ -67,7 +70,7 @@ public class OuterAI {
 
     // time related memebers
     //Stores the quest/mini games' world dimension and their avg heart rate for that game
-    public Map<Integer, Integer> questList; // Quest List should be included in the game tracker
+    //public Map<Integer, Integer> questList; // Quest List should be included in the game tracker
     private void readData(){
     }
 
@@ -77,28 +80,32 @@ public class OuterAI {
 //        questStatus = QuestStatus.NONE;
     }
 
+    public static void setGamePlayTracker(GamePlayTracker gpt){
+        gamePlayTracker = gpt;
+    }
+
     public static OuterAI getInstance(){
         if(instance == null)
             instance = new OuterAI();
         return instance;
     }
 
-    public int get_currHR() {
+    public int getCurrHR() {
         return this.currHR;
     }
 
-    public void set_currHR(int heartRate){
+    public void setCurrHR(int heartRate){
         this.currHR = heartRate;
     }
 
     public AbstractQuestAI getRunningQuest(){
-        return this.currentQuest;
+        return this.currentQuestAI;
     }
 
     public boolean setRunningQuest(AbstractQuestAI questAI){ // checks if theres any game running
-        if(this.currentQuest != null)
+        if(this.currentQuestAI != null)
             return false;
-        this.currentQuest = questAI;
+        this.currentQuestAI = questAI;
         return true;
     }
     private void updateHR(){
@@ -113,7 +120,7 @@ public class OuterAI {
         if(questStatus == EnumQuestStatus.None){
             idleCounter++;
             if(idleCounter >= idleSeconds){
-                popUpQuest();
+                findAndSetPopupQuest();
                 popUpHudShowing=true;
                 idleCounter = 0; // reset idle counter
 
@@ -126,7 +133,7 @@ public class OuterAI {
             //If player pressed C, start the quest
             if (Keyboard.isKeyDown(0x2E) && popUpHudShowing)
             {
-                ClientUtils.sendData(EnumPacketClient.PlayerJoin,currentQuest);
+                ClientUtils.sendData(EnumPacketClient.PlayerJoin, currentQuestAI);
                 popUpHudShowing=false;
             }
         }
@@ -136,11 +143,11 @@ public class OuterAI {
         else{
             System.out.println("Error: Invalid questStatus");
         }
-
-
     }
 
-    public boolean reach_target(){
+
+
+    public boolean isTargetHRReached(){
         return targetReached;
     }
     // Update the heart rate / resistance value every second
@@ -162,19 +169,32 @@ public class OuterAI {
 
     }
 
-
     //TODO: if the kids not in mini-game, and avg heart rate does not reach the goal for __ mins, pop up a quest
-    public void popUpQuest(){
-        if(questList.size()==0){
-            //Randomly generate a quest
+    private void findAndSetPopupQuest(){
+        if(this.gamePlayTracker == null){
+            System.err.println("ERROR findAndSetPopupQuest(): the GamePlayTracker hasn't been initialized yet");
+        }
+        ArrayList<String> quests = this.gamePlayTracker.getPlayedQuests();
+        ArrayList<AbstractQuestAI> questAIs = QuestAIDatabase.getQuestsAIs();
+        if(quests.size() == 0){ // hasn't play any quests
+            // get random questAI from the AI database, and start the game
             Random rand = new Random();
-            currentQuest = QuestDatabase.getQuestsAIs(rand.nextInt(generalQuestList.size()));
+            currentQuestAI = questAIs.get(rand.nextInt());
+        }else{
+//            currentQuestAI = quests.get(Collections.max(questAIs.keySet()));
+//            TODO: yet to be done!
         }
-        else{
-            currentQuest = questList.get(Collections.max(questList.keySet()));
 
-        }
-        hud.showPopUpHUD(currentQuest);
+//        if(questList.size()==0){
+//            //Randomly generate a quest
+//            Random rand = new Random();
+//            currentQuestAI = QuestAIDatabase.getQuestsAIs(rand.nextInt(generalQuestList.size()));
+//        }
+//        else{
+//            currentQuestAI = questList.get(Collections.max(questList.keySet()));
+//
+//        }
+        hud.displayPopUpHUD(currentQuestAI);
     }
 
 }

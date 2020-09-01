@@ -12,9 +12,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class AbstractCustomQuest{
     public static EntityPlayer player = null;
-
     protected boolean isStarted = false;
     protected boolean isFinished = false;
+    protected String NAME = null;
     public int DIMID;
     private long questStartTime;
     public Vec3d questStartLocation;
@@ -44,6 +44,7 @@ public abstract class AbstractCustomQuest{
     public abstract void start(EntityJoinWorldEvent event);
     public abstract void start(); // This is the start interface for client
     public abstract void end();
+    public abstract String getName();
 
 
     public abstract void onWorldTick(TickEvent.WorldTickEvent event);

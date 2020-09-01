@@ -1,7 +1,10 @@
 package edu.ics.uci.minebike.minecraft.client.hud;
 import edu.ics.uci.minebike.minecraft.BiGXMain;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
+import edu.ics.uci.minebike.minecraft.client.AI.AbstractQuestAI;
+import edu.ics.uci.minebike.minecraft.client.AI.OuterAI;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
+import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
 import  edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
@@ -39,7 +42,7 @@ public class OuterAIHud {
     private int level=0;
     private int currentTime=0;
     private float currentResistance=0;
-
+    private OuterAI outerAI = null;
 
     ResourceLocation heartLocation= new ResourceLocation(BiGXMain.MOD_ID +":textures/heart.png");
     ResourceLocation popUpBackGround= new ResourceLocation(BiGXMain.MOD_ID +":textures/bg.png");
@@ -48,7 +51,7 @@ public class OuterAIHud {
 
 
     public OuterAIHud(){
-
+        outerAI = OuterAI.getInstance();
     }
     @SideOnly(Side.CLIENT)
     public void showHeartIcon(){
@@ -74,7 +77,7 @@ public class OuterAIHud {
     }
     @SideOnly(Side.CLIENT)
     public void showHud(){
-        this.heartString= new HudString(14,16, ""+hr,false,false);
+        this.heartString= new HudString(14,16, ""+ outerAI.get_currHR(),false,false);
         this.goalString= new HudString(50, 16, "Heart Rate Goal: "+minGoal+"-"+maxGoal, false, false);
         this.goalReached= new HudString(10, 220, "Goal Reached!",false,false);
         this.resistance= new HudString(10, 200, "Current Resistance: "+currentResistance,false,false);
@@ -83,13 +86,14 @@ public class OuterAIHud {
     }
     @SideOnly(Side.CLIENT)
     public void refresh(){
-
+        int curr_sec = QuestUtils.getSeconds(System.currentTimeMillis());
         if(progressCounter<=0){
             this.goalReached= new HudString(10, 220, "Goal Reached!",false,false);
         }
         if (currentTime != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
             currentTime = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-            hr+=1;
+            hr+=1; // TODO: hr += 1 is a temp place holder need to read from actual heartrate;
+
             System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
 
             if(((BigxClientContext) BiGX.instance().clientContext).resistance!= currentResistance)
@@ -115,7 +119,8 @@ public class OuterAIHud {
 //    public void hidePopUpQuest(){
 //
 //    }
-    public void showPopUpHUD(int dim){
+    public void displayPopUpHUD(AbstractQuestAI questAI){
+        // TODO: yet to be completed need to map each AI to its questName/dimemnsion????
 
         if (dim ==222){
             this.popUpQuest =new HudString(0, 0, "Soccer Quest",true,true);

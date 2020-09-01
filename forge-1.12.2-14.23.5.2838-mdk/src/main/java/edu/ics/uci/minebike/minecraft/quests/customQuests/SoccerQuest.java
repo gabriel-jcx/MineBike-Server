@@ -2,22 +2,17 @@ package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
 import com.mrcrayfish.soccer.entity.EntitySoccerBall;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
-import edu.ics.uci.minebike.minecraft.client.HudManager;
-import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.init.Items;
 import net.minecraft.util.math.Vec3d;
@@ -27,22 +22,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import noppes.npcs.api.NpcAPI;
-import noppes.npcs.api.entity.ICustomNpc;
-import noppes.npcs.controllers.data.Quest;
-import noppes.npcs.entity.EntityCustomNpc;
-import noppes.npcs.entity.data.DataAI;
 
-import java.time.Clock;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Scanner;
 
 import static net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer;
 
@@ -125,6 +109,7 @@ public class SoccerQuest extends AbstractCustomQuest {
 
     public SoccerQuest(){
         super();
+        this.NAME = "soccer";
         this.DIMID = 222;
         this.isStarted = false;
         this.questStartLocation = new Vec3d (-160, 4,1142);
@@ -172,7 +157,7 @@ public class SoccerQuest extends AbstractCustomQuest {
         Potion slow_potion = Potion.getPotionById(2);
         Potion jump_anti_boost = Potion.getPotionById(8);
         System.out.println(slow_potion.getName()+ " " + jump_anti_boost.getName());
-        int secs = QuestUtils.getRemainingSeconds(server_waitingEndTime -System.currentTimeMillis());
+        int secs = QuestUtils.getSeconds(server_waitingEndTime -System.currentTimeMillis());
         System.out.println(secs);
         // I think the duration is in Ticks
         player.addPotionEffect(new PotionEffect(slow_potion,secs*20,1000000000));
@@ -326,6 +311,11 @@ public class SoccerQuest extends AbstractCustomQuest {
         return;
     }
 
+    @Override
+    public String getName() {
+        return this.NAME;
+    }
+
 
     // NOTE: Minecraft runs 20 ticks per second
     //       Every tick is 0.05 seconds and 50 milliseconds
@@ -361,7 +351,7 @@ public class SoccerQuest extends AbstractCustomQuest {
     private void serverStartTick(TickEvent.WorldTickEvent event){
         long curr = System.currentTimeMillis();
         if(ball != null){
-//            int now = QuestUtils.getRemainingSeconds(curr);
+//            int now = QuestUtils.getSeconds(curr);
 //            if(prev != now){
 //                System.out.println("ball is at " + ball.getPosition());
 //                System.out.println("Red Goal " + redGoal);
@@ -428,7 +418,7 @@ public class SoccerQuest extends AbstractCustomQuest {
         }
         else{
             long remaining_millisecs = client_endTime - curr;
-            clockStr.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(remaining_millisecs));
+            clockStr.text = QuestUtils.formatSeconds(QuestUtils.getSeconds(remaining_millisecs));
         }
     }
 
@@ -473,10 +463,10 @@ public class SoccerQuest extends AbstractCustomQuest {
         client_waitingTime = Long.parseLong(waitingTime);
         client_waitingStartTime = System.currentTimeMillis();
 
-        client_waitingTime_seconds = QuestUtils.getRemainingSeconds(client_waitingTime);
+        client_waitingTime_seconds = QuestUtils.getSeconds(client_waitingTime);
         client_waitingEndTime = client_waitingStartTime + client_waitingTime;
         System.out.println("Client waiting for " + client_waitingTime_seconds + " seconds");
-//        QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(client_waitingTime));
+//        QuestUtils.formatSeconds(QuestUtils.getSeconds(client_waitingTime));
 
         //clockRect = new HudRectangle(-30, 30, 60, 30, 0x00000000, true, false);
         clockStr = new HudString(0,35, QuestUtils.formatSeconds(client_waitingTime_seconds),2.0f,true, false);
@@ -485,10 +475,10 @@ public class SoccerQuest extends AbstractCustomQuest {
     }
     public void clientWaitingTick(TickEvent.PlayerTickEvent event){
 
-//        int elpased_seconds = QuestUtils.getRemainingSeconds(System.currentTimeMillis(),client_waitingStartTime);
+//        int elpased_seconds = QuestUtils.getSeconds(System.currentTimeMillis(),client_waitingStartTime);
         client_waitingTime = client_waitingEndTime - System.currentTimeMillis();
 
-        int remaining_seconds = QuestUtils.getRemainingSeconds(client_waitingTime);
+        int remaining_seconds = QuestUtils.getSeconds(client_waitingTime);
         if(remaining_seconds >= 0 ){
             clockStr.text = QuestUtils.formatSeconds(remaining_seconds);
         }

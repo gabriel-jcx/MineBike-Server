@@ -43,6 +43,7 @@ public class QuestHeartRate  {
     protected void get_avg(){
 
     }
+
     @Deprecated
     public void setCurrent_heart_rate( Integer load){
         current_heart_rate=load;

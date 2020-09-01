@@ -52,6 +52,7 @@ public class FishingQuest  extends AbstractCustomQuest {
 
     public FishingQuest(){
         super();
+        this.NAME = "fishing";
         this.DIMID = WorldProviderFishing.DIM_ID;
         this.questStartLocation = new Vec3d(10,10,10);
 
@@ -114,6 +115,11 @@ public class FishingQuest  extends AbstractCustomQuest {
         TextComponentString fish = new TextComponentString(String.format("/give %s Fish 2 ", this.player.getName()));
         this.player.sendMessage(rod);
         this.player.sendMessage(fish);
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 
     @Override

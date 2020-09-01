@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
+import edu.ics.uci.minebike.minecraft.client.AI.AbstractQuestAI;
 import edu.ics.uci.minebike.minecraft.client.AI.Fishpond;
 import edu.ics.uci.minebike.minecraft.client.AI.QuestHeartRate;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
@@ -8,7 +9,7 @@ import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 
 import java.util.*;
 
-public class FishingAI extends QuestHeartRate {
+public class FishingAI extends AbstractQuestAI {
 
     public String lastFish;
 
@@ -50,7 +51,8 @@ public class FishingAI extends QuestHeartRate {
             Integer l= allFishNamesInPond.length;
             return randomFish(l);
         }
-        if (avg <= p.getTargetMax() && avg >= p.getTargetMin()) {
+
+        if (questAvgHR <= getMaxTargetHR() && questAvgHR >= getMinTargetHR()) {
             //smaller fish
             if (fishStatus == FishStatus.ESCAPE) {
                 Integer l = Arrays.asList(allFishNamesInPond).indexOf(lastFish);
@@ -62,7 +64,7 @@ public class FishingAI extends QuestHeartRate {
             }
         }
         //High hr ,smaller fish
-        else if (avg >= p.getTargetMax()) {
+        else if (questAvgHR >= getMaxTargetHR()) {
             Integer l = Arrays.asList(allFishNamesInPond).indexOf(lastFish);
             return randomFish(l);
         }
