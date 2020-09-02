@@ -86,7 +86,9 @@ public class FishingAI extends AbstractQuestAI {
 
 
     }
-
+    public String getQuestName(){
+        return "fishingQuest";
+    }
     public enum FishStatus {
         ESCAPE,
         CAUGHT,

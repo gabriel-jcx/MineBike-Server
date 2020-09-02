@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class PlayerBehaviorAnalyzer {
+
     private OuterAI outerAI = null;
+
     public PlayerBehaviorAnalyzer(){
         this.outerAI = OuterAI.getInstance();
     }
+
     public void findAndSetPopupQuest(){
         ArrayList<String> playedQuests = outerAI.gamePlayTracker.getPlayedQuests();
         ArrayList<AbstractQuestAI> questAIs = QuestAIDatabase.getQuestsAIs();
@@ -17,5 +20,6 @@ public class PlayerBehaviorAnalyzer {
         }else{
             outerAI.setRunningQuest(outerAI.gamePlayTracker.getMaxPlayedQuest());
         }
+
     }
 }

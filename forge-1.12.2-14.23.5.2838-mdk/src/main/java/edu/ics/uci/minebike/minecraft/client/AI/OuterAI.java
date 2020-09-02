@@ -121,7 +121,8 @@ public class OuterAI {
         if(questStatus == EnumQuestStatus.None){
             idleCounter++;
             if(idleCounter >= idleSeconds){
-                findAndSetPopupQuest();
+                playerBehaviorAnalyzer.findAndSetPopupQuest();
+                hud.displayPopUpHUD(currentQuestAI);
                 popUpHudShowing=true;
                 idleCounter = 0; // reset idle counter
 
@@ -134,6 +135,7 @@ public class OuterAI {
             //If player pressed C, start the quest
             if (Keyboard.isKeyDown(0x2E) && popUpHudShowing)
             {
+//                playerBehaviorAnalyzer.findAndSetPopupQuest();
                 ClientUtils.sendData(EnumPacketClient.PlayerJoin, currentQuestAI);
                 popUpHudShowing=false;
             }
@@ -170,32 +172,34 @@ public class OuterAI {
 
     }
 
-    //TODO: if the kids not in mini-game, and avg heart rate does not reach the goal for __ mins, pop up a quest
-    private void findAndSetPopupQuest(){
-        if(this.gamePlayTracker == null){
-            System.err.println("ERROR findAndSetPopupQuest(): the GamePlayTracker hasn't been initialized yet");
-        }
-        ArrayList<String> quests = this.gamePlayTracker.getPlayedQuests();
-        ArrayList<AbstractQuestAI> questAIs = QuestAIDatabase.getQuestsAIs();
-        if(quests.size() == 0){ // hasn't play any quests
-            // get random questAI from the AI database, and start the game
-            Random rand = new Random();
-            currentQuestAI = questAIs.get(rand.nextInt());
-        }else{
-//            currentQuestAI = quests.get(Collections.max(questAIs.keySet()));
-//            TODO: yet to be done!
-        }
-
-//        if(questList.size()==0){
-//            //Randomly generate a quest
-//            Random rand = new Random();
-//            currentQuestAI = QuestAIDatabase.getQuestsAIs(rand.nextInt(generalQuestList.size()));
-//        }
-//        else{
-//            currentQuestAI = questList.get(Collections.max(questList.keySet()));
+// The function below has been moved to PBA class
+//    //TODO: if the kids not in mini-game, and avg heart rate does not reach the goal for __ mins, pop up a quest
+//    private void findAndSetPopupQuest(){
+//        if(this.gamePlayTracker == null){
 //
+//            System.err.println("ERROR findAndSetPopupQuest(): the GamePlayTracker hasn't been initialized yet");
 //        }
-        hud.displayPopUpHUD(currentQuestAI);
-    }
+//        ArrayList<String> quests = this.gamePlayTracker.getPlayedQuests();
+//        ArrayList<AbstractQuestAI> questAIs = QuestAIDatabase.getQuestsAIs();
+//        if(quests.size() == 0){ // hasn't play any quests
+//            // get random questAI from the AI database, and start the game
+//            Random rand = new Random();
+//            currentQuestAI = questAIs.get(rand.nextInt());
+//        }else{
+////            currentQuestAI = quests.get(Collections.max(questAIs.keySet()));
+////            TODO: yet to be done!
+//        }
+//
+////        if(questList.size()==0){
+////            //Randomly generate a quest
+////            Random rand = new Random();
+////            currentQuestAI = QuestAIDatabase.getQuestsAIs(rand.nextInt(generalQuestList.size()));
+////        }
+////        else{
+////            currentQuestAI = questList.get(Collections.max(questList.keySet()));
+////
+////        }
+//        hud.displayPopUpHUD(currentQuestAI);
+//    }
 
 }
