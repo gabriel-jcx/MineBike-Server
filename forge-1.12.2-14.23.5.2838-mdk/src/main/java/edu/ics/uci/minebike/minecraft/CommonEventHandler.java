@@ -45,6 +45,7 @@ public class CommonEventHandler {
     public static boolean loaded = false;
     public static boolean success = false;
     public static OuterAIHud  outerAIHud=new OuterAIHud();
+    public static OuterAI outerAI = OuterAI.getInstance();
     private boolean outerHudShowing=false;
     public CommonEventHandler(){
 
@@ -122,8 +123,8 @@ public class CommonEventHandler {
                 soccer.end();
             }
         }
-        if(event.player.world.isRemote) // client side send Tracking Data to server
-            ServerUtils .sendPlayerGameplayData();
+//        if(event.player.world.isRemote) // client side send Tracking Data to server
+//            ServerUtils .sendPlayerGameplayData();
 
     }
     @SubscribeEvent
@@ -164,7 +165,7 @@ public class CommonEventHandler {
             else{
                 outerHudShowing=true;
                 System.out.println("OuterHudShowing");
-                outerAIHud.showHud();
+                outerAIHud.showHud(outerAI.getCurrHR());
                 System.out.println("OuterHudShowing");
                 outerAIHud.showHeartIcon();
 

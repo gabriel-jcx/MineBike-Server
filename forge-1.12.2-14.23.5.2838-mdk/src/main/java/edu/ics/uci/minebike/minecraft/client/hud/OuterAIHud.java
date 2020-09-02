@@ -42,7 +42,7 @@ public class OuterAIHud {
     private int level=0;
     private int currentTime=0;
     private float currentResistance=0;
-    private OuterAI outerAI = null;
+//    private OuterAI outerAI = null;
 
     ResourceLocation heartLocation= new ResourceLocation(BiGXMain.MOD_ID +":textures/heart.png");
     ResourceLocation popUpBackGround= new ResourceLocation(BiGXMain.MOD_ID +":textures/bg.png");
@@ -51,7 +51,8 @@ public class OuterAIHud {
 
 
     public OuterAIHud(){
-        outerAI = OuterAI.getInstance();
+
+//        outerAI = OuterAI.getInstance();
     }
     @SideOnly(Side.CLIENT)
     public void showHeartIcon(){
@@ -76,8 +77,8 @@ public class OuterAIHud {
 
     }
     @SideOnly(Side.CLIENT)
-    public void showHud(){
-        this.heartString= new HudString(14,16, ""+ outerAI.get_currHR(),false,false);
+    public void showHud(int heartRate){
+        this.heartString= new HudString(14,16, ""+ heartRate,false,false);
         this.goalString= new HudString(50, 16, "Heart Rate Goal: "+minGoal+"-"+maxGoal, false, false);
         this.goalReached= new HudString(10, 220, "Goal Reached!",false,false);
         this.resistance= new HudString(10, 200, "Current Resistance: "+currentResistance,false,false);
@@ -122,14 +123,14 @@ public class OuterAIHud {
     public void displayPopUpHUD(AbstractQuestAI questAI){
         // TODO: yet to be completed need to map each AI to its questName/dimemnsion????
 
-        if (dim ==222){
-            this.popUpQuest =new HudString(0, 0, "Soccer Quest",true,true);
-        }
-        else if (dim ==223){
-            this.popUpQuest =new HudString(0, 0, "Fishing Quest",true,true);
-        }
-        showPopUpBG();
-        this.popUpInstruction= new HudString(0,10,"Press X to accept the quest with extra reward. Press C to cancel",true,true);
+//        if (dim ==222){
+//            this.popUpQuest =new HudString(0, 0, "Soccer Quest",true,true);
+//        }
+//        else if (dim ==223){
+//            this.popUpQuest =new HudString(0, 0, "Fishing Quest",true,true);
+//        }
+//        showPopUpBG();
+//        this.popUpInstruction= new HudString(0,10,"Press X to accept the quest with extra reward. Press C to cancel",true,true);
 
     }
     public void hidePopUp(){
