@@ -75,6 +75,7 @@ public class OuterAI {
     }
 
     private OuterAI(){
+        instance = this;
         prescription = null;// TODO: read the patient prescription form
         hud = new OuterAIHud();
         playerBehaviorAnalyzer =  new PlayerBehaviorAnalyzer();

@@ -50,7 +50,9 @@ public class BiGXMain {
         System.out.printf("MineBike: PreInit finished");
         logger = event.getModLog();
 
-
+        if(event.getSide().isClient()){
+            outerAI = OuterAI.getInstance();
+        }
 
         NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
         MinecraftForge.EVENT_BUS.register(handler);
@@ -70,7 +72,6 @@ public class BiGXMain {
         if(event.getSide().isClient()){
             hudManager = HudManager.getInstance(Minecraft.getMinecraft());
             MinecraftForge.EVENT_BUS.register(hudManager);
-            outerAI = OuterAI.getInstance();
 
         }else{ // should be server side
             saveManager = new ServerSaveManager();
