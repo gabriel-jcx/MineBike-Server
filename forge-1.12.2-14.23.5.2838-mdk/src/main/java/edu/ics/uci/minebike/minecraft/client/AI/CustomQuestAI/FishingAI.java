@@ -2,14 +2,16 @@ package edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.client.AI.AbstractQuestAI;
 import edu.ics.uci.minebike.minecraft.client.AI.Fishpond;
+import edu.ics.uci.minebike.minecraft.client.AI.OuterAI;
 import edu.ics.uci.minebike.minecraft.client.AI.QuestHeartRate;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 //import org.ngs.bigx.minecraft.BiGX;
 //import org.ngs.bigx.minecraft.context.BigxClientContext;
-
+import edu.ics.uci.minebike.minecraft.client.AI.QuestAIDatabase;
 import java.util.*;
 
 public class FishingAI extends AbstractQuestAI {
+    private String QuestName= "fishing";
 
     public String lastFish;
 
@@ -25,8 +27,10 @@ public class FishingAI extends AbstractQuestAI {
 
     Object[] allFishNamesInPond;
 
-    public FishingAI() {
+    private OuterAI  outerAI= OuterAI.getInstance();
 
+    public FishingAI() {
+        QuestAIDatabase.addQuestAI(this);
     }
 
     public void selectPond(int level) {
@@ -87,7 +91,7 @@ public class FishingAI extends AbstractQuestAI {
 
     }
     public String getQuestName(){
-        return "fishingQuest";
+        return QuestName;
     }
     public enum FishStatus {
         ESCAPE,
