@@ -3,6 +3,7 @@ import edu.ics.uci.minebike.minecraft.BiGXMain;
 import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.client.AI.AbstractQuestAI;
 import edu.ics.uci.minebike.minecraft.client.AI.OuterAI;
+import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
 import  edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
@@ -29,9 +30,12 @@ public class OuterAIHud {
     public HudString goalReached;
     public HudString popUpQuest;
     public HudString popUpInstruction;
+    public HudRectangle popUpBG;
     private int minGoal=0;
     private int maxGoal=150;
     private int hr=0;
+    private Minecraft mc = Minecraft.getMinecraft();
+    private HudManager hudManager= HudManager.getInstance(this.mc);
 
     public HudString minString;
     private int progressCounter=90;
@@ -57,22 +61,24 @@ public class OuterAIHud {
     @SideOnly(Side.CLIENT)
     public void showHeartIcon(){
 
-        Minecraft mc = Minecraft.getMinecraft();
-        mc.getTextureManager().bindTexture(heartLocation);
 
-        mc.ingameGUI.drawTexturedModalRect(0,0,0,0,40,40);
-        mc.ingameGUI.drawTexturedModalRect(5,40,40,5,25,80);
-        mc.ingameGUI.drawTexturedModalRect(5,40+progressCounter,70,5+progressCounter,25,80);
 
-    }
-    @SideOnly(Side.CLIENT)
-    public void showPopUpBG(){
+        this.mc.getTextureManager().bindTexture(heartLocation);
 
-        Minecraft mc = Minecraft.getMinecraft();
-        mc.getTextureManager().bindTexture(popUpBackGround);
-        mc.ingameGUI.drawTexturedModalRect(5,40+progressCounter,70,5+progressCounter,25,80);
+        this.mc.ingameGUI.drawTexturedModalRect(0,0,0,0,40,40);
+        this.mc.ingameGUI.drawTexturedModalRect(5,40,40,5,25,80);
+        this.mc.ingameGUI.drawTexturedModalRect(5,40+progressCounter,70,5+progressCounter,25,80);
 
     }
+//    @SideOnly(Side.CLIENT)
+//    public void showPopUpBG(){
+//
+//        this.popUpBG= new HudRectangle(0,0,90,40,200,true,true);
+////        Minecraft mc = Minecraft.getMinecraft();
+////        mc.getTextureManager().bindTexture(popUpBackGround);
+////        mc.ingameGUI.drawTexturedModalRect(5,40+progressCounter,70,5+progressCounter,25,80);
+//
+//    }
     public void showHud_progress(){
 
     }
@@ -80,7 +86,7 @@ public class OuterAIHud {
     public void showHud(int heartRate){
         this.heartString= new HudString(14,16, ""+ heartRate,false,false);
         this.goalString= new HudString(50, 16, "Heart Rate Goal: "+minGoal+"-"+maxGoal, false, false);
-        this.goalReached= new HudString(10, 220, "Goal Reached!",false,false);
+//        this.goalReached= new HudString(10, 220, "Goal Reached!",false,false);
         this.resistance= new HudString(10, 200, "Current Resistance: "+currentResistance,false,false);
 //        this.minString = new HudString(400, 10, "Time Played: "+progressCounter+"m", false, false);
 //        this.incline = new HudString(10, 400, "Current working level: "+ level, false, false);
@@ -123,6 +129,10 @@ public class OuterAIHud {
     public void displayPopUpHUD(AbstractQuestAI questAI){
         // TODO: yet to be completed need to map each AI to its questName/dimemnsion????
 
+
+        this.popUpBG= new HudRectangle(-200,-30,400,60, 0xe4344aff,true,true);
+
+        this.popUpQuest = new HudString(0, 0, "Attention! "+questAI.getQuestName()+" quest with extra reward!",true,true);
 //        if (dim ==222){
 //            this.popUpQuest =new HudString(0, 0, "Soccer Quest",true,true);
 //        }
@@ -130,12 +140,15 @@ public class OuterAIHud {
 //            this.popUpQuest =new HudString(0, 0, "Fishing Quest",true,true);
 //        }
 //        showPopUpBG();
-//        this.popUpInstruction= new HudString(0,10,"Press X to accept the quest with extra reward. Press C to cancel",true,true);
+//
+
+        this.popUpInstruction= new HudString(0,10,"Press X to accept the quest with extra reward.Press C to cancel",true,true);
 
     }
     public void hidePopUp(){
         this.popUpQuest.unregister();
         this.popUpInstruction.unregister();
+        this.popUpBG.unregister();
     }
     public void hide(){
         heartString.unregister();

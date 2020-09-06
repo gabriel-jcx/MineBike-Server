@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft.client;
 
+import edu.ics.uci.minebike.minecraft.client.AI.OuterAI;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudShape;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
@@ -25,6 +26,7 @@ public class HudManager extends GuiScreen {
 //    public Minecraft mc;
     public static int mcWidth;
     public static int mcHeight;
+    private OuterAI outerAI =OuterAI.getInstance();
     private HudManager(Minecraft mc){
         this.mc = mc;
     }
@@ -53,6 +55,10 @@ public class HudManager extends GuiScreen {
     public void onGameOverlayChange(RenderGameOverlayEvent event){
         // return on Non-text change
         if(event.isCancelable() || event.getType() != event.getType().TEXT) return;
+        if(!event.isCancelable()&&event.getType()==RenderGameOverlayEvent.ElementType.TEXT){
+
+            outerAI.hud.showHeartIcon();
+        }
 
 
         updateResolution();

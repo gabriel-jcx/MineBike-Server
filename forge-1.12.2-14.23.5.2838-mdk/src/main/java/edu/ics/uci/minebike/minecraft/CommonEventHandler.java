@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft;
 
+import edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI.MinerAI;
 import edu.ics.uci.minebike.minecraft.client.AI.OuterAI;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import edu.ics.uci.minebike.minecraft.client.hud.OuterAIHud;
@@ -232,20 +233,17 @@ public class CommonEventHandler {
     public void onPlayerSave(PlayerEvent.SaveToFile event){
         System.out.println(event.getEntityPlayer().getName() + " is trying to SaveToFile");
     }
-
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public void onRenderGameOverlay(RenderGameOverlayEvent event){
-
-
-        if(!event.isCancelable()&&event.getType()==RenderGameOverlayEvent.ElementType.TEXT){
-
-            outerAIHud.showHeartIcon();
-
-
-            //TODO:power bar
-        }
-    }
+//
+//    @SideOnly(Side.CLIENT)
+//    @SubscribeEvent
+//    public void onRenderGameOverlay(RenderGameOverlayEvent event){
+//
+//
+//        if(!event.isCancelable()&&event.getType()==RenderGameOverlayEvent.ElementType.TEXT){
+//
+//            outerAIHud.showHeartIcon();
+//        }
+//    }
 //
 //    @SubscribeEvent
 //    public void onIDK(TickE)

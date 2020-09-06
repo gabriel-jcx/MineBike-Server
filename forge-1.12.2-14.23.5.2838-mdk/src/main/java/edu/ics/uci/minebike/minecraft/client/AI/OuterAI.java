@@ -1,6 +1,7 @@
 package edu.ics.uci.minebike.minecraft.client.AI;
 
 import edu.ics.uci.minebike.minecraft.ClientUtils;
+import edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI.MinerAI;
 import edu.ics.uci.minebike.minecraft.client.hud.OuterAIHud;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import edu.ics.uci.minebike.minecraft.constants.EnumQuestStatus;
@@ -49,7 +50,11 @@ public class OuterAI {
     private static OuterAI instance = null;
 
     public static GamePlayTracker gamePlayTracker = null;
+
+    public OuterAIHud hud = null;
     // NOTE: public variables
+
+
 
 
 
@@ -64,7 +69,7 @@ public class OuterAI {
     private int idleSeconds = 600;
     private int idleCounter = 0;
     private boolean targetReached = false;
-    private OuterAIHud hud = null;
+
     private PlayerBehaviorAnalyzer playerBehaviorAnalyzer = null;
     private BiGXPatientPrescription prescription  = null;
 
@@ -123,20 +128,22 @@ public class OuterAI {
             idleCounter++;
             if(idleCounter >= idleSeconds){
                 playerBehaviorAnalyzer.findAndSetPopupQuest();
-                hud.displayPopUpHUD(currentQuestAI);
                 popUpHudShowing=true;
+                hud.displayPopUpHUD(currentQuestAI);
                 idleCounter = 0; // reset idle counter
 
             }
             //If player pressed X, discard the GUI
             if (Keyboard.isKeyDown(0x2D) && popUpHudShowing)
             {
+                hud.hidePopUp();
                 popUpHudShowing=false;
             }
             //If player pressed C, start the quest
             if (Keyboard.isKeyDown(0x2E) && popUpHudShowing)
             {
 //                playerBehaviorAnalyzer.findAndSetPopupQuest();
+                hud.hidePopUp();
                 ClientUtils.sendData(EnumPacketClient.PlayerJoin, currentQuestAI);
                 popUpHudShowing=false;
             }
@@ -158,12 +165,17 @@ public class OuterAI {
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         //kids just started the game, don't modify
+//        if(event.side.isClient() && event.player.world.provider.getDimension() == 0){
+//            hud.displayPopUpHUD(new MinerAI());
+//        }
 
         int currSec = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
         if(currSec != prevSec){  // update every second
             updateHR();
             prevSec = currSec;
             checkPopUpQuest();
+            System.out.println("runing______________________");
+//            hud.displayPopUpHUD(new MinerAI());
 
         }
         if (questStatus==EnumQuestStatus.None) {
