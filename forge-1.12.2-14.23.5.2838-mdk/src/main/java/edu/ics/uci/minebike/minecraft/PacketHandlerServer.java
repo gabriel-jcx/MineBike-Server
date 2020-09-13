@@ -69,6 +69,12 @@ public class PacketHandlerServer {
             String coordinates = CommonUtils.readString(buffer);
             cook.teleportPlayer(coordinates, player);
         }
+        //send the fish name
+        else if (num == EnumPacketClient.Fish)
+        {
+
+            CustomHook.current_fish= buffer.toString();
+        }
         //System.out.println(readString(buffer));
         // teleport and start the quest here!!!!
     }

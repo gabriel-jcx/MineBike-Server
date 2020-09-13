@@ -24,6 +24,8 @@ public class CommonUtils {
             return null;
         }
     }
+//    public static read
+
     public static boolean fillBuffer(ByteBuf buffer, Enum enu, Object... obs) throws IOException {
         buffer.writeInt(enu.ordinal());
         Object[] var3 = obs;

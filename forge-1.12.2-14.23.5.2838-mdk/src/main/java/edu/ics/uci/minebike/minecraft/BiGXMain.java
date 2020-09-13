@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft;
 
+import edu.ics.uci.minebike.minecraft.client.AI.OuterAI;
 import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.item.GameFishingEvent;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
@@ -14,7 +15,9 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.Logger;
-@Mod(modid = BiGXMain.MOD_ID,name = BiGXMain.MOD_NAME, version = BiGXMain.MOD_VERSION, dependencies = "required-after:soccer;required-after:fishingmadebetter;required-after:aquaculture")
+@Mod(modid = BiGXMain.MOD_ID,name = BiGXMain.MOD_NAME, version = BiGXMain.MOD_VERSION,
+//        dependencies = "required-after:soccer;required-after:fishingmadebetter;required-after:aquaculture;")
+        dependencies = "required-after:soccer;required-after:fishingmadebetter;required-after:aquaculture;required-after:bike;")
 public class BiGXMain {
     public static final String MOD_ID = "minebikemod";
     public static final String MOD_NAME = "MineBike Mod";
@@ -22,9 +25,10 @@ public class BiGXMain {
     private static Logger logger;
     public static CommonEventHandler handler = new CommonEventHandler();
     public static CommonProxy proxy;// = new CommonProxy();
-    public static ServerSaveManager saveManager = new ServerSaveManager();
+    public static ServerSaveManager saveManager ;
     public static CustomQuestManager questMangager;
     public static GameFishingEvent gameFishingEvent= new GameFishingEvent();
+    public static OuterAI outerAI;
 //    FMLne
     public HudManager hudManager;
     public static FMLEventChannel Channel;
@@ -46,12 +50,15 @@ public class BiGXMain {
         System.out.printf("MineBike: PreInit finished");
         logger = event.getModLog();
 
-
+        if(event.getSide().isClient()){
+            outerAI = OuterAI.getInstance();
+        }
 
         NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
         MinecraftForge.EVENT_BUS.register(handler);
         MinecraftForge.EVENT_BUS.register(proxy);
         MinecraftForge.EVENT_BUS.register(gameFishingEvent);
+        MinecraftForge.EVENT_BUS.register(outerAI);
 
         proxy.load();
         logger.info("MineBike: PreInit finished");
@@ -66,6 +73,8 @@ public class BiGXMain {
             hudManager = HudManager.getInstance(Minecraft.getMinecraft());
             MinecraftForge.EVENT_BUS.register(hudManager);
 
+        }else{ // should be server side
+            saveManager = new ServerSaveManager();
         }
 
         logger.info("MineBike: Init finished");
