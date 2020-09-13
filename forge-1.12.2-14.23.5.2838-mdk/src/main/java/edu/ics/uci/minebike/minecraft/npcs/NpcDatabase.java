@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.*;
+// import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Ada;
+// import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Elon;
+// import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
+// import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Sam;
 import noppes.npcs.entity.EntityCustomNpc;
 
 public class NpcDatabase {
@@ -19,6 +23,7 @@ public class NpcDatabase {
         npcs.put(Shuttle.NAME, new Shuttle());
         npcs.put(Manager.NAME, new Manager());
         npcs.put(Waiter.NAME, new Waiter());
+        npcs.put(Elon.NAME,new Elon());
     }
     public static void registerNpcs(){
         //System.out.printf("Name = "+ Name + "(" + Location.x + "," + Location.y + "," + Location.z + ")");
@@ -30,5 +35,6 @@ public class NpcDatabase {
         npcs.put(Shuttle.NAME, new Shuttle());
         npcs.put(Manager.NAME, new Manager());
         npcs.put(Waiter.NAME, new Waiter());
+        npcs.put(Elon.NAME, new Elon());
     }
 }
