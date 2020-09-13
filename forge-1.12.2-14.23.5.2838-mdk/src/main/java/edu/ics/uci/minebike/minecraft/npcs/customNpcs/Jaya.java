@@ -24,7 +24,7 @@ public class Jaya extends AbstractCustomNpc {
     public static final String NAME = "Jaya";
     //    public static final Vec3d LOCATION = new Vec3d(10,70,13);
     public static final Vec3d LOCATION = new Vec3d(-55, 64, 319);
-    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/tradesteve.png";
+    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/tradersteve.png";
     public static String UUID;
 
     public Jaya(){

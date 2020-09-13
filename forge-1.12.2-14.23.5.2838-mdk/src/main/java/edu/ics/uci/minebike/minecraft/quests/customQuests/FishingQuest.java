@@ -193,8 +193,11 @@ public class FishingQuest  extends AbstractCustomQuest {
         //return (BiGXPacketHandler.change * 4);
         return 1;
     }
-
+    // TODO: This should be update hr, rename!
     public void fishing_heart_rate(int hr){
+            // You don't need to new here, you can just simply modify this.timerString.text
+//            this.timerString.unregister();
+            this.timerString.setText("The fish will run away in:  " + timer + " seconds");
 
     }
 //    public void refreshCountDown() {
@@ -257,6 +260,18 @@ public class FishingQuest  extends AbstractCustomQuest {
         THROW,
         RETRACT,
         FISHING
+    }
+
+    public void reduce_distance(){
+        if (this.powerLine.getX()==bar_max && distance-1>=0)
+        {
+            distance-=1;
+            this.distanceString.setText("Distance "+ distance);
+            if(distance==0)
+            {
+                ClientUtils.sendData(EnumPacketClient.FishingDistance,distance);
+            }
+        }
     }
 
 }

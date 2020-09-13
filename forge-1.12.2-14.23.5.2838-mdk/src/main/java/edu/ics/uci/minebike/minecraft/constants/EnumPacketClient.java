@@ -6,7 +6,9 @@ public enum EnumPacketClient {
     PlayerJoin,
     FishingDistance,
     Fish,
-    QuestEnd;
+    QuestEnd,
+    OrderSubmit,
+    CookTeleport;
 
 
     private EnumPacketClient(){

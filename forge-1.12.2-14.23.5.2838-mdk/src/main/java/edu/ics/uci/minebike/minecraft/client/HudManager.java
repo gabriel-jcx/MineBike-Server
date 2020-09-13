@@ -4,6 +4,7 @@ import edu.ics.uci.minebike.minecraft.client.AI.OuterAI;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudShape;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
+import edu.ics.uci.minebike.minecraft.client.hud.HudTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.locks.ReentrantLock;
 
 @SideOnly(Side.CLIENT)
 public class HudManager extends GuiScreen {
@@ -23,10 +25,12 @@ public class HudManager extends GuiScreen {
     public ArrayList<HudRectangle> rectangles = new ArrayList<>();
     public ArrayList<HudString> strings = new ArrayList<>();
     public ArrayList<HudShape> shapes = new ArrayList<>();
+    public ArrayList<HudTexture> textures = new ArrayList<>();
 //    public Minecraft mc;
     public static int mcWidth;
     public static int mcHeight;
     private OuterAI outerAI =OuterAI.getInstance();
+
     private HudManager(Minecraft mc){
         this.mc = mc;
     }
@@ -52,29 +56,23 @@ public class HudManager extends GuiScreen {
         return instance;
     }
     @SubscribeEvent
-    public void onGameOverlayChange(RenderGameOverlayEvent event){
+    synchronized void onGameOverlayChange(RenderGameOverlayEvent event){
         // return on Non-text change
         if(event.isCancelable() || event.getType() != event.getType().TEXT) return;
         if(!event.isCancelable()&&event.getType()==RenderGameOverlayEvent.ElementType.TEXT){
 
             outerAI.hud.showHeartIcon();
         }
-
-
         updateResolution();
-        for(HudShape shape : shapes){
-//            if(shape instanceof  HudString){
-//                HudString str = (HudString)shape;
-//                System.out.println(str.text);
-//            }
-            shape.draw();
-        }
-////        System.out.println("not returned");
-//        for(HudRectangle rect: rectangles)
-//            rect.draw();
-//        for(HudString str: strings){
-//            str.draw();
+//        this.shape_lock.lock();
+//        try {
+            for (HudShape shape : shapes) {
+                shape.draw();
+            }
+//        }finally{
+//            this.shape_lock.unlock();
 //        }
+
     }
     private void updateResolution(){
         ScaledResolution sr = new ScaledResolution(this.mc);
