@@ -13,11 +13,15 @@ public class Recipe
 {
     private Item orderType; //type of bread
     private Item[] insideBread; //array of ingredients
+    private String name;
+    private Item thisFood;
 
-    public Recipe(Item type, Item[] items)
+    public Recipe(Item type, Item[] items, String foodName, Item currentFood)
     {
         orderType = type;
         insideBread = items;
+        name = foodName;
+        thisFood = currentFood;
     }
 
     //return type of bread
@@ -32,11 +36,16 @@ public class Recipe
         return insideBread;
     }
 
+    public String getName(){return  name;}
+
+    public Item getFood(){return thisFood;}
+
     //returns true if recipe can be made with player's inventory
     @SideOnly(Side.SERVER)
-    public boolean canMake(TickEvent.PlayerTickEvent event, EntityPlayerMP player) //~~works i think
+    public boolean canMake(EntityPlayer player) //~~works i think
     {
-        int checks = insideBread.length;
+        System.out.println("Checking inventory");
+        int ingredientCnt = insideBread.length;
         boolean type = false;
         InventoryPlayer inventory = player.inventory;
 
@@ -45,51 +54,29 @@ public class Recipe
             ItemStack stack = inventory.getStackInSlot(i);
             if(stack != null)
             {
-                for(int j = 0; j < insideBread.length; j++)
-                {
-                    if(stack.getItem().getUnlocalizedName().equals(orderType.getUnlocalizedName()))
-                        type = true;
-                    else if(stack.getItem().getUnlocalizedName().equals(insideBread[j].getUnlocalizedName()))
-                        checks--;
-
-//					System.out.println(stack.getItem().getUnlocalizedName() + " realbread " + orderType.getUnlocalizedName());
-//					System.out.println(stack.getItem().getUnlocalizedName() + " ingredient " + insideBread[j].getUnlocalizedName());
+                if(stack.getItem() == orderType) {
+                    type = true;
+                }
+                else {
+                    for (int j = 0; j < insideBread.length; j++) {
+                        if (stack.getItem() == insideBread[j] && !(ingredientCnt <= 0))
+                            ingredientCnt--;
+                    }
                 }
             }
         }
-        if(checks==0 && type)
+        if(ingredientCnt==0 && type)
             return true;
-        System.out.println(checks);
+        System.out.println(ingredientCnt);
         return false;
     }
 
-    @SideOnly(Side.CLIENT)
-    public boolean canMake(TickEvent.PlayerTickEvent event) //~~works i think
-    {
-        int checks = insideBread.length;
-        boolean type = false;
-        InventoryPlayer inventory = event.player.inventory;
-
-        for(int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            ItemStack stack = inventory.getStackInSlot(i);
-            if(stack != null)
-            {
-                for(int j = 0; j < insideBread.length; j++)
-                {
-                    if(stack.getItem().getUnlocalizedName().equals(orderType.getUnlocalizedName()))
-                        type = true;
-                    else if(stack.getItem().getUnlocalizedName().equals(insideBread[j].getUnlocalizedName()))
-                        checks--;
-
-//					System.out.println(stack.getItem().getUnlocalizedName() + " realbread " + orderType.getUnlocalizedName());
-//					System.out.println(stack.getItem().getUnlocalizedName() + " ingredient " + insideBread[j].getUnlocalizedName());
-                }
-            }
-        }
-        if(checks==0 && type)
-            return true;
-        System.out.println(checks);
-        return false;
-    }
 }
+
+//                    if(stack.getItem().getUnlocalizedName().equals(orderType.getUnlocalizedName()))
+//                        type = true;
+//                    else if(stack.getItem().getUnlocalizedName().equals(insideBread[j].getUnlocalizedName()))
+//                        ingedrientCnt--;
+
+//					System.out.println(stack.getItem().getUnlocalizedName() + " realbread " + orderType.getUnlocalizedName());
+//					System.out.println(stack.getItem().getUnlocalizedName() + " ingredient " + insideBread[j].getUnlocalizedName());

@@ -8,7 +8,13 @@ public enum EnumPacketServer {
     QuestEnd,
     QuestJoinFailed,
     FishRetract,
-    FishingDistance;
+    FishingDistance,
+    OverCookedWaitTime,
+    OverCookedNewOrder,
+    OverCookedOrderExpire,
+    OverCookedOrderComplete,
+    OverCookedSpawnParticle,
+    OverCookedEnd;
     private EnumPacketServer(){
 
     }

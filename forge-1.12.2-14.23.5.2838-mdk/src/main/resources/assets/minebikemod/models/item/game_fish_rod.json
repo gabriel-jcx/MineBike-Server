@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld_rod",
+  "textures": {
+    "layer0": "minebikemod:items/game_fish_rod"
+  }
+}

@@ -165,7 +165,7 @@ public class FishingQuest  extends AbstractCustomQuest {
 
             // You don't need to new here, you can just simply modify this.timerString.text
 //            this.timerString.unregister();
-            this.timerString.text= "The fish will run away in:  " + timer + " seconds";
+            this.timerString.setText("The fish will run away in:  " + timer + " seconds");
 
         }
     }
@@ -188,7 +188,7 @@ public class FishingQuest  extends AbstractCustomQuest {
         if (this.powerLine.getX()==bar_max && distance-1>=0)
         {
             distance-=1;
-            this.distanceString.text= "Distance "+ distance;
+            this.distanceString.setText("Distance "+ distance);
             if(distance==0)
             {
                 ClientUtils.sendData(EnumPacketClient.FishingDistance,distance);

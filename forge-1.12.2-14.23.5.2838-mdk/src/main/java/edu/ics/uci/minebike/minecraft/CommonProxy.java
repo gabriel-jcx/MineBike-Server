@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 public class CommonProxy implements IGuiHandler {
     public CommonProxy(){
-        System.out.println("Registering Dimension with id = " + WorldProviderSoccerQuest.DIM_ID);
+//        System.out.println("Registering Dimension with id = " + WorldProviderSoccerQuest.DIM_ID);
         DimensionType soccerDType = DimensionType.register("soccerDim", "customDim", WorldProviderSoccerQuest.DIM_ID,WorldProviderSoccerQuest.class, true);
         DimensionManager.registerDimension(soccerDType.getId(),soccerDType);
         DimensionType fishingDtype = DimensionType.register("fishingDim", "customDim", WorldProviderFishing.DIM_ID,WorldProviderFishing.class ,true);

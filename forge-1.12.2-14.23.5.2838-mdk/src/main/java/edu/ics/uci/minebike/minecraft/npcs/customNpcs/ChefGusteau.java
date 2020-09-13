@@ -29,7 +29,7 @@ import noppes.npcs.entity.EntityCustomNpc;
 public class ChefGusteau extends AbstractCustomNpc{
     public static final String NAME = "ChefGusteau";
     public static final Vec3d LOCATION = new Vec3d(7,78,-3);
-    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanfemale/Chef_Gusteau.png";
+    public static final String TEXTURE_NAME = "customnpcs:textures/entity/humanmale/chefsteve.png";
     public ChefGusteau()
     {
         name = NAME;
@@ -59,7 +59,7 @@ public class ChefGusteau extends AbstractCustomNpc{
         }
 //        else
 //        {
-//            System.out.println("Cooking start location: "+ cooked.questStartLocation);
+//            System.out.println("Cooking start location: "+ cooked.questStartLocation+ "  " + cooked.DIMID);
 //            ServerUtils.telport((EntityPlayerMP)player, cooked.questStartLocation,cooked.DIMID);
 //        }
     }

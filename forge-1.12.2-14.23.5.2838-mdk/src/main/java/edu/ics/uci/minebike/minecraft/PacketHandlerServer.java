@@ -6,9 +6,11 @@ import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import edu.ics.uci.minebike.minecraft.item.CustomHook;
 import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.OverCookedQuest;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
@@ -57,9 +59,15 @@ public class PacketHandlerServer {
             int a = Integer.parseInt(questNum);
             System.out.println("a = " + a);
             CustomQuestManager.customQuests.get(Integer.parseInt(questNum)).onPlayerJoin(player);
-        }else if (num == EnumPacketClient.FishingDistance)
-        {
+        }else if (num == EnumPacketClient.FishingDistance) {
             CustomHook.distance= buffer.readInt();
+        }else if(num == EnumPacketClient.OrderSubmit){
+            OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
+            cook.orderComplete(player);
+        }else if(num == EnumPacketClient.CookTeleport){
+            OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
+            String coordinates = CommonUtils.readString(buffer);
+            cook.teleportPlayer(coordinates, player);
         }
         //System.out.println(readString(buffer));
         // teleport and start the quest here!!!!

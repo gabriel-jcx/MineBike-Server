@@ -3,10 +3,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Ada;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Elon;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Sam;
+import edu.ics.uci.minebike.minecraft.npcs.customNpcs.*;
+// import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Ada;
+// import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Elon;
+// import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Jaya;
+// import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Sam;
 import noppes.npcs.entity.EntityCustomNpc;
 
 public class NpcDatabase {
@@ -17,6 +18,11 @@ public class NpcDatabase {
         npcs.put(Sam.NAME,new Sam());
         npcs.put(Jaya.NAME,new Jaya());
         npcs.put(Ada.NAME,new Ada());
+        npcs.put(ChefGusteau.NAME, new ChefGusteau());
+        npcs.put(Gordon.NAME, new Gordon());
+        npcs.put(Shuttle.NAME, new Shuttle());
+        npcs.put(Manager.NAME, new Manager());
+        npcs.put(Waiter.NAME, new Waiter());
         npcs.put(Elon.NAME,new Elon());
     }
     public static void registerNpcs(){
@@ -24,6 +30,11 @@ public class NpcDatabase {
         npcs.put(Jaya.NAME, new Jaya());
         npcs.put(Sam.NAME, new Sam());
         npcs.put(Ada.NAME,new Ada());
+        npcs.put(ChefGusteau.NAME,new ChefGusteau());
+        npcs.put(Gordon.NAME, new Gordon());
+        npcs.put(Shuttle.NAME, new Shuttle());
+        npcs.put(Manager.NAME, new Manager());
+        npcs.put(Waiter.NAME, new Waiter());
         npcs.put(Elon.NAME, new Elon());
     }
 }

@@ -212,61 +212,7 @@ public class SoccerQuest extends AbstractCustomQuest {
     public void start(EntityPlayerSP player){
 
     }
-    @Override
-    public void start(EntityJoinWorldEvent event) {
-//        if(isStarted){
-//            System.err.println("Error: The Soccer Quest is already started!");
-//            return;
-//        }
-//        soccerWS = DimensionManager.getWorld(222);
-//
-//        ICustomNpc npc = NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
-//
-//        if(npc.getAi() instanceof  DataAI){
-//            System.out.println("INPCai is instance of DataAI");
-//        }
-//        int[] pos = new int[]{20,5,20};
-//        DataAI npcai = (DataAI)npc.getAi();
-//        npcPathList.add(0,pos);
-//
-//        npcPathList.add(1,pos);
-//        npcai.setMovingPath(npcPathList);
-//        npc.getAi().setMovingPathType(2,false);
-//        //npc.setMoveForward();
-//        DataAI npcai = (DataAI)npc.getAi();
-//        npcai.setStartPos(new BlockPos(10,5,10));
-//        int[] newPosition = new int[] {20,5,20};
-//        npcai.getMovingPath().add(newPosition);
-//        npcai.setMovingType(0);
-//        npcai.canSprint = true;
-//        npcai.movingPause = false;
-        //npcai.setMovingPath(new List<int>{20,20,20});
-//        BlockPos pos = new BlockPos(20, 20, 20);
-//
-//        npc.getAi().setMovingType(2); // 2 for
-//        npc.getAi().getMovingPathType()
-//        npc.setMoveForward(200);
-        //npc.getAi().setMovingPathType();
-//        EntityCustomNpc npc = new EntityCustomNpc(event.getWorld());
-//        npc.wrappedNPC.setName("a");
-//        npc.ais.setStartPos(npc.getPosition());
-//        boolean spawned = soccerWS.spawnEntity(npc);
-//        soccerWS.updateEntities();
-//        if(spawned){
-//            System.out.println("Spawn successful, but can you see it?");
-//        }
-//        if(npc instanceof  EntityCustomNpc){
-//            System.out.println("The created CustomNPC is actually a EntityCustomNPc");
-//        }
 
-        // Spwan a ball!
-//        ball = new EntitySoccerBall(event.getWorld());
-//        ball.setPosition(ball_location.x,ball_location.y,ball_location.z);
-//        soccerWS.spawnEntity(ball);
-//
-//        this.isStarted = true;
-        // spawn associated NPC and ball if not spawned
-    }
 
 
     @Override
@@ -279,8 +225,9 @@ public class SoccerQuest extends AbstractCustomQuest {
 
 
         // Hud Elements
-        clockStr.y -= 20;
-        clockStr.scale = 1.0f; // make it smaller during the game
+        clockStr.setY(clockStr.getY() - 20);
+        clockStr.setScale(1.0f);
+        //clockStr.scale = 1.0f; // make it smaller during the game
 
 //        scoreLeftRect = new HudRectangle();
         scoreLeftStr = new HudString(-40,35, Integer.toString(scoreLeft), 1.5f, 0x00ff0000, true, false);
@@ -323,7 +270,6 @@ public class SoccerQuest extends AbstractCustomQuest {
             }
         }
         isStarted = false; // set both client and server to not
-        return;
     }
 
 
@@ -353,10 +299,10 @@ public class SoccerQuest extends AbstractCustomQuest {
 //        DimensionManager.getWorld(222).spawnParticle(EnumParticleTypes.WATER_WAKE);
     }
     public void leftScoreUpdate(){
-        scoreLeftStr.text = Integer.toString(++scoreLeft);
+        scoreLeftStr.setText(Integer.toString(++scoreLeft));
     }
     public void rightScoreUpdate(){
-        scoreRightStr.text = Integer.toString(++scoreRight);
+        scoreRightStr.setText(Integer.toString(++scoreRight));
     }
     private void serverStartTick(TickEvent.WorldTickEvent event){
         long curr = System.currentTimeMillis();
@@ -421,14 +367,14 @@ public class SoccerQuest extends AbstractCustomQuest {
 
         // The logic works based on the fact that the GAME last more than 3 seconds!!!
         if(curr - client_startTime < 5000) // 3000ms for displaying GAMESTART!
-            clockStr.text = "GAME START! KICK THE BALL TOWARDS THE GOAL!~";
+            clockStr.setText("GAME START! KICK THE BALL TOWARDS THE GOAL!~");
         else if(curr >= client_endTime){
             System.out.println("Game END on client!");
             this.end();
         }
         else{
             long remaining_millisecs = client_endTime - curr;
-            clockStr.text = QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(remaining_millisecs));
+            clockStr.setText(QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(remaining_millisecs)));
         }
     }
 
@@ -490,10 +436,65 @@ public class SoccerQuest extends AbstractCustomQuest {
 
         int remaining_seconds = QuestUtils.getRemainingSeconds(client_waitingTime);
         if(remaining_seconds >= 0 ){
-            clockStr.text = QuestUtils.formatSeconds(remaining_seconds);
+            clockStr.setText(QuestUtils.formatSeconds(remaining_seconds));
         }
 
 //        System.out.println("Client have " + clockStr.text + "left");
     }
 
+    @Override
+    public void start(EntityJoinWorldEvent event) {
+//        if(isStarted){
+//            System.err.println("Error: The Soccer Quest is already started!");
+//            return;
+//        }
+//        soccerWS = DimensionManager.getWorld(222);
+//
+//        ICustomNpc npc = NpcAPI.Instance().spawnNPC(event.getWorld(),10, 5,10 );
+//
+//        if(npc.getAi() instanceof  DataAI){
+//            System.out.println("INPCai is instance of DataAI");
+//        }
+//        int[] pos = new int[]{20,5,20};
+//        DataAI npcai = (DataAI)npc.getAi();
+//        npcPathList.add(0,pos);
+//
+//        npcPathList.add(1,pos);
+//        npcai.setMovingPath(npcPathList);
+//        npc.getAi().setMovingPathType(2,false);
+//        //npc.setMoveForward();
+//        DataAI npcai = (DataAI)npc.getAi();
+//        npcai.setStartPos(new BlockPos(10,5,10));
+//        int[] newPosition = new int[] {20,5,20};
+//        npcai.getMovingPath().add(newPosition);
+//        npcai.setMovingType(0);
+//        npcai.canSprint = true;
+//        npcai.movingPause = false;
+        //npcai.setMovingPath(new List<int>{20,20,20});
+//        BlockPos pos = new BlockPos(20, 20, 20);
+//
+//        npc.getAi().setMovingType(2); // 2 for
+//        npc.getAi().getMovingPathType()
+//        npc.setMoveForward(200);
+        //npc.getAi().setMovingPathType();
+//        EntityCustomNpc npc = new EntityCustomNpc(event.getWorld());
+//        npc.wrappedNPC.setName("a");
+//        npc.ais.setStartPos(npc.getPosition());
+//        boolean spawned = soccerWS.spawnEntity(npc);
+//        soccerWS.updateEntities();
+//        if(spawned){
+//            System.out.println("Spawn successful, but can you see it?");
+//        }
+//        if(npc instanceof  EntityCustomNpc){
+//            System.out.println("The created CustomNPC is actually a EntityCustomNPc");
+//        }
+
+        // Spwan a ball!
+//        ball = new EntitySoccerBall(event.getWorld());
+//        ball.setPosition(ball_location.x,ball_location.y,ball_location.z);
+//        soccerWS.spawnEntity(ball);
+//
+//        this.isStarted = true;
+        // spawn associated NPC and ball if not spawned
+    }
 }
