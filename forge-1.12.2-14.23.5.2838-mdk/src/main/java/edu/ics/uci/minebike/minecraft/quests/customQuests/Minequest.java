@@ -225,6 +225,8 @@ public class Minequest extends AbstractCustomQuest {
 
 
     private void resetCeiling(int laneNumber) {
+        // TODO: extract functions and use switch statment!
+
         if (laneNumber == 1) {
             for(int z = 800; z >= endZ; z--) {
                 for (int x = -1152; x <= -1143; x++) {
@@ -508,11 +510,14 @@ public class Minequest extends AbstractCustomQuest {
 
 
     public void serverStartTick() {
-        if (player.getPosition() == null)
+        if (player.getPosition() == null) //??? what is this if statement for?
             return;
         checkStartLocations();
         generateLavaTick();
-
+        if(!(this.player instanceof  EntityPlayerMP)){
+            System.err.println("ERROR: serverStartTick executed on the client side? Need to understand!");
+            return;
+        }
         BlockPos dab = (new BlockPos(player.getPosition().getX(), player.getPosition().getY() - 1, player.getPosition().getZ()));
         BlockPos playerPos = player.getPosition();
         if (((EntityPlayerMP) player).world.getBlockState(dab).getBlock() == Blocks.MAGENTA_GLAZED_TERRACOTTA) {
