@@ -9,8 +9,7 @@ public class NpcEventHandler {
         AbstractCustomNpc npc = NpcDatabase.npcs.get(event.getTarget().getName());
         System.out.println();
         if(npc == null){
-            System.out.println("Player interacted with NPC:" + event.getTarget().getName() +" but not in the NPC database");
-
+            System.out.println("Player interacted with target:" + event.getTarget().getName() +" but not in the NPC database");
             return;
         }else{
             System.out.println(player.getName() + " interacted with " + npc.getName());
