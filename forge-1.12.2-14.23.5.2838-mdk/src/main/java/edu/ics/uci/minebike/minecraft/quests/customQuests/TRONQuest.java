@@ -2,6 +2,7 @@ package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
 import com.mrcrayfish.soccer.entity.EntitySoccerBall;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
+import edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI.TronAI;
 import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
@@ -60,6 +61,8 @@ import static net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer;
 public class TRONQuest extends AbstractCustomQuest {
 
     private boolean worldLoaded = false;
+    private TronAI tronAI= new TronAI();
+
 
     public static final String NPC_NAME = "Rinzler"; // Name of npc
     static EntityCustomNpc npc;
@@ -144,6 +147,7 @@ public class TRONQuest extends AbstractCustomQuest {
 
     public TRONQuest() {
         super();
+        this.NAME="Tron";
         this.DIMID = 250;
         //setting it to true will mean that a part of onWorldEvent will run and search for the player's coordinates
         this.questStartLocation = new Vec3d (0,8, 0);
@@ -246,6 +250,7 @@ public class TRONQuest extends AbstractCustomQuest {
     @Override
     public void start(EntityPlayerSP player) {
 
+
     }
     @Override
     public void start(EntityJoinWorldEvent event) {
@@ -282,6 +287,11 @@ public class TRONQuest extends AbstractCustomQuest {
             //RinzlerNPC.delete();
         }
         return;
+    }
+
+    @Override
+    public String getName() {
+        return this.NAME;
     }
 
     /* minecraft often oscillates coordinates (there are doubles) */
@@ -418,6 +428,7 @@ public class TRONQuest extends AbstractCustomQuest {
                     RinzlerNPC.wrappedNPC.setHome(newLoc[0], 5, newLoc[2]); //trying to go to the randomized destination
                     newLoc[0] = ((int) (Math.random() * 201)) - 100;
                     newLoc[2] = ((int) (Math.random() * 201)) - 100;
+                    npcSpeed= tronAI.calcSpeed(npcSpeed);
                     RinzlerNPC.wrappedNPC.navigateTo(newLoc[0], 5, newLoc[2], npcSpeed); //trying to go to the randomized destination
                 }
                 //RinzlerNPC.wrappedNPC.setMoveForward(10);
