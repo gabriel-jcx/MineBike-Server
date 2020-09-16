@@ -1,27 +1,19 @@
 package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 //import com.sun.org.apache.xpath.internal.operations.Bool;
-import edu.ics.uci.minebike.minecraft.ClientUtils;
-import edu.ics.uci.minebike.minecraft.CommonUtils;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
+import edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI.OverCookedAI;
 import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
-import edu.ics.uci.minebike.minecraft.client.hud.HudTexture;
-import edu.ics.uci.minebike.minecraft.item.*;
 import edu.ics.uci.minebike.minecraft.npcs.AbstractCustomNpc;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.npcs.NpcUtils;
 import edu.ics.uci.minebike.minecraft.npcs.customNpcs.ChefGusteau;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Gordon;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Manager;
-import edu.ics.uci.minebike.minecraft.npcs.customNpcs.Shuttle;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderOverCooked;
@@ -44,7 +36,6 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.block.state.IBlockState;
 
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -52,16 +43,12 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import noppes.npcs.Server;
 import noppes.npcs.entity.EntityCustomNpc;
-import org.lwjgl.Sys;
 //import sun.plugin2.util.ColorUtil;
 
 public class OverCookedQuest extends AbstractCustomQuest {
@@ -86,6 +73,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     private Map<String, BlockPos> stations = new HashMap<>();
     private ArrayList<Recipe> recipes = new ArrayList<>();
     private ArrayList<String> locations = new ArrayList<>();
+    private OverCookedAI overCookedAI= new OverCookedAI();
 
 
 
@@ -133,6 +121,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     public OverCookedQuest()
     {
+        this.NAME="OverCooked";
         this.DIMID = WorldProviderOverCooked.DIM_ID;
         this.questStartLocation = new Vec3d(0,4,0);
         this.isStarted = false;
@@ -336,6 +325,11 @@ public class OverCookedQuest extends AbstractCustomQuest {
     }
 
     @Override
+    public String getName() {
+        return this.NAME;
+    }
+
+    @Override
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
         //Server Side
@@ -469,7 +463,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 curOrders.add(recipes.get(next));
                 orderAddTime.add(System.currentTimeMillis());
                 lastGenerated = System.currentTimeMillis();
-                nextGenerated = lastGenerated + randTime();
+//                nextGenerated = lastGenerated + randTime();
+                nextGenerated = lastGenerated + overCookedAI.orderTime();
                 System.out.println("Next generation at : " + nextGenerated);
             } else if(System.currentTimeMillis() >= nextGenerated || curOrders.size() == 0){
                 for(EntityPlayer player : playersInGame) {
@@ -479,7 +474,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 curOrders.add(recipes.get(next));
                 orderAddTime.add(System.currentTimeMillis());
                 lastGenerated = System.currentTimeMillis();
-                nextGenerated = lastGenerated + randTime();
+//                nextGenerated = lastGenerated + randTime();
+                nextGenerated = lastGenerated + overCookedAI.orderTime();
                 System.out.println("Next generation at : " + nextGenerated);
             }
         }
@@ -494,6 +490,8 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     //generates random time for next order
     public long randTime(){return (long)(Math.random() * 10000) + 65000;}
+
+
 
     //Updates the world time to stop daynight and fire spread and time set
     public void updateWorldTime(){

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class MinerAI extends AbstractQuestAI {
-    private String QuestName= "miner";
+    private String QuestName= "Miner";
     private OuterAI outerAI= OuterAI.getInstance();
     private ArrayList<Integer> timeUsedForEachLane = new ArrayList<Integer>();
     @Override

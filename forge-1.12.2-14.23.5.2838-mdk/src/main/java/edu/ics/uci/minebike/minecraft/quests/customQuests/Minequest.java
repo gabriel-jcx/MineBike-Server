@@ -80,11 +80,13 @@ public class Minequest extends AbstractCustomQuest {
     public int DIMID;
     private boolean isStarted;
 
+
     public Vec3d questStartLocation;
     private int score = 0;
     public static final int MINERDIMENSIONID = 420;
     private ItemStack[] playerInventory;
     private final int currentTick;
+
 
 
     private HudRectangle backRectangle;
@@ -115,6 +117,7 @@ public class Minequest extends AbstractCustomQuest {
         super();
         //initializing all private variables
 
+        this.NAME="Miner";
         currentTick = 0; // Once game starts the lava should proceed every couple ticks
 
         points = 0;
@@ -575,6 +578,11 @@ public class Minequest extends AbstractCustomQuest {
 
     public void end(){
 
+    }
+
+    @Override
+    public String getName() {
+        return this.NAME;
     }
 
 }
