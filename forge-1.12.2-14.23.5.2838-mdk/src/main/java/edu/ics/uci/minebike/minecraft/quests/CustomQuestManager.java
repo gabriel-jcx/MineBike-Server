@@ -1,9 +1,13 @@
 package edu.ics.uci.minebike.minecraft.quests;
 
 import edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.Minequest;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.OverCookedQuest;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.TRONQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderMiner;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderOverCooked;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderTRONQuest;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -21,13 +25,15 @@ public class CustomQuestManager {
     //public static ArrayList<Integer> questDimsIDs = new ArrayList<>();
 
     public CustomQuestManager() {
-
+        // NOTE: Custom Quest Initalizer
         customQuests.put(WorldProviderSoccerQuest.DIM_ID, new SoccerQuest());
         //questDimsIDs.add(WorldProviderSoccerQuest.DIM_ID);
         customQuests.put(WorldProviderFishing.DIM_ID, new FishingQuest());
         //questDimsIDs.add(WorldProviderFishing.DIM_ID);
         customQuests.put(WorldProviderTRONQuest.DIM_ID, new TRONQuest());
-        //questDimsIDs.add(WorldProviderTRONQuest.DIM_ID);
+
+        customQuests.put(WorldProviderMiner.DIM_ID, new Minequest());
+        customQuests.put(WorldProviderOverCooked.DIM_ID, new OverCookedQuest());
 
     }
 

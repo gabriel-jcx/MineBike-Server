@@ -68,6 +68,12 @@ dependencies {
     shade files('BiomesOPlenty-1.12.2-7.0.1.2441-universal.jar')
     shade files('FishingMadeBetter-1.12.2-1.1.3.jar')
     shade files('Aquaculture-1.12.2-1.6.8.jar')
+//    shade files('bigxDictionary.jar')
+//    shade files('bigxController.jar')
+//    shade files('BikeMod-6.0.fast.jar')
+//    shade files('jsch-0.1.53.jar')
+//    shade files('slf4j-api-1.7.12.jar')
+    shade files('D3Commands-1.4.2.jar')
     compile files('Soccer-Mod-1.12.2.jar')
 }
 

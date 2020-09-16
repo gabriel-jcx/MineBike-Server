@@ -4,8 +4,8 @@ import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
 import edu.ics.uci.minebike.minecraft.item.CustomHook;
 import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
-import edu.ics.uci.minebike.minecraft.quests.customQuests.FishingQuest;
-import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
+import edu.ics.uci.minebike.minecraft.quests.QuestUtils;
+import edu.ics.uci.minebike.minecraft.quests.customQuests.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,7 +53,34 @@ public class PacketHandlerClient {
             soccer.rightScoreUpdate();
         }else if (type == EnumPacketServer.FishRetract) {
             FishingQuest fishingQuest = (FishingQuest) CustomQuestManager.customQuests.get(223);
-            fishingQuest.retract=buffer.readInt();
+
+            fishingQuest.retract= FishingQuest.Movement.values()[buffer.readInt()];
+
+//            fishingQuest.retract=buffer.readInt();
+        }else if (type == EnumPacketServer.OverCookedWaitTime){
+            OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
+            String waitTime = CommonUtils.readString(buffer);
+            cook.clientStartWaiting(waitTime);
+        }else if(type == EnumPacketServer.OverCookedNewOrder){
+            OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
+            int newOrder = Integer.parseInt(CommonUtils.readString(buffer));
+            cook.newOrder(newOrder);
+        }else if(type == EnumPacketServer.OverCookedOrderExpire){
+            OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
+            int expired = Integer.parseInt(CommonUtils.readString(buffer));
+            cook.clientSideExpire(expired);
+        }else if(type == EnumPacketServer.OverCookedOrderComplete){
+            OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
+            int complete = Integer.parseInt(CommonUtils.readString(buffer));
+            cook.clientSideComplete(complete);
+        }else if(type == EnumPacketServer.OverCookedSpawnParticle){
+            OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
+            String particle = CommonUtils.readString(buffer);
+            System.out.println("Attempting to spawn " + particle);
+            cook.clientSpawnParticle(particle);
+        }else if(type == EnumPacketServer.OverCookedEnd){
+            OverCookedQuest cook = (OverCookedQuest) CustomQuestManager.customQuests.get(723);
+            cook.end();
         }
 
 

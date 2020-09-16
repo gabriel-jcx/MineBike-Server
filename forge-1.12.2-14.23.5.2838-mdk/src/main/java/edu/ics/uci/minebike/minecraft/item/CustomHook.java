@@ -1,72 +1,32 @@
 package edu.ics.uci.minebike.minecraft.item;
 
 
-
-import com.teammetallurgy.aquaculture.items.AquacultureItems;
 import com.teammetallurgy.aquaculture.items.ItemFish;
-import edu.ics.uci.minebike.minecraft.ServerUtils;
-import edu.ics.uci.minebike.minecraft.client.AI.FishingAI;
-import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
-import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
-import edu.ics.uci.minebike.minecraft.item.ItemGameHook;
-import io.netty.buffer.ByteBuf;
-
-import java.awt.Color;
-import java.time.Clock;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-
-import io.netty.util.internal.MathUtil;
+import javafx.util.Pair;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-//import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.EnchantmentProtection;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityFishHook;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemFishFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.stats.StatList;
-//import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.DamageSource;
-//import net.minecraft.util.MathHelper;
-//import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
-//import net.minecraft.util.Vec3;
-import net.minecraft.util.WeightedRandom;
-//import net.minecraft.util.WeightedRandomFishable;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.client.config.GuiMessageDialog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import noppes.npcs.Server;
-import noppes.npcs.client.RenderChatMessages;
 
-import static edu.ics.uci.minebike.minecraft.item.ItemManager.GAME_FISHING_ROD;
-import static net.minecraft.realms.Realms.currentTimeMillis;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.teammetallurgy.aquaculture.items.AquacultureItems.fish;
+
+//import net.minecraft.client.renderer.entity.RenderItem;
+//import net.minecraft.util.AxisAlignedBB;
+//import net.minecraft.util.MathHelper;
+//import net.minecraft.util.MovingObjectPosition;
+//import net.minecraft.util.Vec3;
+//import net.minecraft.util.WeightedRandomFishable;
 
 //import org.ngs.bigx.minecraft.BiGX;
 //import org.ngs.bigx.minecraft.bike.BiGXPacketHandler;
@@ -88,19 +48,7 @@ public class CustomHook extends EntityFishHook
     public int shake;
     //    public OlReliable rod;
     public EntityPlayer angler;
-    private int ticksInGround;
-    private int ticksInAir;
-    private int ticksCatchable;
-    private int ticksCaughtDelay;
-    private int ticksCatchableDelay;
-    private float fishApproachAngle;
-    public Entity caughtEntity;
-    private int fishPosRotationIncrements;
-    private double fishX;
-    private double fishY;
-    private double fishZ;
-    private double fishYaw;
-    private double fishPitch;
+
     @SideOnly(Side.CLIENT)
     private double clientMotionX;
     @SideOnly(Side.CLIENT)
@@ -109,6 +57,7 @@ public class CustomHook extends EntityFishHook
     private double clientMotionZ;
     private static final String __OBFID = "CL_00001663";
     private boolean justSpawned;
+    private int fish_n=0;
 
 
     //Pulling Mechanic Variables
@@ -159,16 +108,15 @@ public class CustomHook extends EntityFishHook
     //Determines how much clickRate is decreased by, Used to make catching faster if power above certain limit
     public static int addPower;
 
-    //Used to make catching go twice as fast when bonus is active
-    public static int doubleTime = 1;
-
     //Remaining distance to catch the fish
     public static int distance = 4;
+    public static String current_fish;
+    public static int spawn_fish;
 
     public int timer = 10;
 
     EntityItem entityitem;
-    FishingAI fishingAI=new FishingAI();
+
 
     //Store all the fishes with their weights
     private List<ArrayList<ItemFish>> fishingSpots = new ArrayList<ArrayList<ItemFish>>();
@@ -261,7 +209,7 @@ public class CustomHook extends EntityFishHook
         float f3 = MathHelper.sqrt(p_146035_1_ * p_146035_1_ + p_146035_5_ * p_146035_5_);
         this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(p_146035_1_, p_146035_5_) * 180.0D / Math.PI);
         this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(p_146035_3_, (double)f3) * 180.0D / Math.PI);
-        this.ticksInGround = 0;
+
     }
 
     /**
@@ -283,9 +231,11 @@ public class CustomHook extends EntityFishHook
         //Todo: erase hud if fish rod is not in hand, retract hook, spawn fish
         if (distance==0)
         {
+
             this.setDead();
-            entityitem = new EntityItem(this.world, this.posX, this.posY, this.posZ,this.getFishingResult());
+            entityitem = new EntityItem(this.world, this.posX, this.posY, this.posZ,fish.getItemStackFish(current_fish));
             spawn_fish();
+            fish_n+=1;
             distance=4;
 
         }
@@ -398,50 +348,12 @@ public class CustomHook extends EntityFishHook
 
 
     //Gets the types of items and custom fish the player can catch
-    private ItemStack getFishingResult()
-    {
-        ItemStack itemstack;
-        //this.angler.triggerAchievement(StatList.fishCaughtStat);
-        switch(fishingLocation)
-        {
-//            case 1:
-//                System.out.println("Lake Worked");
-//                itemstack = ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, fishingSpots.get(0))).func_150708_a(this.rand);
-//                difficulty = ((ItemFish)(itemstack.getItem())).getRarity();
-//                break;
-//            case 2:
-//                System.out.println("Spooky Worked");
-//                itemstack = ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, fishingSpots.get(1))).func_150708_a(this.rand);
-//                difficulty = ((ItemFish)(itemstack.getItem())).getRarity();
-//                break;
-//            case 3:
-//                System.out.println("Glacial Worked");
-//                itemstack = ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, fishingSpots.get(2))).func_150708_a(this.rand);
-//                difficulty = ((ItemFish)(itemstack.getItem())).getRarity();
-//                break;
-//            case 4:
-//                System.out.println("Koi Pond Worked");
-//                itemstack = ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, fishingSpots.get(3))).func_150708_a(this.rand);
-//                difficulty = ((ItemFish)(itemstack.getItem())).getRarity();
-//                break;
-//            case 5:
-//                System.out.println("Deep Sea Worked");
-//                itemstack = ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, fishingSpots.get(4))).func_150708_a(this.rand);
-//                difficulty = ((ItemFish)(itemstack.getItem())).getRarity();
-//                break;
-//            case 6:
-//                System.out.println("Nether Worked");
-//                itemstack = ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, fishingSpots.get(5))).func_150708_a(this.rand);
-//                difficulty = ((ItemFish)(itemstack.getItem())).getRarity();
-//                break;
-//            default:
-//                System.out.println("defualt Worked");
-//                int rand = (int)(Math.random() * 6) + 1;
-//                itemstack = ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, fishingSpots.get(rand))).func_150708_a(this.rand);
-//                difficulty = ((ItemFish)(itemstack.getItem())).getRarity();
-//                break;
-        }
-        //Todo: testing return red shrooma
-        return fishingAI.fish_testing();
-    }
+//    private ItemStack getFishingResult()
+//    {
+//        ItemStack itemstack;
+//        //this.angler.triggerAchievement(StatList.fishCaughtStat);
+//
+//        //Todo: testing return red shrooma
+//        return fishingAI.fish_testing().getValue();
+//    }
 }

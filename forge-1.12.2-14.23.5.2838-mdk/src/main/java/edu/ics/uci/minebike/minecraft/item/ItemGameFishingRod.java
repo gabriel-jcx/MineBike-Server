@@ -59,13 +59,13 @@ public class ItemGameFishingRod extends ItemBetterFishingRod {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
 
-        System.out.println("Right click aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+//        System.out.println("Right click aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         if (playerIn.fishEntity != null)
         {
 
             if (!worldIn.isRemote)
             {
-                System.out.println("retract 222222222222222222222222222222222");
+                System.out.println("Retract 222222222222222222222222222222222");
                 ServerUtils.sendQuestData(EnumPacketServer.FishRetract,(EntityPlayerMP)playerIn, 2);
             }
             int i = playerIn.fishEntity.handleHookRetraction();
@@ -80,7 +80,7 @@ public class ItemGameFishingRod extends ItemBetterFishingRod {
 
             if (!worldIn.isRemote)
             {
-                System.out.println("retract 1111111111111111111111111111");
+                System.out.println("Throw 1111111111111111111111111111");
                 ServerUtils.sendQuestData(EnumPacketServer.FishRetract,(EntityPlayerMP)playerIn, 1);
 //                System.out.println("New Hook bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
                 gameHook = new CustomHook(worldIn, playerIn);

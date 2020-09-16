@@ -32,6 +32,4 @@ public abstract class AbstractCustomNpc {
     }
     public String getUUID(){return UUID;}
 
-
-
 }

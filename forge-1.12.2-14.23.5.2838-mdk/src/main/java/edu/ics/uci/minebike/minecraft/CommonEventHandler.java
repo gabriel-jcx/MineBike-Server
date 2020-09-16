@@ -1,5 +1,9 @@
 package edu.ics.uci.minebike.minecraft;
 
+import edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI.MinerAI;
+import edu.ics.uci.minebike.minecraft.client.AI.OuterAI;
+import edu.ics.uci.minebike.minecraft.client.hud.HudString;
+import edu.ics.uci.minebike.minecraft.client.hud.OuterAIHud;
 import edu.ics.uci.minebike.minecraft.item.ItemManager;
 import edu.ics.uci.minebike.minecraft.npcs.NpcDatabase;
 import edu.ics.uci.minebike.minecraft.npcs.NpcEventHandler;
@@ -9,6 +13,8 @@ import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreenServerList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -16,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -24,6 +31,9 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import edu.ics.uci.minebike.minecraft.client.hud.HudString;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import noppes.npcs.entity.EntityCustomNpc;
 
 import java.util.Iterator;
@@ -35,6 +45,9 @@ public class CommonEventHandler {
     public static boolean spawned = false;
     public static boolean loaded = false;
     public static boolean success = false;
+    public static OuterAIHud  outerAIHud=new OuterAIHud();
+    public static OuterAI outerAI = OuterAI.getInstance();
+    private boolean outerHudShowing=false;
     public CommonEventHandler(){
 
     }
@@ -103,6 +116,7 @@ public class CommonEventHandler {
         System.out.println(event.player.dimension);
         System.out.println(event.player.getName() + " has logged out");
 
+        // Player Logout at
         if(event.player.world.provider.getDimension() == WorldProviderSoccerQuest.DIM_ID){
             SoccerQuest soccer = (SoccerQuest)CustomQuestManager.customQuests.get(222);
             soccer.playersInGame.remove((EntityPlayerMP)event.player);
@@ -110,6 +124,8 @@ public class CommonEventHandler {
                 soccer.end();
             }
         }
+//        if(event.player.world.isRemote) // client side send Tracking Data to server
+//            ServerUtils .sendPlayerGameplayData();
 
     }
     @SubscribeEvent
@@ -142,8 +158,27 @@ public class CommonEventHandler {
             }
             spawned = true;
         }
+        if(event.side.isClient() && event.player.world.provider.getDimension() == 0){
+            if (outerHudShowing){
+                //outerHud initialized, updating it for every sec
+                outerAIHud.refresh();
+            }
+            else{
+                outerHudShowing=true;
+                System.out.println("OuterHudShowing");
+                outerAIHud.showHud(outerAI.getCurrHR());
+                System.out.println("OuterHudShowing");
+                outerAIHud.showHeartIcon();
+
+                //initializing the outerHud.
+            }
+        }
+
         if(event.side.isClient() && event.player.world.provider.getDimension() != 0){
-            CustomQuestManager.onPlayerTick(event);
+            //TODO: not in dim0, the hud might need to be rearranged.
+            outerHudShowing=false;
+//            outerAIHud.hide();
+//            CustomQuestManager.onPlayerTick(event);
         }
     }
     @SubscribeEvent
@@ -174,6 +209,7 @@ public class CommonEventHandler {
         //System.out.println("A world is loaded, WorldEvent.Load triggerd");
         if(event.getWorld().provider.getDimension() == 0){
             System.out.println("Loading the overall world");
+
             //List<Entity> list = event.getWorld().getLoadedEntityList();
 //            for(Entity e:list){
 //                System.out.println(e.getName());
@@ -197,6 +233,17 @@ public class CommonEventHandler {
     public void onPlayerSave(PlayerEvent.SaveToFile event){
         System.out.println(event.getEntityPlayer().getName() + " is trying to SaveToFile");
     }
+//
+//    @SideOnly(Side.CLIENT)
+//    @SubscribeEvent
+//    public void onRenderGameOverlay(RenderGameOverlayEvent event){
+//
+//
+//        if(!event.isCancelable()&&event.getType()==RenderGameOverlayEvent.ElementType.TEXT){
+//
+//            outerAIHud.showHeartIcon();
+//        }
+//    }
 //
 //    @SubscribeEvent
 //    public void onIDK(TickE)
