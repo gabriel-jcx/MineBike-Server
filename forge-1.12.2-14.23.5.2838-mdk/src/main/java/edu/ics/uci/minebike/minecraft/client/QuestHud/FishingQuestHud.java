@@ -67,7 +67,7 @@ public class FishingQuestHud {
         if (gameCountDown != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
             gameCountDown = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
             gameTimeDisplay -= 1;
-            this.gameTime.text= "Time: "+gameTimeDisplay;
+            this.gameTime.setText("Time: "+gameTimeDisplay);
         }
     }
 
@@ -80,7 +80,7 @@ public class FishingQuestHud {
 
             // You don't need to new here, you can just simply modify this.timerString.text
 //            this.timerString.unregister();
-            this.timerString.text= "The fish will run away in:  " + timer + " seconds";
+            this.timerString.setText( "The fish will run away in:  " + timer + " seconds");
 
         }
     }
@@ -103,7 +103,7 @@ public class FishingQuestHud {
         if (this.powerLine.getX()==BAR_MAX && distance-1>=0)
         {
             distance-=1;
-            this.distanceString.text= "Distance "+ distance;
+            this.distanceString.setText( "Distance "+ distance);
             if(distance==0)
             {
                 ClientUtils.sendData(EnumPacketClient.FishingDistance,distance);

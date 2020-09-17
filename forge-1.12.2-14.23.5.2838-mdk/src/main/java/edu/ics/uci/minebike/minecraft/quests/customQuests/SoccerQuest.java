@@ -365,7 +365,7 @@ public class SoccerQuest extends AbstractCustomQuest {
         else{
             long remaining_millisecs = client_endTime - curr;
 
-            clockStr.text = QuestUtils.formatSeconds(QuestUtils.getSeconds(remaining_millisecs));
+            clockStr.setText( QuestUtils.formatSeconds(QuestUtils.getSeconds(remaining_millisecs)));
 //             clockStr.setText(QuestUtils.formatSeconds(QuestUtils.getRemainingSeconds(remaining_millisecs)));
         }
     }

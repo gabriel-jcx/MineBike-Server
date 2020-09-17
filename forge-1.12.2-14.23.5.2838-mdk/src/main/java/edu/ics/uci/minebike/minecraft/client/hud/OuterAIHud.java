@@ -106,7 +106,7 @@ public class OuterAIHud {
             if(((BigxClientContext) BiGX.instance().clientContext).resistance!= currentResistance)
             {
                 currentResistance=((BigxClientContext) BiGX.instance().clientContext).resistance;
-                this.resistance.text="Current Resistance: "+currentResistance;
+                this.resistance.setText("Current Resistance: "+currentResistance);
             }
 //            heartString.text= ""+hr;
 //            System.out.println(progressCounter);
