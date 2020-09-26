@@ -47,8 +47,7 @@ public class PacketHandlerServer {
         EntityPlayerMP player = ((NetHandlerPlayServer)event.getHandler()).player;
         ByteBuf buffer = event.getPacket().payload();
         int integer = buffer.readInt();
-        System.out.println("I got a custom packet from the client " + player.getName() + "!!!!");
-        System.out.println("Enum of the packet is: " + integer);
+//
         //buffer.readInt();
 //        System.out.println(buffer.readInt());
         EnumPacketClient num = EnumPacketClient.values()[integer];
