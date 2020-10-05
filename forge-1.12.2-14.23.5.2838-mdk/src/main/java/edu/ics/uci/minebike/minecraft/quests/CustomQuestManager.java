@@ -31,6 +31,7 @@ public class CustomQuestManager {
         customQuests.put(WorldProviderMiner.DIM_ID, new Minequest());
         customQuests.put(WorldProviderOverCooked.DIM_ID, new OverCookedQuest());
 
+
     }
 
     public static void findAndStart(EntityJoinWorldEvent event){

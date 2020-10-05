@@ -52,15 +52,15 @@ import noppes.npcs.entity.EntityCustomNpc;
 //import sun.plugin2.util.ColorUtil;
 
 public class OverCookedQuest extends AbstractCustomQuest {
-
+    public boolean OvercookDebug = true;
 
     public int DIMID;
     public WorldServer overcookWs = DimensionManager.getWorld(this.DIMID);
     public Vec3d questWaitingLocation = new Vec3d(-500, 5, 0);
 //    public Vec3d questStartLocation;
 
-    private boolean isStarted;
-    private boolean isWaiting;
+    private boolean isStarted = false;
+    private boolean isWaiting = false;
 
 
 
@@ -161,7 +161,10 @@ public class OverCookedQuest extends AbstractCustomQuest {
             }
             if(playersInGame.size() <= maxPlayerCount) {
                 ServerUtils.sendQuestData(EnumPacketServer.OverCookedWaitTime,(EntityPlayerMP)player,Long.toString(this.serverWaitTime));
-                System.out.println("Teleporting Player: " + player.getName() + " to Overcooked Quest Dim");
+                if(OvercookDebug){
+                    System.out.println("Teleporting Player: " + player.getName() + " to Overcooked Quest Dim");
+                    System.out.println(" Sending reamaning " + this.serverWaitTime + " milliseconds to the client for wait");
+                }
                 ServerUtils.telport((EntityPlayerMP)player, questWaitingLocation,this.DIMID);
                 player.addPotionEffect(new PotionEffect(night_vision, (int)(gameTime + waitTime)/1000 * 20, 5, false, false));
                 player.addPotionEffect(new PotionEffect(saturation, (int)(gameTime + waitTime)/1000 * 20, 5, false, false));
@@ -345,6 +348,10 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     public void onPlayerTick(TickEvent.PlayerTickEvent event)
     {
+        if(OvercookDebug){
+//            System.out.println("The server is waiting:"  + isWaiting);
+//            System.out.println("The server is started:"  + isStarted);
+        }
         if(isWaiting){
             clientWaitTick();
         }else if(isStarted){
@@ -411,6 +418,9 @@ public class OverCookedQuest extends AbstractCustomQuest {
 
     //Client side tick during waiting period
     public void clientWaitTick(){
+        if(OvercookDebug){
+            System.out.println("Client Wait Tick Executing");
+        }
         clientWaitTime = clientEndWaitTime - System.currentTimeMillis();
         int remainingWait = QuestUtils.getRemainingSeconds(clientWaitTime);
         if(remainingWait >= 0)
@@ -434,6 +444,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
             orders.update(curTime);
             scoreVal.setText(Integer.toString(score));
 //        }
+
     }
 
     //Initializes time for the client side as well as timer HUD
@@ -443,6 +454,9 @@ public class OverCookedQuest extends AbstractCustomQuest {
         int waitingSeconds = QuestUtils.getRemainingSeconds(clientWaitTime);
         clientStartWaitTime = System.currentTimeMillis();
         clientEndWaitTime = clientStartWaitTime + clientWaitTime;
+        if(OvercookDebug){
+            System.out.println("The remaining second on the client side is " + waitingSeconds);
+        }
 //        int clientWaitLeftSeconds = QuestUtils.getRemainingSeconds(clientEndWaitTime, clientStartWaitTime);
         hudTimer = new HudString(15,10, QuestUtils.formatSeconds(waitingSeconds),2.5f,true, false);
         isWaiting = true;

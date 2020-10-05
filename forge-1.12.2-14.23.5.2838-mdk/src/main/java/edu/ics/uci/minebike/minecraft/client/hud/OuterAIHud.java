@@ -16,9 +16,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.ngs.bigx.minecraft.BiGX;
-import org.ngs.bigx.minecraft.context.BigxClientContext;
-import org.ngs.bigx.minecraft.client.ClientEventHandler;
+//import org.ngs.bigx.minecraft.BiGX;
+//import org.ngs.bigx.minecraft.context.BigxClientContext;
+//import org.ngs.bigx.minecraft.client.ClientEventHandler;
 
 
 import java.util.concurrent.TimeUnit;
@@ -108,31 +108,18 @@ public class OuterAIHud {
             currentTime = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
             hr+=1; // TODO: hr += 1 is a temp place holder need to read from actual heartrate;
 
-            System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
+//            System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
+//
+//            if(((BigxClientContext) BiGX.instance().clientContext).resistance!= currentResistance)
+//            {
+//                currentResistance=((BigxClientContext) BiGX.instance().clientContext).resistance;
+//                this.resistance.setText("Current Resistance: "+currentResistance);
+//            }
 
-            if(((BigxClientContext) BiGX.instance().clientContext).resistance!= currentResistance)
-            {
-                currentResistance=((BigxClientContext) BiGX.instance().clientContext).resistance;
-                this.resistance.setText("Current Resistance: "+currentResistance);
-            }
-//            heartString.text= ""+hr;
-//            System.out.println(progressCounter);
-//            if(progressCounter<=0){
-////                this.goalReached= new HudString(10, 220, "Goal Reached!",false,false);
-//            }
-//            else{
-//                progressCounter-=10;
-//            }
-//     p       showHeartIcon();
 
         }
     }
-//    public void setPopUpQuest(int questNum){
-//
-//    }
-//    public void hidePopUpQuest(){
-//
-//    }
+
     @SideOnly(Side.CLIENT)
     public void displayPopUpHUD(AbstractQuestAI questAI){
         // TODO: yet to be completed need to map each AI to its questName/dimemnsion????
@@ -141,14 +128,6 @@ public class OuterAIHud {
         this.popUpBG= new HudRectangle(-200,-30,400,60, 0xe4344aff,true,true);
 
         this.popUpQuest = new HudString(0, 0, "Attention! "+questAI.getQuestName()+" quest with extra reward!",true,true);
-//        if (dim ==222){
-//            this.popUpQuest =new HudString(0, 0, "Soccer Quest",true,true);
-//        }
-//        else if (dim ==223){
-//            this.popUpQuest =new HudString(0, 0, "Fishing Quest",true,true);
-//        }
-//        showPopUpBG();
-//
 
         this.popUpInstruction= new HudString(0,10,"Press X to accept the quest with extra reward.Press C to cancel",true,true);
 
@@ -167,13 +146,6 @@ public class OuterAIHud {
         incline.unregister();
     }
 
-//    @SubscribeEvent
-//    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-//
-//        if(event.player.dimension==0)
-//        {
-//            System.out.println("onPlayerTick in OuterHud");
-//        }
-//    }
+
 
 }

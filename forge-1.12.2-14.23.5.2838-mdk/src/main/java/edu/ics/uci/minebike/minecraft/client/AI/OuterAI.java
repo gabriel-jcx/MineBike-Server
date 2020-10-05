@@ -11,8 +11,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.ngs.bigx.dictionary.objects.clinical.BiGXPatientPrescription;
-import org.ngs.bigx.minecraft.BiGX;
-import org.ngs.bigx.minecraft.client.AI.OuterAI.QuestStatus;
+//import org.ngs.bigx.minecraft.BiGX;
+//import org.ngs.bigx.minecraft.client.AI.OuterAI.QuestStatus;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -65,7 +65,7 @@ public class OuterAI {
     private float currResistance = 0; // current resistance level
     private int prevSec;
     private AbstractQuestAI currentQuestAI;
-    private EnumQuestStatus questStatus;
+    private EnumQuestStatus questStatus = EnumQuestStatus.None;
     private int idleSeconds = 600;
     private int idleCounter = 0;
     private boolean targetReached = false;
@@ -115,13 +115,13 @@ public class OuterAI {
         this.currentQuestAI = questAI;
         return true;
     }
-    private void updateHR(){
-        this.currHR = BiGX.instance().clientContext.heartrate;
-    }
-
-    private void updateResistance(){
-        this.currResistance = BiGX.instance().clientContext.resistance;
-    }
+//    private void updateHR(){
+//        this.currHR = BiGX.instance().clientContext.heartrate;
+//    }
+//
+//    private void updateResistance(){
+//        this.currResistance = BiGX.instance().clientContext.resistance;
+//    }
 
     private void checkPopUpQuest(){
         if(questStatus == EnumQuestStatus.None){
@@ -152,7 +152,7 @@ public class OuterAI {
             gameTimeDisplayTimer=0;
         }
         else{
-            System.out.println("Error: Invalid questStatus");
+            System.out.println("Error: Invalid questStatus, current Quest Status is " + questStatus);
         }
     }
 
@@ -171,7 +171,7 @@ public class OuterAI {
 
         int currSec = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
         if(currSec != prevSec){  // update every second
-            updateHR();
+//            updateHR();
             prevSec = currSec;
             checkPopUpQuest();
             System.out.println("runing______________________");

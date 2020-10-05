@@ -178,7 +178,7 @@ public class CommonEventHandler {
             //TODO: not in dim0, the hud might need to be rearranged.
             outerHudShowing=false;
 //            outerAIHud.hide();
-//            CustomQuestManager.onPlayerTick(event);
+            CustomQuestManager.onPlayerTick(event);
         }
     }
     @SubscribeEvent
