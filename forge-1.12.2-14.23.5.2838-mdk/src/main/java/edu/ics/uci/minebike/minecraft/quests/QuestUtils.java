@@ -8,6 +8,10 @@ public class QuestUtils {
     public static int getRemainingSeconds(long curr, long start){
         return (int)((curr - start) /1000);
     }
+
+    public static int getRemainingSeconds(long curr){
+        return (int)((curr) /1000);
+    }
     public static int getSeconds(long curr){
         return (int)(curr/1000);
     }

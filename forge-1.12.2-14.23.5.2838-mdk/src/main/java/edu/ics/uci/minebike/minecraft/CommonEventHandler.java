@@ -45,8 +45,8 @@ public class CommonEventHandler {
     public static boolean spawned = false;
     public static boolean loaded = false;
     public static boolean success = false;
-    public static OuterAIHud  outerAIHud=new OuterAIHud();
-    public static OuterAI outerAI = OuterAI.getInstance();
+//    public static OuterAIHud  outerAIHud=OuterAIHud.getInstance();
+//    public  OuterAI outerAI = OuterAI.getInstance();
     private boolean outerHudShowing=false;
     public CommonEventHandler(){
 
@@ -158,21 +158,21 @@ public class CommonEventHandler {
             }
             spawned = true;
         }
-        if(event.side.isClient() && event.player.world.provider.getDimension() == 0){
-            if (outerHudShowing){
-                //outerHud initialized, updating it for every sec
-                outerAIHud.refresh();
-            }
-            else{
-                outerHudShowing=true;
-                System.out.println("OuterHudShowing");
-                outerAIHud.showHud(outerAI.getCurrHR());
-                System.out.println("OuterHudShowing");
-                outerAIHud.showHeartIcon();
-
-                //initializing the outerHud.
-            }
-        }
+//        if(event.side.isClient() && event.player.world.provider.getDimension() == 0){
+//            if (outerHudShowing){
+//                //outerHud initialized, updating it for every sec
+//                outerAIHud.refresh();
+//            }
+//            else{
+//                outerHudShowing=true;
+//                System.out.println("OuterHudShowing");
+////                outerAIHud.showHud(outerAI.getCurrHR());
+//                System.out.println("OuterHudShowing");
+//                outerAIHud.showHeartIcon();
+//
+//                //initializing the outerHud.
+//            }
+//        }
 
         if(event.side.isClient() && event.player.world.provider.getDimension() != 0){
             //TODO: not in dim0, the hud might need to be rearranged.

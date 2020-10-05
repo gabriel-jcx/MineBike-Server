@@ -308,15 +308,15 @@ public class OverCookedQuest extends AbstractCustomQuest {
             isStarted = false;
             serverWaitTime = waitTime;
         } else{
-            System.out.println("Client ending, unregistering HUD elements");
-            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
-            try{
+//            System.out.println("Client ending, unregistering HUD elements");
+//            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
+//            try{
                 hudTimer.unregister();
                 scoreTitle.unregister();
                 scoreVal.unregister();
-            }finally{
-                HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
-            }
+//            }finally{
+//                HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
+//            }
 
             orders.endGame();
             isStarted = false;

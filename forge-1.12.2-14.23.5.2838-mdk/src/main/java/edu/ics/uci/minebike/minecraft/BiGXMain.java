@@ -58,7 +58,7 @@ public class BiGXMain {
         MinecraftForge.EVENT_BUS.register(handler);
         MinecraftForge.EVENT_BUS.register(proxy);
         MinecraftForge.EVENT_BUS.register(gameFishingEvent);
-        MinecraftForge.EVENT_BUS.register(outerAI);
+//        MinecraftForge.EVENT_BUS.register(outerAI);
 
         proxy.load();
         logger.info("MineBike: PreInit finished");

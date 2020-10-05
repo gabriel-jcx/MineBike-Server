@@ -34,8 +34,8 @@ public class OuterAIHud {
     private int minGoal=0;
     private int maxGoal=150;
     private int hr=0;
-    private Minecraft mc = Minecraft.getMinecraft();
-    private HudManager hudManager= HudManager.getInstance(this.mc);
+//    private Minecraft mc = Minecraft.getMinecraft();
+//    private HudManager hudManager= HudManager.getInstance(this.mc);
 
     public HudString minString;
     private int progressCounter=90;
@@ -43,6 +43,7 @@ public class OuterAIHud {
 
     public HudString incline;
 
+    private static OuterAIHud instance = null;
     private int level=0;
     private int currentTime=0;
     private float currentResistance=0;
@@ -55,19 +56,25 @@ public class OuterAIHud {
 
 
     public OuterAIHud(){
+        instance = this;
 
 //        outerAI = OuterAI.getInstance();
+    }
+    public static OuterAIHud getInstance(){
+        if(instance == null)
+            instance = new OuterAIHud();
+        return instance;
     }
     @SideOnly(Side.CLIENT)
     public void showHeartIcon(){
 
+        Minecraft mc = Minecraft.getMinecraft();
 
+        mc.getTextureManager().bindTexture(heartLocation);
 
-        this.mc.getTextureManager().bindTexture(heartLocation);
-
-        this.mc.ingameGUI.drawTexturedModalRect(0,0,0,0,40,40);
-        this.mc.ingameGUI.drawTexturedModalRect(5,40,40,5,25,80);
-        this.mc.ingameGUI.drawTexturedModalRect(5,40+progressCounter,70,5+progressCounter,25,80);
+        mc.ingameGUI.drawTexturedModalRect(0,0,0,0,40,40);
+        mc.ingameGUI.drawTexturedModalRect(5,40,40,5,25,80);
+        mc.ingameGUI.drawTexturedModalRect(5,40+progressCounter,70,5+progressCounter,25,80);
 
     }
 //    @SideOnly(Side.CLIENT)
@@ -126,6 +133,7 @@ public class OuterAIHud {
 //    public void hidePopUpQuest(){
 //
 //    }
+    @SideOnly(Side.CLIENT)
     public void displayPopUpHUD(AbstractQuestAI questAI){
         // TODO: yet to be completed need to map each AI to its questName/dimemnsion????
 
@@ -145,11 +153,13 @@ public class OuterAIHud {
         this.popUpInstruction= new HudString(0,10,"Press X to accept the quest with extra reward.Press C to cancel",true,true);
 
     }
+    @SideOnly(Side.CLIENT)
     public void hidePopUp(){
         this.popUpQuest.unregister();
         this.popUpInstruction.unregister();
         this.popUpBG.unregister();
     }
+    @SideOnly(Side.CLIENT)
     public void hide(){
         heartString.unregister();
         goalString.unregister();

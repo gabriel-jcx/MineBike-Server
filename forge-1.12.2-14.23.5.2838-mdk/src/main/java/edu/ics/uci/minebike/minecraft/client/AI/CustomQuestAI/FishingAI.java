@@ -27,7 +27,7 @@ public class FishingAI extends AbstractQuestAI {
 
     Object[] allFishNamesInPond;
 
-    private OuterAI  outerAI= OuterAI.getInstance();
+//    private OuterAI  outerAI= OuterAI.getInstance();
 
     public FishingAI() {
         QuestAIDatabase.addQuestAI(this);

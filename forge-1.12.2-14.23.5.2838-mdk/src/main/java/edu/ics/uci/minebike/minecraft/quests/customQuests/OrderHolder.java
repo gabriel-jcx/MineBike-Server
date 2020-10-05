@@ -111,13 +111,13 @@ public class OrderHolder {
                 textures.get(i).setY(textures.get(i-1).getY());
             }
         }
-        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
-        try{
+////        HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.lock();
+//        try{
             timer.get(ind).unregister();
             textures.get(ind).unregister();
-        }finally{
-            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
-        }
+//        }finally{
+////            HudManager.getInstance(Minecraft.getMinecraft()).shape_lock.unlock();
+//        }
         textures.remove(ind);
         timer.remove(ind);
         expiration.remove(ind);

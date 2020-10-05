@@ -79,10 +79,10 @@ public class OuterAI {
     private void readData(){
     }
 
-    private OuterAI(){
+    public OuterAI(){
         instance = this;
         prescription = null;// TODO: read the patient prescription form
-        hud = new OuterAIHud();
+        hud = OuterAIHud.getInstance();
         playerBehaviorAnalyzer =  new PlayerBehaviorAnalyzer();
 //        questStatus = QuestStatus.NONE;
     }
