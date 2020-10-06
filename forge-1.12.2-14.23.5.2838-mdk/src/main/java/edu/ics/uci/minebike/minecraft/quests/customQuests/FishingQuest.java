@@ -129,7 +129,7 @@ public class FishingQuest  extends AbstractCustomQuest {
 
     @Override
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-//        if(event.side.isClient()) {
+        if(event.side.isClient()) {
 //            System.out.println("event.side.isClient()");
             fishingQuestHud.refreshCountDown();
             if (retract == Movement.RETRACT) {
@@ -185,7 +185,7 @@ public class FishingQuest  extends AbstractCustomQuest {
                     fishingAI.fishStatus = FishingAI.FishStatus.CAUGHT;
                 }
             }
-//        }
+        }
     }
     private int getPower()
     {

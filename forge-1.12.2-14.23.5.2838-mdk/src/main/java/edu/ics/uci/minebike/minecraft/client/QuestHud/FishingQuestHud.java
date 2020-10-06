@@ -28,13 +28,17 @@ public class FishingQuestHud {
     public static int timer=10;
     static final int BAR_MIN= -70;
     static final int BAR_MAX=65;
-    public int gameTimeDisplay=240;
+
+
+    public int requiredGameTime =240;
+    public int gameTimeDisplay=requiredGameTime;
 
     //this variable varies according to kids' prescription
     public int requiredPower=1;
 
 
     public FishingQuestHud(){
+
 
     }
     @SideOnly(Side.CLIENT)
@@ -45,7 +49,7 @@ public class FishingQuestHud {
     @SideOnly(Side.CLIENT)
     public void initializeFishingHud(){
 
-        this.gameTime= new HudString(-165, 20, "Time: "+gameTimeDisplay, true, false);
+//        this.gameTime= new HudString(-165, 20, "Time: "+gameTimeDisplay, true, false);
         this.powerString = new HudString(-125, 20, "POWER LEVEL", true, false);
         this.distanceString = new HudString(-10, 35, "Distance "+ distance, true, false);
         this.timerString = new HudString(-10, 45, "The fish will run away in:  "+ timer+" seconds", true, false);
@@ -60,6 +64,7 @@ public class FishingQuestHud {
         this.powerBar.unregister();
         this.powerString.unregister();
         this.timerString.unregister();
+        this.gameTime.unregister();
     }
     @SideOnly(Side.CLIENT)
     public void refreshCountDown() {
@@ -67,7 +72,13 @@ public class FishingQuestHud {
         if (gameCountDown != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
             gameCountDown = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
             gameTimeDisplay -= 1;
-            this.gameTime.setText("Time: "+gameTimeDisplay);
+            if(gameTimeDisplay!=requiredGameTime){
+                this.gameTime.setText("Time: "+gameTimeDisplay);
+            }
+            else{
+                initializeGameTime();
+            }
+
         }
     }
 

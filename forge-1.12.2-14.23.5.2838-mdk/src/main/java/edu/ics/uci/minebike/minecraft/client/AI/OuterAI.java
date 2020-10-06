@@ -134,19 +134,19 @@ public class OuterAI {
                 System.out.println("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
 
             }
-            //If player pressed X, discard the GUI
-            if (Keyboard.isKeyDown(0x2D) && popUpHudShowing)
+            //If player pressed C, discard the GUI
+            if (Keyboard.isKeyDown(0x2E) && popUpHudShowing)
             {
-                System.out.println("pressed X, discard the GUI");
+                System.out.println("pressed C, discard the GUI");
                 hud.hidePopUp();
                 popUpHudShowing=false;
                 idleCounter=0;
             }
-            //If player pressed C, start the quest
-            if (Keyboard.isKeyDown(0x2E) && popUpHudShowing)
+            //If player pressed X, start the quest
+            if (Keyboard.isKeyDown(0x2D) && popUpHudShowing)
             {
 //                playerBehaviorAnalyzer.findAndSetPopupQuest();
-                System.out.println("pressed C, start the quest");
+                System.out.println("pressed X, start the quest");
                 hud.hidePopUp();
                 ClientUtils.sendData(EnumPacketClient.PlayerJoin, currentQuestAI.getQuestDim());
                 popUpHudShowing=false;
