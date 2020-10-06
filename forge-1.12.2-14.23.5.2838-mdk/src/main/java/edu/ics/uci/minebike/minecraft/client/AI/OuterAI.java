@@ -49,7 +49,7 @@ public class OuterAI {
     // local instance
     private static OuterAI instance = null;
 
-    public static GamePlayTracker gamePlayTracker = null;
+    public static GamePlayTracker gamePlayTracker = GamePlayTracker.getInstance();
 
     public OuterAIHud hud = null;
     // NOTE: public variables
@@ -66,7 +66,7 @@ public class OuterAI {
     private int prevSec;
     private AbstractQuestAI currentQuestAI;
     private EnumQuestStatus questStatus = EnumQuestStatus.None;
-    private int idleSeconds = 1000;
+    private int idleSeconds = 180;
     private int idleCounter = 0;
     private boolean targetReached = false;
 
@@ -131,21 +131,27 @@ public class OuterAI {
                 popUpHudShowing=true;
                 hud.displayPopUpHUD(currentQuestAI);
                 idleCounter = 0; // reset idle counter
+                System.out.println("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
 
             }
             //If player pressed X, discard the GUI
             if (Keyboard.isKeyDown(0x2D) && popUpHudShowing)
             {
+                System.out.println("pressed X, discard the GUI");
                 hud.hidePopUp();
                 popUpHudShowing=false;
+                idleCounter=0;
             }
             //If player pressed C, start the quest
             if (Keyboard.isKeyDown(0x2E) && popUpHudShowing)
             {
 //                playerBehaviorAnalyzer.findAndSetPopupQuest();
+                System.out.println("pressed C, start the quest");
                 hud.hidePopUp();
                 ClientUtils.sendData(EnumPacketClient.PlayerJoin, currentQuestAI.getQuestDim());
                 popUpHudShowing=false;
+                idleCounter=0;
+                questStatus=EnumQuestStatus.InProgress;
             }
         }
         else if (questStatus==EnumQuestStatus.InProgress){

@@ -18,6 +18,7 @@ import java.util.Collections;
 public class GamePlayTracker {
     // Game Play is temporarily stored locally.
 
+    private static GamePlayTracker instance= getInstance();
     private  String name;
     private  int heart_rate;
     private  ArrayList<String> playedQuests = new ArrayList<>();
@@ -26,6 +27,11 @@ public class GamePlayTracker {
         name = "";
         heart_rate = 0;
 
+    }
+    public static GamePlayTracker getInstance(){
+        if(instance == null)
+            instance = new GamePlayTracker();
+        return instance;
     }
 
     public void addPlayedQuest(AbstractCustomQuest quest){
