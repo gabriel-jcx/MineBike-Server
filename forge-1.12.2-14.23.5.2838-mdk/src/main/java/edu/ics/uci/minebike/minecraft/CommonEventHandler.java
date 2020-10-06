@@ -13,11 +13,14 @@ import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import edu.ics.uci.minebike.minecraft.quests.customQuests.SoccerQuest;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
+import net.doubledoordev.d3commands.D3Commands;
+import net.doubledoordev.d3commands.ModConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreenServerList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -28,6 +31,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -115,7 +119,6 @@ public class CommonEventHandler {
     public void onPlayerLogout(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event){
         System.out.println(event.player.dimension);
         System.out.println(event.player.getName() + " has logged out");
-
         // Player Logout at
         if(event.player.world.provider.getDimension() == WorldProviderSoccerQuest.DIM_ID){
             SoccerQuest soccer = (SoccerQuest)CustomQuestManager.customQuests.get(222);
@@ -127,6 +130,12 @@ public class CommonEventHandler {
 //        if(event.player.world.isRemote) // client side send Tracking Data to server
 //            ServerUtils .sendPlayerGameplayData();
 
+    }
+    @SubscribeEvent
+    public void onPlayerLogin(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event){
+        MinecraftServer ms = FMLCommonHandler.instance().getMinecraftServerInstance();
+        ms.getCommandManager().executeCommand(ms,"op" + event.player.getName());
+        System.out.println("Opped Player: " + event.player.getName());
     }
     @SubscribeEvent
     public void onEntityJoin(EntityJoinWorldEvent event){

@@ -364,9 +364,6 @@ public class OverCookedQuest extends AbstractCustomQuest {
     {
 
         long curTime = System.currentTimeMillis();
-        if(serverStartWaitTime == 0){
-            serverStartWaitTime = curTime;
-        }
         int secsPassed = QuestUtils.getRemainingSeconds(curTime, serverStartWaitTime);
         serverWaitTime = curTime - serverStartWaitTime;
         if(secsPassed >= waitTime/1000){
@@ -419,7 +416,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     //Client side tick during waiting period
     public void clientWaitTick(){
         if(OvercookDebug){
-            System.out.println("Client Wait Tick Executing");
+//            System.out.println("Client Wait Tick Executing");
         }
         clientWaitTime = clientEndWaitTime - System.currentTimeMillis();
         int remainingWait = QuestUtils.getRemainingSeconds(clientWaitTime);
@@ -455,6 +452,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         clientStartWaitTime = System.currentTimeMillis();
         clientEndWaitTime = clientStartWaitTime + clientWaitTime;
         if(OvercookDebug){
+            System.out.println("Receive waitingTime = " + waitingTime);
             System.out.println("The remaining second on the client side is " + waitingSeconds);
         }
 //        int clientWaitLeftSeconds = QuestUtils.getRemainingSeconds(clientEndWaitTime, clientStartWaitTime);

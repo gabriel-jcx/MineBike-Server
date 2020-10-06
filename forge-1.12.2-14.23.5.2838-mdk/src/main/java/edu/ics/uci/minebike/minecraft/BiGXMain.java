@@ -5,6 +5,7 @@ import edu.ics.uci.minebike.minecraft.client.HudManager;
 import edu.ics.uci.minebike.minecraft.item.GameFishingEvent;
 import edu.ics.uci.minebike.minecraft.quests.CustomQuestManager;
 import edu.ics.uci.minebike.minecraft.serverSave.ServerSaveManager;
+import net.doubledoordev.d3commands.ModConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -78,7 +79,8 @@ public class BiGXMain {
         }else{ // should be server side
             saveManager = new ServerSaveManager();
         }
-
+        ModConfig.tpxPermissionLevel = 0;
+        logger.info("Setting tpxPermission Level to " + ModConfig.tpxPermissionLevel);
         logger.info("MineBike: Init finished");
 
         System.out.println();
