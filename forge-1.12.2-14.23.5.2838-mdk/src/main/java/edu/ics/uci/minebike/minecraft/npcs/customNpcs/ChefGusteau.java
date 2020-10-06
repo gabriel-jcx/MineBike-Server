@@ -55,6 +55,8 @@ public class ChefGusteau extends AbstractCustomNpc{
         if(event.getWorld().isRemote)
         {
             ClientUtils.sendData(EnumPacketClient.PlayerJoin, "723");
+            ClientUtils.teleport((EntityPlayerSP)player, new Vec3d(-500, 5 , 0), WorldProviderOverCooked.DIM_ID);
+
 //            System.out.println("is Client Side!!!!");
         }
 //        else

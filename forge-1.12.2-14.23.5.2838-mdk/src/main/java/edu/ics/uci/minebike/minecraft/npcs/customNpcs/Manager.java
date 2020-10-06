@@ -46,7 +46,8 @@ public class Manager extends AbstractCustomNpc {
         Vec3d destination = new Vec3d(0, 4, 0);
         String packet = destination.x + " " + destination.y + " " + destination.z;
         if(event.getWorld().isRemote) {
-            ClientUtils.sendData(EnumPacketClient.CookTeleport, packet);
+//            ClientUtils.sendData(EnumPacketClient.CookTeleport, packet);
+            ClientUtils.teleport((EntityPlayerSP)player, destination, WorldProviderOverCooked.DIM_ID);
         }
     }
 }

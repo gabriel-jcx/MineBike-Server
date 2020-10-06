@@ -60,12 +60,16 @@ public class Ada extends AbstractCustomNpc {
 
         //boolean isJoinSuccess = fishing.onPlayerJoin(player);
         if(event.getWorld().isRemote){  // Client side send message
+            if(player instanceof  EntityPlayerSP){
+                ClientUtils.teleport((EntityPlayerSP)player, fishing.questStartLocation, fishing.DIMID);
+
+            }
             ClientUtils.sendData(EnumPacketClient.PlayerJoin,"223");
             System.out.println("is Client Side!!!!");
         }
         else {
             System.out.println("fish start location: "+fishing.questStartLocation+"   "+fishing.DIMID);
-            ServerUtils.telport((EntityPlayerMP)player, fishing.questStartLocation,fishing.DIMID);
+            //ServerUtils.telport((EntityPlayerMP)player, fishing.questStartLocation,fishing.DIMID);
 //            give_rod( player);
             //ServerUtils.telport((EntityPlayerMP)player, fishing.questStartLocation,fishing.DIMID);
         }

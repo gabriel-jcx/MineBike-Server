@@ -134,8 +134,9 @@ public class CommonEventHandler {
     @SubscribeEvent
     public void onPlayerLogin(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event){
         MinecraftServer ms = FMLCommonHandler.instance().getMinecraftServerInstance();
-        ms.getCommandManager().executeCommand(ms,"op" + event.player.getName());
         System.out.println("Opped Player: " + event.player.getName());
+
+        ms.getCommandManager().executeCommand(ms,"op " + event.player.getName());
     }
     @SubscribeEvent
     public void onEntityJoin(EntityJoinWorldEvent event){

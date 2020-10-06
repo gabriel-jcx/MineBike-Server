@@ -180,7 +180,7 @@ public class OuterAI {
 //            updateHR();
             prevSec = currSec;
             checkPopUpQuest();
-            System.out.println("runing______________________");
+//            System.out.println("runing______________________");
 //            hud.displayPopUpHUD(new MinerAI());
 
         }

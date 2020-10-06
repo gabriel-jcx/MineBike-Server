@@ -83,11 +83,11 @@ public class FishingQuest  extends AbstractCustomQuest {
     public void start(EntityPlayerMP playerMP) {
         //this.player = player;
 
-        System.out.println(" Start Fishing quest ");
+//        System.out.println(" Start Fishing quest ");
 //        TextComponentString give = new TextComponentString(String.format("/give %s fishingmadebetter:diamond_fishing_rod ", this.player.getName()));
 //        this.player.sendMessage(give);
-        System.out.println("Trying to teleport " + playerMP.getName() + " to DIM" + this.DIMID);
-        ServerUtils.telport((EntityPlayerMP) playerMP, questStartLocation, DIMID);
+//        System.out.println("Trying to teleport " + playerMP.getName() + " to DIM" + this.DIMID);
+//        ServerUtils.telport((EntityPlayerMP) playerMP, questStartLocation, DIMID);
 
 //        this.gameTime= new HudString(-165, 20, "Time: "+gameTimeDisplay, true, false);
         fishingQuestHud.initializeGameTime();

@@ -25,12 +25,14 @@ import java.util.UUID;
 
 public class ServerUtils {
     //@SideOnly(Side.CLIENT)
+    @Deprecated
     public static void telport(EntityPlayerMP player, Vec3d pos, int dimID){
-        MineBikeScheduler.runTask(()->{
-            DimChanger.changeDim(player, dimID);
-//        player.changeDimension(dimID);
-            player.connection.setPlayerLocation(pos.x,pos.y,pos.z,player.rotationYaw,player.rotationPitch);
-        },1);
+
+//        MineBikeScheduler.runTask(()->{
+//            DimChanger.changeDim(player, dimID);
+////        player.changeDimension(dimID);
+//            player.connection.setPlayerLocation(pos.x,pos.y,pos.z,player.rotationYaw,player.rotationPitch);
+//        },1);
 
         //player.
 //        WorldServer ws = DimensionManager.getWorld(dimID);
@@ -38,6 +40,9 @@ public class ServerUtils {
 //        NoppesUtilPlayer.teleportPlayer(player,pos.x,pos.y,pos.z,dimID);
         //playerSP.sendChatMessage("/tpx "+ dimID + " " + pos.x + " " + pos.y + " " + pos.z );
     }
+
+
+
     public static void sendQuestData(EnumPacketServer type, EntityPlayerMP player, Object... objs){
         sendQuestDataDelayed(player, type, 0, objs);
     }

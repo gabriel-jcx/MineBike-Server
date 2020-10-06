@@ -8,8 +8,10 @@ import edu.ics.uci.minebike.minecraft.worlds.WorldProviderFishing;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderMiner;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderOverCooked;
 import edu.ics.uci.minebike.minecraft.worlds.WorldProviderSoccerQuest;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +34,7 @@ public class CustomQuestManager {
         customQuests.put(WorldProviderOverCooked.DIM_ID, new OverCookedQuest());
 
 
+
     }
 
     public static void findAndStart(EntityJoinWorldEvent event){
@@ -43,11 +46,16 @@ public class CustomQuestManager {
         }
         return;
     }
-
+    // NOTE: findAndStart only happens on client side at the moment
     public static void findAndStart(int dimID){
+        //System.out.println("Finding Quest with dimID = " + dimID);
         AbstractCustomQuest quest = customQuests.get(dimID);
+        System.out.println(quest);
         if(quest != null){
+            quest.start(Minecraft.getMinecraft().player);
             quest.start();
+        }else{
+            System.out.println("Unable to find quest with DIMID = " + dimID);
         }
     }
     public static void onWorldTick(TickEvent.WorldTickEvent event){

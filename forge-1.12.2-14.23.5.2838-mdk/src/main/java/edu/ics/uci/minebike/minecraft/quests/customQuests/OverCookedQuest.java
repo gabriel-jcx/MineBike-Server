@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 //import com.sun.org.apache.xpath.internal.operations.Bool;
+import ca.weblite.objc.Client;
+import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI.OverCookedAI;
 import edu.ics.uci.minebike.minecraft.client.HudManager;
@@ -57,6 +59,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     public int DIMID;
     public WorldServer overcookWs = DimensionManager.getWorld(this.DIMID);
     public Vec3d questWaitingLocation = new Vec3d(-500, 5, 0);
+
 //    public Vec3d questStartLocation;
 
     private boolean isStarted = false;
@@ -149,7 +152,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
 //                WorldServer ws = DimensionManager.getWorld(this.DIMID);
                 questWaitingLocation = new Vec3d(-500, 5 , 0);
                 overcookWs = DimensionManager.getWorld(this.DIMID);
-                isWaiting = true;
+
                 //Records current time and when waiting period ends. Starts Waiting. Sets End Time
                 serverStartWaitTime = System.currentTimeMillis();
                 serverWaitTime = waitTime;
@@ -158,14 +161,16 @@ public class OverCookedQuest extends AbstractCustomQuest {
                 updateWorldTime();
                 setTPLocations();
                 resetBeacon();
+                isWaiting = true;
+
             }
             if(playersInGame.size() <= maxPlayerCount) {
                 ServerUtils.sendQuestData(EnumPacketServer.OverCookedWaitTime,(EntityPlayerMP)player,Long.toString(this.serverWaitTime));
                 if(OvercookDebug){
                     System.out.println("Teleporting Player: " + player.getName() + " to Overcooked Quest Dim");
-                    System.out.println(" Sending reamaning " + this.serverWaitTime + " milliseconds to the client for wait");
+                    System.out.println(" Sending remaining " + this.serverWaitTime + " milliseconds to the client for wait");
                 }
-                ServerUtils.telport((EntityPlayerMP)player, questWaitingLocation,this.DIMID);
+//                ServerUtils.telport((EntityPlayerMP)player, questWaitingLocation,this.DIMID);
                 player.addPotionEffect(new PotionEffect(night_vision, (int)(gameTime + waitTime)/1000 * 20, 5, false, false));
                 player.addPotionEffect(new PotionEffect(saturation, (int)(gameTime + waitTime)/1000 * 20, 5, false, false));
                 playersInGame.add(player);
@@ -261,7 +266,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     {
         System.out.print("Started For Player" + player.getName());
         ServerUtils.sendQuestData(EnumPacketServer.QuestStart, player, Long.toString(this.DIMID));
-        ServerUtils.telport(player, this.questStartLocation,this.DIMID);
+//        ServerUtils.telport(player, this.questStartLocation,this.DIMID);
         spawnNPCs();
         sameBlock = false;
     }
@@ -272,6 +277,9 @@ public class OverCookedQuest extends AbstractCustomQuest {
     public void start(EntityPlayerSP player)
     {
         isStarted = true;
+        System.out.println("Overcook Client start executed");
+        player.sendChatMessage("/tp " + this.questStartLocation.x + " " + this.questStartLocation.y + " " + this.questStartLocation.z);
+        //ClientUtils.teleport(player, this.questStartLocation, this.DIMID);
     }
 
     @Override
@@ -283,6 +291,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
     @Override
     public void start()
     {
+
         clientStartTime = System.currentTimeMillis();
         clientEndTime = clientStartTime + gameTime;
         isWaiting = false;
@@ -364,9 +373,9 @@ public class OverCookedQuest extends AbstractCustomQuest {
     {
 
         long curTime = System.currentTimeMillis();
-        int secsPassed = QuestUtils.getRemainingSeconds(curTime, serverStartWaitTime);
-        serverWaitTime = curTime - serverStartWaitTime;
-        if(secsPassed >= waitTime/1000){
+        //int secsPassed = QuestUtils.getRemainingSeconds(curTime, serverStartWaitTime);
+        serverWaitTime = serverEndWaitTime - curTime;
+        if(serverWaitTime <= 0){ // game start state transition
             System.out.println("Trigger start for players");
             for(EntityPlayer player: this.playersInGame){
                 this.start((EntityPlayerMP)player); // event game start triggered
@@ -772,7 +781,7 @@ public class OverCookedQuest extends AbstractCustomQuest {
         int y = (int)Double.parseDouble(coords[1]);
         int z = (int)Double.parseDouble(coords[2]);
         Vec3d destination = new Vec3d(x,y,z);
-        ServerUtils.telport(playerMP,destination, this.DIMID);
+//        ServerUtils.telport(playerMP,destination, this.DIMID);
         System.out.println("Teleport " + playerMP.getName() + " to " + destination);
     }
 

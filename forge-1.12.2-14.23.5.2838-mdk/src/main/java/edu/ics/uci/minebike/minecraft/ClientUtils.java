@@ -7,6 +7,7 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import noppes.npcs.LogWriter;
@@ -21,6 +22,9 @@ import java.util.UUID;
 import static noppes.npcs.Server.writeString;
 
 public class ClientUtils {
+    public static void teleport(EntityPlayerSP playerSP, Vec3d pos, int dimID){
+        playerSP.sendChatMessage("/tpx " + dimID + " " + pos.x + " " + pos.y + " " + pos.z);
+    }
 
 //    public static void sendPlayerGameplayData(GamePlayTracker localData){
 //        sendData();
