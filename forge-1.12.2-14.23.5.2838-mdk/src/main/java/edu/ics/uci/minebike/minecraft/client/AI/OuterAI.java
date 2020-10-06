@@ -45,7 +45,7 @@ public class OuterAI {
 
     private boolean keyXPressed= false;
 
-    private boolean popUpHudShowing= true;
+    private boolean popUpHudShowing= false;
     // local instance
     private static OuterAI instance = null;
 
@@ -66,7 +66,7 @@ public class OuterAI {
     private int prevSec;
     private AbstractQuestAI currentQuestAI;
     private EnumQuestStatus questStatus = EnumQuestStatus.None;
-    private int idleSeconds = 600;
+    private int idleSeconds = 1000;
     private int idleCounter = 0;
     private boolean targetReached = false;
 
@@ -144,7 +144,7 @@ public class OuterAI {
             {
 //                playerBehaviorAnalyzer.findAndSetPopupQuest();
                 hud.hidePopUp();
-                ClientUtils.sendData(EnumPacketClient.PlayerJoin, currentQuestAI);
+                ClientUtils.sendData(EnumPacketClient.PlayerJoin, currentQuestAI.getQuestDim());
                 popUpHudShowing=false;
             }
         }
@@ -170,7 +170,7 @@ public class OuterAI {
 //        }
 
         int currSec = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-        if(currSec != prevSec){  // update every second
+        if(currSec != prevSec && event.side.isClient()){  // update every second
 //            updateHR();
             prevSec = currSec;
             checkPopUpQuest();
@@ -178,10 +178,10 @@ public class OuterAI {
 //            hud.displayPopUpHUD(new MinerAI());
 
         }
-        if (questStatus==EnumQuestStatus.None) {
-
-
-        }
+//        if (questStatus==EnumQuestStatus.None) {
+//
+//
+//        }
 
     }
 

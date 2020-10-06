@@ -8,11 +8,17 @@ import java.util.Map;
 
 public class MinerAI extends AbstractQuestAI {
     private String QuestName= "Miner";
+    private int QuestDim= 420;
     private OuterAI outerAI= OuterAI.getInstance();
     private ArrayList<Integer> timeUsedForEachLane = new ArrayList<Integer>();
     @Override
     public String getQuestName() {
         return QuestName;
+    }
+
+    @Override
+    public int getQuestDim() {
+        return QuestDim;
     }
 
     private int calcTimeForNextLane(){

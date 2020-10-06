@@ -41,6 +41,8 @@ public class Gordon extends AbstractCustomNpc {
 
     @Override
     public void onInteraction(EntityPlayer player, PlayerInteractEvent.EntityInteract event) {
-
+        System.out.println("Gordon was interacted");
+        if(event.getWorld().isRemote) // client send packet
+            ClientUtils.sendData(EnumPacketClient.PlayerJoin,"250");
     }
 }

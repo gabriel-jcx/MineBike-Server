@@ -54,7 +54,7 @@ public class FishingQuest  extends AbstractCustomQuest {
         super();
         this.NAME = "fishing";
         this.DIMID = WorldProviderFishing.DIM_ID;
-        this.questStartLocation = new Vec3d(10,10,10);
+        this.questStartLocation = new Vec3d(-88,4,62);
 
     }
     @Override

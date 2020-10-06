@@ -9,6 +9,7 @@ public abstract class AbstractQuestAI {
     private boolean isStarted;
     private boolean targetHRReached;
     private String QuestName;
+    private int QuestDim;
     private int minTargetHR;
     private int maxTargetHR;
     private int remainingTargetTime; // in terms of seconds
@@ -30,6 +31,7 @@ public abstract class AbstractQuestAI {
         questAvgHR = 0; // init to zero
     }
     abstract public String getQuestName();
+    abstract public int getQuestDim();
     public int getRemainingTime_Sec(){
         return remainingTargetTime;
     }

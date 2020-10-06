@@ -6,14 +6,19 @@ import java.util.Arrays;
 
 public class OverCookedAI extends AbstractQuestAI {
     private String QuestName= "overcook";
-
+    private int QuestDim=723;
     private int currentOrder=1;
     private long lastOrderTime=0;
     @Override
     public String getQuestName() {
         return QuestName;
     }
+    @Override
+    public int getQuestDim() {
+        return QuestDim;
+    }
     //calculated time for next order.
+
     public long orderTime(){
 
         if (currentOrder==1){

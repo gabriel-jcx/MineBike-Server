@@ -13,6 +13,7 @@ import java.util.*;
 public class FishingAI extends AbstractQuestAI {
     private String QuestName= "fishing";
 
+    private int QuestDim=223;
     public String lastFish;
 
     public FishStatus fishStatus = FishStatus.QUIT;
@@ -33,6 +34,10 @@ public class FishingAI extends AbstractQuestAI {
         QuestAIDatabase.addQuestAI(this);
     }
 
+    @Override
+    public int getQuestDim() {
+        return QuestDim;
+    }
     public void selectPond(int level) {
         switch (level) {
             case 1:
