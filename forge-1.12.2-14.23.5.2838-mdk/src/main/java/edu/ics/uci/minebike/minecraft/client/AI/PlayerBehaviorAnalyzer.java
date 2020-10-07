@@ -18,7 +18,9 @@ public class PlayerBehaviorAnalyzer {
         if(playedQuests.size() == 0){ // hasn't play any quests
             System.out.println("playedQuests.size() == 0");
             Random rand = new Random();
-            outerAI.setRunningQuest(questAIs.get(rand.nextInt(questAIs.size())));
+            AbstractQuestAI temp= questAIs.get(rand.nextInt(questAIs.size()));
+            System.out.println(temp.getQuestName()+temp.getQuestDim());
+            outerAI.setRunningQuest(temp);
         }else{
             System.out.println("playedQuests.size() !!!!= 0");
             outerAI.setRunningQuest(outerAI.gamePlayTracker.getMaxPlayedQuest());

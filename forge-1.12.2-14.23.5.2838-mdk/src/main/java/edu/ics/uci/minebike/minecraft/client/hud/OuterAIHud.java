@@ -16,6 +16,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.ngs.bigx.minecraft.BiGX;
+import org.ngs.bigx.minecraft.context.BigxClientContext;
 //import org.ngs.bigx.minecraft.BiGX;
 //import org.ngs.bigx.minecraft.context.BigxClientContext;
 //import org.ngs.bigx.minecraft.client.ClientEventHandler;
@@ -108,13 +110,13 @@ public class OuterAIHud {
             currentTime = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
             hr+=1; // TODO: hr += 1 is a temp place holder need to read from actual heartrate;
 
-//            System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
-//
-//            if(((BigxClientContext) BiGX.instance().clientContext).resistance!= currentResistance)
-//            {
-//                currentResistance=((BigxClientContext) BiGX.instance().clientContext).resistance;
-//                this.resistance.setText("Current Resistance: "+currentResistance);
-//            }
+            System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
+
+            if(((BigxClientContext) BiGX.instance().clientContext).resistance!= currentResistance)
+            {
+                currentResistance=((BigxClientContext) BiGX.instance().clientContext).resistance;
+                this.resistance.setText("Current Resistance: "+currentResistance);
+            }
 
 
         }
@@ -129,7 +131,7 @@ public class OuterAIHud {
 
         this.popUpQuest = new HudString(0, 0, "Attention! "+questAI.getQuestName()+" quest with extra reward!",true,true);
 
-        this.popUpInstruction= new HudString(0,10,"Press X to accept the quest with extra reward.Press C to cancel",true,true);
+        this.popUpInstruction= new HudString(0,10,"Press B to accept the quest with extra reward.Press V to cancel",true,true);
 
     }
     @SideOnly(Side.CLIENT)

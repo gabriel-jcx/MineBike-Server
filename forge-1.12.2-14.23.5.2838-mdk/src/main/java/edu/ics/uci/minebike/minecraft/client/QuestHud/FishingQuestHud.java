@@ -7,6 +7,7 @@ import edu.ics.uci.minebike.minecraft.client.hud.HudRectangle;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.ngs.bigx.minecraft.bike.BiGXPacketHandler;
 //import org.ngs.bigx.minecraft.bike.BiGXPacketHandler;
 
 import java.util.concurrent.TimeUnit;
@@ -71,14 +72,14 @@ public class FishingQuestHud {
         System.out.println("refreshCountDown");
         if (gameCountDown != (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) {
             gameCountDown = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-            gameTimeDisplay -= 1;
+
             if(gameTimeDisplay!=requiredGameTime){
                 this.gameTime.setText("Time: "+gameTimeDisplay);
             }
             else{
                 initializeGameTime();
             }
-
+            gameTimeDisplay -= 1;
         }
     }
 
@@ -128,7 +129,7 @@ public class FishingQuestHud {
     //Copied from previous code. It detects the bike's current power.
     private int getPower()
     {
-//        return BiGXPacketHandler.change * 4;
-        return 1;
+        return BiGXPacketHandler.change * 4;
+//        return 1;
     }
 }

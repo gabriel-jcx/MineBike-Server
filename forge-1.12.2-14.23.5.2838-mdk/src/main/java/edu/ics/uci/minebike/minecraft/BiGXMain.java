@@ -17,8 +17,8 @@ import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.Logger;
 @Mod(modid = BiGXMain.MOD_ID,name = BiGXMain.MOD_NAME, version = BiGXMain.MOD_VERSION,
-        dependencies = "required-after:soccer;required-after:fishingmadebetter;required-after:aquaculture;")
-//        dependencies = "required-after:soccer;required-after:fishingmadebetter;required-after:aquaculture;required-after:bike;")
+//        dependencies = "required-after:soccer;required-after:fishingmadebetter;required-after:aquaculture;")
+        dependencies = "required-after:soccer;required-after:fishingmadebetter;required-after:aquaculture;required-after:bike;")
 public class BiGXMain {
     public static final String MOD_ID = "minebikemod";
     public static final String MOD_NAME = "MineBike Mod";

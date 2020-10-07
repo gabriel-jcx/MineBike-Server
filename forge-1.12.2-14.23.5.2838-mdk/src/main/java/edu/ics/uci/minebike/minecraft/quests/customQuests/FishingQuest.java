@@ -1,5 +1,6 @@
 package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
+import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI.FishingAI;
 import edu.ics.uci.minebike.minecraft.quests.AbstractCustomQuest;
@@ -15,6 +16,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import edu.ics.uci.minebike.minecraft.item.ItemGameFishingRod;
@@ -36,7 +38,7 @@ public class FishingQuest  extends AbstractCustomQuest {
 //    public static int BAR_MAX=65;
 //    public int requiredPower=1;
 //    public int gameTimeDisplay=240;
-    public static ItemGameFishingRod rod;
+    public static ItemGameFishingRod rod =null;
 //    public static HudString powerString;
 //    public static HudString timerString;
 //    public static HudRectangle powerBar;
@@ -64,19 +66,28 @@ public class FishingQuest  extends AbstractCustomQuest {
 
     @Override
     public boolean onPlayerJoin(EntityPlayer player) {
+        System.out.println("Fishing onPlayerJoin");
         give_rod(player);
+
         return true;
     }
 
     public void give_rod(EntityPlayer playerSP){
         //ResourceLocation resourcelocation = new ResourceLocation("minebikemod:game_rod"); //
         //Fishing rod name
+        if(playerSP.world.isRemote){
+            ClientUtils.teleport(((EntityPlayerSP)playerSP),questStartLocation,223);
+        }
+
         ResourceLocation resourcelocation = new ResourceLocation("minebikemod:game_fish_rod");
         this.rod = (ItemGameFishingRod)Item.REGISTRY.getObject(resourcelocation);
         ItemStack itemstack = new ItemStack(rod,1);
+        System.out.println("Fishingrod"+itemstack);
         playerSP.inventory.addItemStackToInventory(itemstack);
+        playerSP.addItemStackToInventory(itemstack);
         playerSP.world.playSound((EntityPlayer)null, playerSP.posX, playerSP.posY, playerSP.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((playerSP.getRNG().nextFloat() - playerSP.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
         playerSP.inventoryContainer.detectAndSendChanges();
+
 
     }
     @Override
