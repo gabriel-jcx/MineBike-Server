@@ -5,12 +5,16 @@ import edu.ics.uci.minebike.minecraft.client.AI.CustomQuestAI.MinerAI;
 import edu.ics.uci.minebike.minecraft.client.hud.OuterAIHud;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketClient;
 import edu.ics.uci.minebike.minecraft.constants.EnumQuestStatus;
+import edu.ics.uci.minebike.minecraft.worlds.WorldProviderOverCooked;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.ngs.bigx.dictionary.objects.clinical.BiGXPatientPrescription;
+import org.ngs.bigx.minecraft.BiGX;
 //import org.ngs.bigx.minecraft.BiGX;
 //import org.ngs.bigx.minecraft.client.AI.OuterAI.QuestStatus;
 import java.util.*;
@@ -66,7 +70,7 @@ public class OuterAI {
     private int prevSec;
     private AbstractQuestAI currentQuestAI;
     private EnumQuestStatus questStatus = EnumQuestStatus.None;
-    private int idleSeconds = 180;
+    private int idleSeconds = 300;
     private int idleCounter = 0;
     private boolean targetReached = false;
 
@@ -115,50 +119,60 @@ public class OuterAI {
         this.currentQuestAI = questAI;
         return true;
     }
-//    private void updateHR(){
-//        this.currHR = BiGX.instance().clientContext.heartrate;
-//    }
-//
-//    private void updateResistance(){
-//        this.currResistance = BiGX.instance().clientContext.resistance;
-//    }
+    private void updateHR(){
+        this.currHR = BiGX.instance().clientContext.heartrate;
+    }
 
-    private void checkPopUpQuest(){
+    private void updateResistance(){
+        this.currResistance = BiGX.instance().clientContext.resistance;
+    }
+
+    private void checkPopUpQuest(TickEvent.PlayerTickEvent event){
         if(questStatus == EnumQuestStatus.None){
             idleCounter++;
             if(idleCounter >= idleSeconds){
                 playerBehaviorAnalyzer.findAndSetPopupQuest();
                 popUpHudShowing=true;
-                hud.displayPopUpHUD(currentQuestAI);
+                if(event.side.isClient()) {
+                    hud.displayPopUpHUD(currentQuestAI);
+                }
                 idleCounter = 0; // reset idle counter
                 System.out.println("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
 
             }
-            //If player pressed C, discard the GUI
-            if (Keyboard.isKeyDown(0x2E) && popUpHudShowing)
-            {
-                System.out.println("pressed C, discard the GUI");
-                hud.hidePopUp();
-                popUpHudShowing=false;
-                idleCounter=0;
-            }
-            //If player pressed X, start the quest
-            if (Keyboard.isKeyDown(0x2D) && popUpHudShowing)
-            {
-//                playerBehaviorAnalyzer.findAndSetPopupQuest();
-                System.out.println("pressed X, start the quest");
-                hud.hidePopUp();
-                ClientUtils.sendData(EnumPacketClient.PlayerJoin, currentQuestAI.getQuestDim());
-                popUpHudShowing=false;
-                idleCounter=0;
-                questStatus=EnumQuestStatus.InProgress;
-            }
+
         }
         else if (questStatus==EnumQuestStatus.InProgress){
             gameTimeDisplayTimer=0;
         }
         else{
             System.out.println("Error: Invalid questStatus, current Quest Status is " + questStatus);
+        }
+    }
+    private void HUDkeyAction(TickEvent.PlayerTickEvent event){
+        //If player pressed C, discard the GUI
+        if (Keyboard.isKeyDown(0x2F) && popUpHudShowing)
+        {
+            System.out.println("pressed C, discard the GUI");
+            hud.hidePopUp();
+            popUpHudShowing=false;
+            idleCounter=0;
+        }
+        //If player pressed X, start the quest
+        if (Keyboard.isKeyDown(0x30) && popUpHudShowing)
+        {
+//                playerBehaviorAnalyzer.findAndSetPopupQuest();
+            System.out.println("pressed X, start the quest");
+            hud.hidePopUp();
+            System.out.println(currentQuestAI.getQuestDim());
+            if(event.player.world.isRemote) {
+                ClientUtils.sendData(EnumPacketClient.PlayerJoin, currentQuestAI.getQuestDim());
+                ClientUtils.teleport((EntityPlayerSP)event.player, new Vec3d(-88,4,62), currentQuestAI.getQuestDim());
+
+            }
+            popUpHudShowing=false;
+            idleCounter=0;
+            questStatus=EnumQuestStatus.InProgress;
         }
     }
 
@@ -176,18 +190,25 @@ public class OuterAI {
 //        }
 
         int currSec = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-        if(currSec != prevSec && event.side.isClient()){  // update every second
-//            updateHR();
-            prevSec = currSec;
-            checkPopUpQuest();
-//            System.out.println("runing______________________");
-//            hud.displayPopUpHUD(new MinerAI());
 
+            if(currSec != prevSec){  // update every second
+    //            updateHR();
+                prevSec = currSec;
+                if (event.player.dimension==0){
+                    checkPopUpQuest(event);
+                }
+
+    //            System.out.println("runing______________________");
+    //            hud.displayPopUpHUD(new MinerAI());
+
+            }
+
+            HUDkeyAction(event);
+//            if(event.player.dimension==0){
+//                questStatus=EnumQuestStatus.None;
+//            }
         }
-//        if (questStatus==EnumQuestStatus.None) {
-//
-//
-//        }
+
 
     }
 
@@ -221,4 +242,4 @@ public class OuterAI {
 //        hud.displayPopUpHUD(currentQuestAI);
 //    }
 
-}
+
