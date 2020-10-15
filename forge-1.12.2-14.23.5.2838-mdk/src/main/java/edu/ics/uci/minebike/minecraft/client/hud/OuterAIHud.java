@@ -16,8 +16,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.ngs.bigx.minecraft.BiGX;
-import org.ngs.bigx.minecraft.context.BigxClientContext;
+//import org.ngs.bigx.minecraft.BiGX;
+//import org.ngs.bigx.minecraft.context.BigxClientContext;
 //import org.ngs.bigx.minecraft.BiGX;
 //import org.ngs.bigx.minecraft.context.BigxClientContext;
 //import org.ngs.bigx.minecraft.client.ClientEventHandler;
@@ -110,13 +110,13 @@ public class OuterAIHud {
             currentTime = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
             hr+=1; // TODO: hr += 1 is a temp place holder need to read from actual heartrate;
 
-            System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
-
-            if(((BigxClientContext) BiGX.instance().clientContext).resistance!= currentResistance)
-            {
-                currentResistance=((BigxClientContext) BiGX.instance().clientContext).resistance;
-                this.resistance.setText("Current Resistance: "+currentResistance);
-            }
+//            System.out.println(((BigxClientContext) BiGX.instance().clientContext).resistance);
+//
+//            if(((BigxClientContext) BiGX.instance().clientContext).resistance!= currentResistance)
+//            {
+//                currentResistance=((BigxClientContext) BiGX.instance().clientContext).resistance;
+//                this.resistance.setText("Current Resistance: "+currentResistance);
+//            }
 
 
         }
