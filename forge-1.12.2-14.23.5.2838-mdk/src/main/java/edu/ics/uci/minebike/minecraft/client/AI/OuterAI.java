@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.ngs.bigx.dictionary.objects.clinical.BiGXPatientPrescription;
-import org.ngs.bigx.minecraft.BiGX;
+//import org.ngs.bigx.minecraft.BiGX;
 //import org.ngs.bigx.minecraft.BiGX;
 //import org.ngs.bigx.minecraft.client.AI.OuterAI.QuestStatus;
 import java.util.*;
@@ -119,13 +119,13 @@ public class OuterAI {
         this.currentQuestAI = questAI;
         return true;
     }
-    private void updateHR(){
-        this.currHR = BiGX.instance().clientContext.heartrate;
-    }
-
-    private void updateResistance(){
-        this.currResistance = BiGX.instance().clientContext.resistance;
-    }
+//    private void updateHR(){
+//        this.currHR = BiGX.instance().clientContext.heartrate;
+//    }
+//
+//    private void updateResistance(){
+//        this.currResistance = BiGX.instance().clientContext.resistance;
+//    }
 
     private void checkPopUpQuest(TickEvent.PlayerTickEvent event){
         if(questStatus == EnumQuestStatus.None){

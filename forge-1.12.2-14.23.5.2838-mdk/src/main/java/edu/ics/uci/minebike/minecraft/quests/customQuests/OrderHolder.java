@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public class OrderHolder {
 
+    private boolean OrderHolderDebug = true;
     private ArrayList<Recipe> foods = new ArrayList<>();
     private ArrayList<Long> startTimes = new ArrayList<>();
     private ArrayList<Long> expiration = new ArrayList<>();
@@ -32,6 +33,9 @@ public class OrderHolder {
         long endTime = curTime + timeLimit;
         startTimes.add(curTime);
         expiration.add(endTime);
+        if(OrderHolderDebug){
+            System.out.println("OrderHolder::add The location of the new texture is = " + location);
+        }
         timer.add(new HudString(-200,35 + timer.size() * 10,newFood.getName() + "  Time Left: " + QuestUtils.getRemainingSeconds(endTime,curTime),true, false));
         textures.add(new HudTexture(30, 10 + 80 * textures.size(), 132, 68, location, 255));
 //        textures.add(new HudTexture(50, 10 + 80 * textures.size(), 70, 70, location, 255));
