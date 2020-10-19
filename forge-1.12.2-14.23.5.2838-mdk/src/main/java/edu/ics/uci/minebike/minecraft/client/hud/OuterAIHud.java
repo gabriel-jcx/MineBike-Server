@@ -77,7 +77,7 @@ public class OuterAIHud {
         mc.ingameGUI.drawTexturedModalRect(0,0,0,0,40,40);
         mc.ingameGUI.drawTexturedModalRect(5,40,40,5,25,80);
         mc.ingameGUI.drawTexturedModalRect(5,40+progressCounter,70,5+progressCounter,25,80);
-
+//        mc.ingameGUI.
     }
 //    @SideOnly(Side.CLIENT)
 //    public void showPopUpBG(){

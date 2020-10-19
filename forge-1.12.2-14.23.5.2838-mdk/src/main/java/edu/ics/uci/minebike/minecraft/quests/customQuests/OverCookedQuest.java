@@ -246,16 +246,17 @@ public class OverCookedQuest extends AbstractCustomQuest {
         recipes.add(new Recipe(hamburgerbun, nopot,"Potato-Less Hamburger", burgnopot));
         recipes.add(new Recipe(hamburgerbun, plain,"Plain Hamburger", burgplain));
 
-        locations.add("textures/gui/sandwich_all_ui.png");
-        locations.add("textures/gui/sandwich_veg_ui.png");
-        locations.add("textures/gui/sandwich_meat_ui.png");
-        locations.add("textures/gui/sandwich_nopot_ui.png");
-        locations.add("textures/gui/sandwich_plain_ui.png");
-        locations.add("textures/gui/burger_all_ui.png");
-        locations.add("textures/gui/burger_veg_ui.png");
-        locations.add("textures/gui/burger_meat_ui.png");
-        locations.add("textures/gui/burger_nopot_ui.png");
-        locations.add("textures/gui/burger_plain_ui.png");
+        locations.add("textures/sandwichallui.png");
+        locations.add("textures/sandwichvegui.png");
+        locations.add("textures/sandwichmeatui.png");
+        locations.add("textures/sandwichnopotui.png");
+        locations.add("textures/sandwichplainui.png");
+        locations.add("textures/burgerallui.png");
+        locations.add("textures/burgervegui.png");
+        locations.add("textures/burgermeatui.png");
+        locations.add("textures/burgernopotui.png");
+        locations.add("textures/burgerplainui.png");
+
 
     }
 

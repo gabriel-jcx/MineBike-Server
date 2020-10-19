@@ -10,6 +10,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import org.ngs.bigx.dictionary.objects.clinical.BiGXPatientPrescription;
+
+import java.math.BigDecimal;
 
 
 @SideOnly(Side.CLIENT)
@@ -34,7 +37,8 @@ public class HudTexture extends HudShape{
         this.centerX = false;
         this.centerY = false;
 
-        this.resourceLocation = new ResourceLocation(BiGXMain.MOD_ID, location);
+//        this.resourceLocation = new ResourceLocation(BiGXMain.MOD_ID, location);
+        this.resourceLocation = new ResourceLocation(BiGXMain.MOD_ID+":"+location);
 
         this.alpha = alpha;
         HudManager.getInstance(mc).shapes.add(this);
