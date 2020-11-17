@@ -3,7 +3,7 @@ package edu.ics.uci.minebike.minecraft.worlds;
 import net.minecraft.world.DimensionType;
 
 public class WorldProviderMiner extends WorldProviderFlat {
-    public static int DIM_ID = 420;
+    public static final int DIM_ID = 420;
     public static String DIM_NAME = "Miner Dimension";
 
     public void WorldProviderSoccerQuest(){

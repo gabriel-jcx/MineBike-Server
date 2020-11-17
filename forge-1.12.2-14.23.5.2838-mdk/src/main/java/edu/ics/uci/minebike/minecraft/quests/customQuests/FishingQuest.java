@@ -68,7 +68,7 @@ public class FishingQuest  extends AbstractCustomQuest {
     public boolean onPlayerJoin(EntityPlayer player) {
         System.out.println("Fishing onPlayerJoin");
         give_rod(player);
-
+//        this.start((EntityPlayerMP)player);
         return true;
     }
 

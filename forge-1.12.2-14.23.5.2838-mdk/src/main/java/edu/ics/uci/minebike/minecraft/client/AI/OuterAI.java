@@ -166,7 +166,7 @@ public class OuterAI {
             hud.hidePopUp();
             System.out.println(currentQuestAI.getQuestDim());
             if(event.player.world.isRemote) {
-                ClientUtils.sendData(EnumPacketClient.PlayerJoin, currentQuestAI.getQuestDim());
+                ClientUtils.sendData(EnumPacketClient.PlayerJoin, Integer.toString(currentQuestAI.getQuestDim()));
                 ClientUtils.teleport((EntityPlayerSP)event.player, new Vec3d(-88,4,62), currentQuestAI.getQuestDim());
 
             }

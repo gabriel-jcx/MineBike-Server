@@ -38,6 +38,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import noppes.npcs.api.event.DialogEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 
 import java.util.Iterator;
@@ -97,6 +98,18 @@ public class CommonEventHandler {
         if(event.world.provider.getDimension() != 0){ // if the world is not overall world
             CustomQuestManager.onWorldTick(event);
         }
+    }
+
+    @SubscribeEvent
+    public void onOptionClick(DialogEvent.OptionEvent event){
+        System.out.println("I CLICK!");
+        System.out.println(event.npc.getName());
+        System.out.println("OnOptionClick"+event);
+    }
+
+    @SubscribeEvent
+    public void onDialogOpen(DialogEvent.OpenEvent event){
+        System.out.println("I OPENED THIS!");
     }
 //    @SubscribeEvent
 //    public void onPlayerTick(TickEvent.PlayerTickEvent event){
