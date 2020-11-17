@@ -1,6 +1,7 @@
 package edu.ics.uci.minebike.minecraft.quests.customQuests;
 
 import com.mrcrayfish.soccer.entity.EntitySoccerBall;
+import edu.ics.uci.minebike.minecraft.ClientUtils;
 import edu.ics.uci.minebike.minecraft.ServerUtils;
 import edu.ics.uci.minebike.minecraft.client.hud.HudString;
 import edu.ics.uci.minebike.minecraft.constants.EnumPacketServer;
@@ -152,8 +153,7 @@ public class SoccerQuest extends AbstractCustomQuest {
             isWaiting = true;
         //waitingEndTime = waitingStartTime + waitingTime;
         }
-        ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
-
+        //ServerUtils.telport((EntityPlayerMP)player, this.questStartLocation,this.DIMID);
         Potion slow_potion = Potion.getPotionById(2);
         Potion jump_anti_boost = Potion.getPotionById(8);
         System.out.println(slow_potion.getName()+ " " + jump_anti_boost.getName());
@@ -237,7 +237,6 @@ public class SoccerQuest extends AbstractCustomQuest {
                 for(EntityPlayer player: this.playersInGame){
                     giveItemToPlayer(player, new ItemStack(Items.DIAMOND, numDiamonds));
                     // add teleporting back to Jaya
-                    ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
                 }
                 isFinished = false;
             }
@@ -252,7 +251,9 @@ public class SoccerQuest extends AbstractCustomQuest {
             if(isStarted){
                 scoreLeftStr.unregister();
                 scoreRightStr.unregister();
+                ServerUtils.telport((EntityPlayerMP)player, Jaya.LOCATION,0);
             }
+//            ClientUtils.teleport(());
         }
         isStarted = false; // set both client and server to not
     }
